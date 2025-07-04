@@ -1,0 +1,32 @@
+[27-Jun-2024 07:41:55 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\ServiceProvider" not found in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php on line 7
+[27-Jun-2024 07:41:57 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\ServiceProvider" not found in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php on line 7
+[28-Jun-2024 06:57:33 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\ServiceProvider" not found in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php on line 7
+[28-Jun-2024 06:57:36 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\ServiceProvider" not found in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php on line 7
+[29-Jun-2024 08:45:34 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\ServiceProvider" not found in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php on line 7
+[29-Jun-2024 08:45:36 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\ServiceProvider" not found in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php on line 7
+[30-Jun-2024 05:34:06 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\ServiceProvider" not found in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php on line 7
+[30-Jun-2024 05:34:08 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\ServiceProvider" not found in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/app/Providers/AppServiceProvider.php on line 7
