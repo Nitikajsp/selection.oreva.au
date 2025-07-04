@@ -41,7 +41,7 @@
       @endif
 
       <div class="card mt-4 p-2 ">
-        <div class="customerscroll">
+        <div class="customerscroll" style="width: 664px;">
         <table class="table datatables-projects" id="customerlist">
           <thead class="table-dark">
             <tr>

@@ -146,17 +146,12 @@ class ListController extends Controller
     public function addcartproduct(ListModel $list, $customerId)
     {
         $adminId = auth()->id();
-       // dd($customerId);
        $lists = ListModel::where('customer_id', $customerId)
         ->whereHas('customer', function ($query) use ($adminId) {
             $query->where('admin_user_id', $adminId);
         })
         ->with(['products', 'customer'])
         ->get();
-       // dd($lists->all());
-       // $list->load('products');
-    
-        // Retrieve only products that are in stock and have delete_status = '1'
         $products = Product::where('in_stock', 1)
             ->where('delete_status', '1')
             ->where('admin_user_id', $adminId)
@@ -175,8 +170,8 @@ class ListController extends Controller
                 return $categories[$id] ?? 'Unknown';
             }, $categoryIds);
         }
-    
-        return view('list.add_cart_product', compact('list', 'products'));
+
+        return view('list.add_cart_product', compact('list', 'products',));
     }
     
     
@@ -654,9 +649,3 @@ public function showList($list, $customer_id)
         // }
 
 }
-
-
-
-
-
-

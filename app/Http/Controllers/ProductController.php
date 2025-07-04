@@ -65,6 +65,9 @@ class ProductController extends Controller
             'product_code' => 'required|unique:products,product_code',
             'product_stock' => 'required|integer',
              'product_image' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+         ], [
+             'product_image.max' => 'Please upload an image smaller than 2MB.',
+
         ]);
     
         $input = $request->all();
