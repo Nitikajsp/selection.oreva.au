@@ -193,6 +193,7 @@
                     , }
                 }
                 , messages: {
+                
                     name: {
                         required: "Please enter your name"
                     }
