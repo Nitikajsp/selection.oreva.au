@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Hindware Visualizer</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1.0,minimum-scale=0.8, user-scalable=no" />
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.webp" />
+    <!-- vendor css  -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css">
+    <!-- custom css.5  -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <!-- Babylon.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <style>
+        #loader {  
+            position: fixed; 
+            display: none; 
+            z-index: 1049;
+            width: 100vw;
+            height: 100vh;
+            position: fixed; 
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px); 
+            text-align: center;
+        } 
+        #loader img {
+            width: 200px;
+            margin: calc(50vh - 100px) calc(50vw - 100px);
+        } 
+        #loader_pdf {
+            z-index: 1049;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            display: none;
+        } 
+        #loader_pdf img {
+            width: 200px;
+            margin: calc(50vh - 100px) calc(50vw - 100px);
+        }
+
+        #loader_pdf p {
+            margin: calc(72vh - 100px) calc(33vw - 100px);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 11px;
+            top: 0;
+            position: fixed;
+            padding: 9px;
+            padding-right: 8vw;
+            width: 46vw;
+            padding-left: 8vw;
+            font-style: normal;
+            font-weight: 500;
+            text-align: center;
+            color: black;
+        } 
+        .dynamic-overlay {
+            display: none;
+            position: absolute;
+            width: -webkit-fill-available;
+            height: -webkit-fill-available;
+            background-size: contain;
+        } 
+        .mds_modal_dialog {
+            bottom: 41px;
+            position: fixed;
+            right: 4px;
+        } 
+        .mds_modal_content {
+            border: 3px solid #e1c16700;
+            background: #00000000;
+            border-radius: 30px;
+        } 
+        .mds_sharelink {
+            margin-top: 0;
+            position: relative;
+            margin-bottom: 0;
+            bottom: -80px;
+        }
+
+        #pincode {
+            width: 82%;
+            padding: 1rem;
+            border-radius: 55px;
+            font-size: 1rem;
+            font-weight: 100;
+            color: #E1C167;
+            border: 2px solid #E1C167;
+            background: #000;
+            text-align: left;
+            height: 52px;
+        } 
+        button#go {
+            padding: 1.1rem 1.45rem;
+            position: absolute;
+            height: 46px;
+            width: 50px;
+            bottom: 6%;
+            right: 10%;
+        } 
+        button#go img {
+            height: 16px;
+            position: absolute;
+            bottom: 30%;
+            right: 32%;
+        } 
+        #filter_data_div {
+            margin-top: -2px;
+            height: min-content;
+        overflow-y: scroll;
+scroll-behavior: smooth; 
+            max-height: 470px;
+            max-width: 270px;
+            padding-top: 102px;
+            background: #00000080;
+            border-radius: 20px;
+            text-align: -webkit-center !important;
+        } 
+        .prod-desc {
+            display: flex;
+            border-radius: 32px;
+            padding: 0px;
+            width: 345px;
+            margin-bottom: 17px;
+        } 
+        .prod-desc .imgdiv {
+            border: 4px solid #E1C167;
+            border-top: 4px solid #E1C167;
+            z-index: 1;
+            padding-top: 14px;
+            background: rgb(0 0 0 / 82%);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            position: absolute;
+            top: 10%;
+            height: 175px;
+            width: 202px;
+        } 
+        .prod-desc .imgdiv img {
+            max-width: 240px;
+            max-height: 115px;
+        } 
+        .prod-desc span {
+            border: 4px solid #E1C167;
+            border-radius: 50px;
+            margin-left: 30px;
+            padding-left: 49px;
+            padding-right: 108px;
+            text-align: left;
+            padding-top: 15px;
+            color: #E1C167;
+            min-width: 280px;
+        } 
+        #amazon {
+            border: 4px solid #E1C167;
+            border-radius: 50px;
+            margin-left: 212px;
+            padding-left: 17px;
+            padding-right: 57px;
+            text-align: center;
+            margin-top: 3%;
+            padding-top: 15px;
+            color: #E1C167;
+            min-width: 196px;
+            height: 60px;
+            background: black;
+        } 
+        .mds_modal_close {
+            position: relative;
+            width: 20px;
+            top: -30px;
+            right: -426px;
+            color: #ffd560;
+            font-size: 35px;
+        } 
+        #ytvid1 h6 {
+            max-width: 180px;
+            margin-left: -6px;
+            margin-top: -6px;
+            font-size: 15px;
+        } 
+        #loader23 {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            top: 0px;
+            width: -webkit-fill-available;
+            height: 100%;
+        } 
+        #loader23 {
+            display: block;
+            position: fixed;
+            z-index: 99999;
+            top: 0px;
+            width: -webkit-fill-available;
+            height: 100%;
+        } 
+        #loader23 img {
+            width: 100%;
+            height: -webkit-fill-available;
+            max-width: 100%;
+            display: block;
+            object-fit: fill;
+        }
+        @media (max-width : 1120px){
+            #closePdfBtn{
+                top: 15px !important;
+                z-index: 999;
+                right: 20px !important;
+            }
+        } 
+    </style>
+    <!--link rel="stylesheet" type="text/css" href="//chatbot-plugin.iamdave.ai/assets/css/8.1/dave-style.min.css">
+    <link rel="stylesheet" type="text/css" href="//chatbot-plugin.iamdave.ai/assets/css/8.1/dave-help.min.css"-->
+</head>
+
+<body>
+    <!--Please put this at the bottom of the body.-->
+    <!--script type="text/javascript" src="//chatbot-plugin.iamdave.ai/assets/js/jquery.js"></script>
+    <script type="text/javascript" src="//chatbot-plugin.iamdave.ai/assets/js/8.1/dave-chatbot-wjq-help.js"></script>
+    <div class="dave-main-container" id="dave-settings" data-base-url="https://test.iamdave.ai"
+        data-conversation-id="deployment_hindware" data-enterprise-id="hindware" data-user-model="customer"
+        data-user-id-attr="customer_id" data-signup-api-key="d1e881a1-186a-3a43-9133-bf7047971e6b"
+        data-default-user-data='{"name":"soham"}' data-cb-height-desktop='450px' data-cb-width-desktop='450px'
+        data-cb-height-mobile='calc( 100vh - 80px )' data-cb-width-mobile='100%' data-cb-minLockHeight='300px'>
+        <script>
+            djQ(document).ready(
+                DAVE_SETTINGS.register_custom_callback("on_chat_start", function (inp, params, callbackFunc, errorFunc, unknownFunc) {
+                    if (params.customer_state) {
+                        return;
+                    }
+                    if (params.customer_response && !params.customer_state) {
+                        params.customer_state = "cs_generic_state" 
+                    }
+                    if (!params.temporary_data) {
+                        params.temporary_data = {}
+                    }
+                    params.temporary_data = chat_temporary_data 
+                })
+            );
+        </script>
+    </div-->
+    <div id="loader23">
+        <img id="background-img" class="loader123">
+    </div> 
+    <div id="loader2" class="preloader2">
+        <div class="dynamic-overlay bathroom_contemporary" id="bathroom_contemporary">
+        </div>
+        <div class="dynamic-overlay bathroom_large" id="bathroom_large">
+        </div>
+        <div class="dynamic-overlay bathroom_lushgreen" id="bathroom_lushgreen">
+
+        </div>
+        <div class="dynamic-overlay bathroom_palmblossom" id="bathroom_palmblossom">
+
+        </div>
+        <div class="dynamic-overlay bathroom_modernglam" id="bathroom_modernglam">
+
+        </div>
+        <div class="dynamic-overlay bathroom_ivoryarcadia" id="bathroom_ivoryarcadia">
+
+        </div>
+        <div class="dynamic-overlay bathroom_enpause" id="bathroom_enpause">
+
+        </div>
+        <!-- <img src="/assets/img/loader.webp"> -->
+    </div>
+    <div id="loader">
+        <img src="assets/img/loader.webp">
+    </div>
+    <div id="loader_pdf">
+        <img src="assets/img/loader.webp">
+        <div class="text">
+            <p>Immerse yourself in a world of impeccable hygiene <br/> and exquisite design. </p>
+        </div>
+    </div>
+    <section class="banner-section"> 
+        <div class="store-finder" style="display: none;">
+            <button data-toggle="modal" data-target="#basicModal">
+                <div class="  storefindbtn">
+                    <img src="assets/img/newui/Vector (7).svg" alt=""
+                        style="float: left;width: 25px;margin-left: 12px;">
+
+                    <img src="assets/img/newui/STORE FINDER.svg" style="width: 100px;" alt="">
+                </div>
+            </button>
+        </div>
+        <div class="pdf-download" style="display:none" id="pdfDownloadDiv">
+            <button onclick="displayPDFContent();">
+                <div class="pdfbtn">
+                    <img src="assets/img/Icons/downloadpdf.svg" alt="">
+                </div>
+            </button>
+        </div>
+        <div class="right-btns restrict" id="resize">
+            <button onclick="openFullscreen();" class="track-btn" data-variable="maximize_screen">
+                <div class="rbtns" title="Full Screen">
+                    <img src="assets/img/Icons/Maximize.svg" alt="">
+                </div>
+            </button>
+            <button class="track-btn" data-variable="auto_rotate">
+                <div class="rbtns" onclick="window.p.startAutoRotate()" title="Auto-Rotate">
+                    <img src="assets/img/Icons/360-degrees.svg" alt="">
+                </div>
+            </button>
+            <button class="track-btn" data-variable="camera_reset">
+                <div class="rbtns" onclick="window.p.resetCamera()" title="Reset Camera">
+                    <img src="assets/img/Icons/Reset.svg" alt="">
+                </div>
+            </button>
+            <button onclick="myFunction()" title="Share" class="track-btn" data-variable="share">
+                <div class="rbtns">
+                    <img src="assets/img/Icons/Share.svg" alt="">
+                </div>
+            </button>
+        </div>
+        <div class="share-new share-show" id="share2">
+            <div class="socialicon2">
+                <img src="assets/img/fb.webp" alt="facebook_share" class="track-btn" data-variable="facebook_share">
+                <img src="assets/img/twitter_x.webp" alt="twitter_share" class="track-btn" data-variable="twitter_share">
+                <img src="assets/img/mail.webp" alt="mail_share" class="track-btn" data-variable="mail">
+            </div>
+            <div class="sharelink2">
+                <button onclick="copyfunct()"><img src="assets/img/share-link.svg" alt="" class="track-btn"
+                        data-variable="copy_share_link"> Copy Link</button>
+
+                <input type="text" id="sharebox" readonly>
+            </div>
+        </div>
+        <div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal"
+            aria-hidden="true">
+            <div class="modal-dialog mds_modal_dialog">
+                <div class="sharemodal modal-content mds_modal_content">
+
+                    <div class="modal-body">
+                        <div class="sharelink mds_sharelink">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                style="color: #E1C167; position: absolute; right: 5%; bottom: 54px; ">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <input type="text" id="pincode" placeholder="Enter pincode" pattern="[0-9]{6}" maxlength="6"
+                                minlength="6">
+                            <select id="city" style="display: none;">
+                                <option value="">city</option>
+                            </select>
+                            <button id="go" onclick="getFiltercityJson(event)">
+                                <img src="assets/img/Search (1).svg" alt="Search">
+                            </button>
+                        </div>
+                        <div class="socialicon" id="filter_data_div">
+                        </div>
+                        <style>
+                        </style>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <a href="#" class="btn btn-lg btn-success" data-toggle="modal" data-target="#proddesc">Click to open Modal</a> -->
+
+        <div class="modal fade" id="proddesc" tabindex="-1" role="dialog" aria-labelledby="proddesc" aria-hidden="true">
+            <div class="modal-dialog prodinfo">
+                <div class="modal-content sharemodal" id="share">
+                    <button type="button" class="close mds_modal_close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="modal-body " id="mod">
+                        <div class="prod-desc">
+                            <div class="imgdiv">
+                                <img src="" alt="" id="prodpic">
+
+                            </div>
+                            <h6 class="prodname">Shower</h6>
+                            <h6 class="prodname skuid">Shower</h6>
+                            <span id="amazon">
+
+                                <h6 class="itemname"><b class="amazonlink">amazon.in/shower-251 </b></h6>
+                            </span>
+                            <button id="go">
+                                <img src="assets/img/Hindware-h.png" alt="a" style="right: 24px;">
+                            </button>
+
+                        </div>
+
+                        <div class="prod-desc" id="amzbtndiv">
+
+                            <span id="amazon">
+                                <a href="#" id="amzlink" target="_blank" style="text-decoration: none; color: #e1c167;">
+                                    <h6 class="itemname2" style="font-size: medium;">Buy on Amazon</h6>
+                                </a>
+                            </span>
+                            <a href="#" id="amzbtn" target="_blank"
+                                style="text-decoration: none; color: #e1c167;display:contents">
+                                <button id="go" class="amzbtn" href="#">
+                                    <img src="assets/img/amazon/Amazon_icon.svg" alt="a">
+                                </button>
+                            </a>
+                        </div>
+                        <div class="prod-desc" id="ytbtndiv">
+                            <!-- <div class="imgdiv img2">
+                            <img src="" alt="" id="prodpic2">
+                            </div> -->
+                            <span id="amazon">
+                                <a href="#" id="ytvid1" target="_blank" style="text-decoration: none;color: #e1c167;">
+                                    <h6 class="itemname2"> Watch Product video </h6>
+                                    <!-- <a href="#" id="ytvid1" target="_blank" style="text-decoration: none;color: #e1c167;"><i class="ytlink">amazon.in/shower-251</i></a><img src="assets/img/newui/arrow.svg" alt=""> -->
+                                </a>
+                            </span>
+                            <a href="#" id="ytbtn" target="_blank"
+                                style="text-decoration: none; color: #e1c167;display:contents">
+
+                                <button id="go">
+                                    <img src="assets/img/amazon/Youtube_icon.svg" alt="a">
+                                </button></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="logosection" onclick="window.location.href='index.html'">
+            <img src="assets/img/home/logo.png" alt="">
+        </div>
+        <div class="left-carousel" id="leftcarousel">
+            <div class="containerl restrict" id="leftcont">
+                <div class="searchbox">
+                    <input type="text" name="" id="filter">
+                    <img src="assets/img/Icons/search.svg" alt="">
+                </div>
+                <button class="categorybox headerBtn categoriesBtn" id="cattext" title="CATEGORIES">CATEGORIES</button>
+                <button class="categorybox headerBtn productsBtn" title="BACK">BACK</button>
+                <div class="containera">
+                    <div class="banner-slider" id="scroll">
+                        <div class="navchild" id="show"> 
+                        </div>
+                    </div>
+                    <button type="button" class="downbtn" id="nav-toggle"></button>
+                    <div class="slider-right">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="rotate">
+        <img src="assets/img/rotate2.gif" alt="" class="image w-100" />
+    </div>
+    <!--div id="instructiondiv"style="position: fixed;top: 0;width: 100%;height: 100%;">
+        <img style="width: -webkit-fill-available;height: 104%;object-fit: fill;" src="assets/img/Overlay.png" alt="">
+    </div-->
+    <!-- Button to open the modal -->
+    <!-- <button id="openModalBtn">Open Modal</button> -->
+
+    <!-- Modal -->
+    <div id="modal" class="modal"> 
+        <button class="close-btn btn btn-danger" id="closePdfBtn" onclick="closeModal()" style="right: 110px;position: fixed;top: 60px;">Close</button>
+        <div class="modal-content modal-content2" id="pdf_modal">
+            <!-- Modal content goes here -->
+        </div>
+    </div>
+    <style>
+        /* Style for the modal */
+        .modal {
+            display: none;
+            /* Hide the modal by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent background */
+            overflow: auto;
+            /* Enable scrolling */
+        }
+
+        /* Style for the modal content */
+        .modal-content2 {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: 750px;
+        }
+    </style>
+    <div style="">
+        <canvas id="renderCanvas" style="height: 100vh;"></canvas>
+    </div>       
+    <!-- Js placed at end for faster loading -->
+
+    <!-- vendor js  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
+
+    <!-- custom js  -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/visualizer_babylon.js"></script>
+
+    <!-- mds custom js  -->
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/setup_room.js"></script>
+    <script src="assets/js/custom_main.js"></script>
+    <script src="assets/js/storefinder.js"></script>
+    <script src="assets/js/helpOverlay.js"></script>
+    <script src="assets/js/pdf.js"></script>
+    <script>
+
+        function myFunction() {
+            url = create_copy_url();
+            document.getElementById("sharebox").value = url;
+            $(".socialicon2 img").each(function (v) {
+                $(this).attr('data-link', url);
+            });
+            $("#share2").toggleClass("share-show");
+        }
+
+        function copyfunct() {
+            /* Get the text field */
+            var copyText = document.getElementById("sharebox");
+
+            /* Select the text field */
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+            function try_clipboard(copyText) {
+                try {
+                    navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
+                        if (result.state == "granted" || result.state == "prompt") {
+                            navigator.clipboard.writeText(copyText.value).then(function (v) {
+                                console.log('Copied');
+                                copyText.blur();
+                            }, function (e) {
+                                alert('Your browser does not allow copy to clipboard! Please share via social media')
+                            });
+                        }
+                    }, (err) => {
+                        console.error(err);
+                        alert('Your browser does not allow copy to clipboard! Please share via social media')
+                    });
+                } catch (err1) {
+                    alert('Your browser does not allow copy to clipboard! Please share via social media')
+                }
+            }
+
+            try {
+                let c = document.execCommand("copy");
+                if (c) {
+                    console.log("Link is copied");
+                } else {
+                    try_clipboard(copyText);
+                }
+            } catch (err) {
+                try_clipboard(copyText);
+            }
+            /* Copy the text inside the text field */
+
+            /* Alert the copied text */
+            // alert("Copied To Clipboard: " + copyText.value);
+        }
+    </script>
+    <script type="text/javascript">
+        // Parse the URL parameter
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+        // Give the parameter a variable name
+        var dynamicContent = getParameterByName('room_id'); 
+        $(document).ready(function () {
+            if (!document.documentElement.requestFullscreen && !document.documentElement.webkitRequestFullscreen && !document.msRequestFullscreen) {
+                $("[data-variable='maximize_screen']").hide();
+            }
+            // Check if the URL parameter is bathroom_large
+            if (dynamicContent == 'bathroom_large') {
+                $('#bathroom_large').show();
+            }
+            // Check if the URL parameter is bathroom_contemporary
+            else if (dynamicContent == 'bathroom_contemporary') {
+                $('#bathroom_contemporary').show();
+            }
+            // Check if the URL parameter is bathroom_lushgreen
+            else if (dynamicContent == 'bathroom_lushgreen') {
+                $('#bathroom_lushgreen').show();
+            }
+            // Check if the URL parmeter is empty or not defined, display default content
+            else {
+                $('#default-content').show();
+            }
+
+            $(".socialicon2 img").on("click", function () {
+                let d = $(this).data('variable');
+                let l = $(this).attr('data-link');
+                if (d.indexOf('facebook') >= 0) {
+                    window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(l));
+                } else if (d.indexOf('twitter') >= 0) {
+                    window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(l) + '&text=Products I selected at Hindware Visualizer&hastags=hindware,bathroom,visualizer');
+                } else if (d.indexOf('mail') >= 0) {
+                    window.open('mailto:?&subject=Explore Hindware Visualizer&cc=&bcc=&body=Check the products I have selected on the Hindware Visualizer, by visiting this link: ' + encodeURIComponent(l));
+                }
+            });
+        });
+    </script>
+    <script>
+        // search bar script 
+        $("#filter").keyup(function () {
+            // Retrieve the input field text and reset the count to zero
+            var filter = $(this).val(),
+                count = 0;
+            // Loop through the comment list
+            $('#show a').each(function () {
+                // If the list item does not contain the text search term fade it out
+                if ($(this).text().search(new RegExp(filter, "i")) < 0) {
+                    $(this).hide(); 
+                    // Show the list item if the search term matches and increase the count by 1
+                } else {
+                    
+                    $(this).show();
+                    count++; 
+                } 
+            });
+            // console.log("count : " + count)
+            if(count==0){ 
+                $('#show a').hide();
+                $(".no-result").show();
+            }else{
+                $(".no-result").hide();
+            } 
+        });
+        window.ui_loaded = function () {
+            if (!getCookie('_shown_2_help')) {
+                helpOverlay.addLabelTo($("div.logosection"), "Click on hindware logo to go back to homepage", 'right', 1, 60, 1, 15, 4, 35, 10);
+                helpOverlay.addLabelTo($(".searchbox input"), "Search for any product here", 'right', 1, 60, 1, 15, 4, 35, -5);
+                helpOverlay.addLabelTo($(".thumbnail-image").first(), "Select a category", 'right', 1, 60, 1, 15, 4, -30, 10);
+                helpOverlay.addLabelTo($(".right-btns .rbtns").first(), "View in full screen", "left", 1, 60, 1, -110, 5, 0, 15);
+                helpOverlay.addLabelTo($(".right-btns .rbtns").eq(1), "Rotate the room", "left", 1, 60, 1, -110, 5, 0, 15);
+                helpOverlay.addLabelTo($(".right-btns .rbtns").eq(2), "Reset camera to default", "left", 1, 60, 1, -110, 5, 0, 15);
+                helpOverlay.addLabelTo($(".right-btns .rbtns").eq(3), "Share in Social Media", "left", 1, 60, 1, -110, 5, 0, 15);
+                setCookie('_shown_2_help', true);
+                setTimeout(function () {
+                    helpOverlay.remove();
+                }, 7000);
+            }
+        }
+    </script>
+    <!-- Google tag (gtag.js) -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TL6D010H7T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-TL6D010H7T');
+    </script>
+    <script>
+
+        gtag('event', 'screen_view', {
+            'app_name': 'Hindware',
+            'screen_name': 'Room'
+        });
+    </script>
+    <script>
+        const trackBtns = document.querySelectorAll('.track-btn');
+
+        trackBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                gtag('event', 'click', {
+                    'room_id': room_id,
+                    'event_category': 'CTA Button--' + room_id,
+                    'event_label': this.getAttribute('data-variable') + '--' + room_id
+                });
+                console.log(this.getAttribute('data-variable') + ' Room : ' + room_id);
+            });
+        });
+    </script>
+    <script>
+
+
+        // console.log(room_id);
+        const trackBtns2 = document.querySelectorAll('.gatrack');
+
+        trackBtns2.forEach(btn => {
+            btn.addEventListener('click', function () {
+                gtag('event', 'click', {
+                    'room_id': room_id,
+                    'event_category': 'product_view--' + room_id,
+                    'event_label': room_id + '--' + this.getAttribute('data-ga')
+                });
+
+            });
+        });
+    </script>
+    <style>
+        .noibtn:hover {
+            margin-bottom: 10px;
+            margin-top: 0px !important;
+        }
+    </style>
+    <!--script>
+        setTimeout(function() {
+        $('#instructiondiv').fadeOut('fast');
+        }, 5000);
+        
+        $('body').click(function() {
+            $('#instructiondiv').fadeOut('fast');
+        
+        });
+    </script-->
+    <style>
+        .restrict {
+            pointer-events: none;
+        }
+    </style>
+    <script>
+        function showLoader() {
+
+            var i = 0;
+            var intervalId = setInterval(() => {
+                if (i <= 5) { 
+                    i++;
+                } else {
+                    clearInterval(intervalId);
+                    setTimeout(() => {
+                        document.getElementById("loader23").style.display = "none"; 
+                        console.log("remove1!");
+                    }, 20); // remove after 1 second
+                }
+            }, 1); 
+            document.getElementById("loader23").style.display = "block";
+        }
+
+        console.log("Done!"); 
+    </script>
+    <script>
+        function closeModal() {
+            var modal = document.getElementById('modal');
+            if (modal) {
+                modal.style.display = 'none';
+                $("#pdf_modal").empty()
+            }
+        }
+    </script>
+    <script>
+        // Get the ID from the URL
+        const id = window.location.search.replace("?room_id=", "");
+
+        // Define a mapping of IDs to image URLs
+        const imageUrls = {
+            "bathroom_palmblossom": "assets/img/palmbl.webp",
+            "bathroom_lushgreen": "assets/img/home/lushgreen.webp",
+            "bathroom_contemporary": "assets/img/home/contem.webp",
+            "bathroom_modernglam": "assets/img/home/modern.webp",
+            "bathroom_large": "assets/img/home/large.webp",
+            "bathroom_ivoryarcadia": "assets/img/ivory_load.webp",
+            "bathroom_enpause": "assets/img/enpause.webp",
+        };
+
+        // Get the image element
+        const img = document.getElementById("background-img");
+
+        // Set the source attribute based on the ID
+        if (imageUrls[id]) {
+            img.src = imageUrls[id];
+        } else {
+            img.src = " "; 
+        }
+        function scene_loaded() { 
+            console.log("Room is fully loaded now!!") 
+            showPdfDownloadDiv();
+            
+        }
+
+        function showPdfDownloadDiv() { 
+            setTimeout(function () {
+                document.getElementById("loader").style.display = "none";
+                console.log("loader delay remove !!");
+                
+                var pdfDownloadDiv = document.getElementById("pdfDownloadDiv");
+                pdfDownloadDiv.style.display = "block";
+            }, 3000);
+
+        }
+    </script>
+    <script>
+        document.querySelector('.navchild').addEventListener('click', function (event) {
+            if (event.target.classList.contains('ibtn2')) {
+                var ibtn2Image = event.target.closest('.ibtn2');
+
+                    // Check if the image source is "close.png"
+                    if (ibtn2Image.src.endsWith('close.svg')) {
+                        // Change the src attribute back to the original source
+                        ibtn2Image.src = '../assets/img/newui/Group.svg'; 
+                    } else {
+                        // Change the src attribute to "close.png"
+                        ibtn2Image.src = '../assets/img/newui/close.svg';
+                    }
+                var thumbnailImage = event.target.closest('.singleProduct');
+                var productDetails = thumbnailImage.querySelector('.product-details');
+                var thumbImg = thumbnailImage.querySelector('.thumbImg');
+                var img121 = thumbnailImage.querySelector('.img121');
+                var hovertoshow = thumbnailImage.querySelector('.hovertoshow');
+                var hovertohide = thumbnailImage.querySelector('.hovertohide');
+                                
+                if (productDetails) {
+                    if (productDetails.style.display === 'none' || !productDetails.style.display) {
+                        productDetails.style.display = 'block';
+                        hovertoshow.classList.add('dispblock');
+                        
+                        thumbImg.classList.add('imgactive121'); 
+                        img121.classList.add('imgactive123');
+                        hovertohide.classList.add('text121')
+
+                    } else {
+                        productDetails.style.display = 'none';
+                        hovertoshow.classList.remove('dispblock');
+
+                        thumbImg.classList.remove('imgactive121');
+                        img121.classList.remove('imgactive123'); 
+                        hovertohide.classList.remove('text121')
+                    }
+                }
+
+            }
+        }); 
+
+        // Function to detect if the device is iOS
+function isIOS() {
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+// If iOS is detected, dynamically include the ios.css file
+if (isIOS()) {
+  var link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = 'assets/css/ios.css'; // Replace with the path to your iOS-specific stylesheet
+  document.head.appendChild(link);
+}
+
+
+
+// Function to detect if the user is on an Android device
+function isAndroid() {
+    return /Android/i.test(navigator.userAgent);
+}
+
+// Function to trigger openFullscreen() once on first user interaction
+function enableFullscreenOnFirstInteraction() {
+    if (!isAndroid()) {
+        return; // Only enable for Android devices
+    }
+
+    function handleInteraction() {
+        openFullscreen(); // Call the fullscreen function
+    }
+
+    // Function to check if fullscreen is active and remove event listeners
+    function handleFullscreenChange() {
+        if (document.fullscreenElement || 
+            document.webkitFullscreenElement || 
+            document.mozFullScreenElement || 
+            document.msFullscreenElement) {
+            // Fullscreen mode is active, remove event listeners
+            document.removeEventListener('click', handleInteraction);
+            document.removeEventListener('keydown', handleInteraction);
+            document.removeEventListener('touchstart', handleInteraction);
+
+            // Remove the listener for fullscreen change itself
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+        }
+    }
+
+    // Add event listeners for user interactions
+    document.addEventListener('click', handleInteraction);
+    document.addEventListener('keydown', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction);
+
+    // Add event listener to monitor fullscreen changes
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange); // Safari
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange); // Firefox
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange); // IE/Edge
+}
+
+// Call the function when the script is loaded
+enableFullscreenOnFirstInteraction();
+    </script>
+    <div class="popup-tag" id="popup-tag">
+       
+    </div>
+
+</body>
+
+</html>

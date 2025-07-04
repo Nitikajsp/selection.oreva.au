@@ -1,0 +1,360 @@
+[18-Jun-2024 13:35:02 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[18-Jun-2024 13:35:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/queue.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/queue.php on line 16
+[18-Jun-2024 13:35:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/app.php on line 16
+[18-Jun-2024 13:35:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/queue.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/queue.php on line 16
+[18-Jun-2024 13:35:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/logging.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/logging.php on line 21
+[18-Jun-2024 13:35:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:35:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/auth.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/auth.php on line 17
+[18-Jun-2024 13:35:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[18-Jun-2024 13:35:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:35:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[18-Jun-2024 13:35:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/logging.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/logging.php on line 21
+[18-Jun-2024 13:35:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/logging.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/logging.php on line 21
+[18-Jun-2024 13:35:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/queue.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/queue.php on line 16
+[18-Jun-2024 13:35:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/auth.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/auth.php on line 17
+[18-Jun-2024 13:35:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:35:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/app.php on line 16
+[18-Jun-2024 13:35:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/filesystems.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/filesystems.php on line 16
+[18-Jun-2024 13:35:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/database.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/database.php on line 19
+[18-Jun-2024 13:35:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[18-Jun-2024 13:35:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/queue.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/queue.php on line 16
+[18-Jun-2024 13:35:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/filesystems.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/filesystems.php on line 16
+[18-Jun-2024 13:35:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/filesystems.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/filesystems.php on line 16
+[18-Jun-2024 13:35:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/app.php on line 16
+[18-Jun-2024 13:35:07 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/auth.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/auth.php on line 17
+[18-Jun-2024 13:35:07 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:35:08 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[18-Jun-2024 13:35:09 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[18-Jun-2024 13:35:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[18-Jun-2024 13:35:21 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[18-Jun-2024 13:37:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/filesystems.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/filesystems.php on line 16
+[18-Jun-2024 13:37:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/queue.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/queue.php on line 16
+[18-Jun-2024 13:37:19 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/app.php on line 16
+[18-Jun-2024 13:37:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:37:38 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[18-Jun-2024 13:37:39 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/logging.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/logging.php on line 21
+[18-Jun-2024 13:37:42 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[18-Jun-2024 13:37:43 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/database.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/database.php on line 19
+[18-Jun-2024 13:46:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:46:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/logging.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/logging.php on line 21
+[18-Jun-2024 13:46:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/queue.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/queue.php on line 16
+[18-Jun-2024 13:46:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[18-Jun-2024 13:46:34 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[18-Jun-2024 13:46:34 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[18-Jun-2024 13:46:34 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:46:34 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[18-Jun-2024 13:46:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:46:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/logging.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/logging.php on line 21
+[18-Jun-2024 13:46:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[18-Jun-2024 13:46:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[18-Jun-2024 13:46:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:46:36 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/queue.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/queue.php on line 16
+[18-Jun-2024 13:46:36 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/filesystems.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/filesystems.php on line 16
+[18-Jun-2024 13:46:36 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/logging.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/logging.php on line 21
+[18-Jun-2024 13:46:36 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/filesystems.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/filesystems.php on line 16
+[18-Jun-2024 13:46:36 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/filesystems.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/filesystems.php on line 16
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/app.php on line 16
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/app.php on line 16
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/filesystems.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/filesystems.php on line 16
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/app.php on line 16
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/app.php on line 16
+[18-Jun-2024 13:46:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/queue.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/queue.php on line 16
+[18-Jun-2024 13:46:39 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[18-Jun-2024 13:49:12 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/services.php on line 18
+[18-Jun-2024 13:49:13 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[18-Jun-2024 13:49:14 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/app.php on line 16
+[18-Jun-2024 13:49:15 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/filesystems.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/filesystems.php on line 16
+[18-Jun-2024 13:49:15 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[18-Jun-2024 13:49:38 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[27-Jun-2024 20:04:58 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[27-Jun-2024 20:05:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[28-Jun-2024 03:38:21 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[28-Jun-2024 03:38:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[29-Jun-2024 02:30:42 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[29-Jun-2024 02:30:44 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[29-Jun-2024 11:05:53 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[29-Jun-2024 11:05:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[30-Jun-2024 03:23:30 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[30-Jun-2024 03:23:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/cache.php on line 18
+[30-Jun-2024 10:06:23 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[30-Jun-2024 10:06:26 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[30-Jun-2024 10:50:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[30-Jun-2024 10:50:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[01-Jul-2024 03:11:14 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[01-Jul-2024 03:11:22 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/session.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/session.php on line 21
+[01-Jul-2024 03:11:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
+[01-Jul-2024 03:11:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bookingoreva/public_html/config/mail.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/bookingoreva/public_html/config/mail.php on line 17
