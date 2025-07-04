@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Validation\Rule;
+
 
 class CategoryController extends Controller
 {
@@ -30,29 +32,50 @@ class CategoryController extends Controller
     {
         return view('category.add_category');
     }
+
+    // public function categorystore(Request $request)
+    // {
+    //     $request->validate([
+    //         'category_name' => 'required',
+    //     ]);
+    
+    //     // Check if the category already exists
+    //     $existingCategory = Category::where('category_name', $request->category_name)->first();
+    
+    //     if ($existingCategory) {
+    //         return redirect()->route('showcategory')
+    //                          ->with('error', 'Category already exists.');
+    //     }
+    
+    //     // If the category does not exist, create a new one
+    //     //Category::create($request->all());
+    //     Category::create([
+    //         'category_name' => $request->category_name,
+    //         'admin_user_id' => auth()->user()->id,
+    //     ]);
+    
+    //     return redirect()->route('showcategory')
+    //                      ->with('success', 'Category added successfully.');
+    // }
+
     public function categorystore(Request $request)
     {
         $request->validate([
-            'category_name' => 'required',
+            'category_name' => [
+                'required',
+                Rule::unique('categories')->where(function ($query) {
+                    return $query->where('admin_user_id', auth()->user()->id);
+                }),
+            ],
         ]);
-    
-        // Check if the category already exists
-        $existingCategory = Category::where('category_name', $request->category_name)->first();
-    
-        if ($existingCategory) {
-            return redirect()->route('showcategory')
-                             ->with('error', 'Category already exists.');
-        }
-    
-        // If the category does not exist, create a new one
-        //Category::create($request->all());
+
         Category::create([
             'category_name' => $request->category_name,
             'admin_user_id' => auth()->user()->id,
         ]);
-    
+
         return redirect()->route('showcategory')
-                         ->with('success', 'Category added successfully.');
+                        ->with('success', 'Category added successfully.');
     }
     
     public function update(Request $request, $id)

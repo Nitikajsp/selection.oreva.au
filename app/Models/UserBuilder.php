@@ -9,6 +9,6 @@ class UserBuilder extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'builder_name', 'contact_email'
+        'admin_user_id','builder_name', 'contact_email'
     ];
 }
