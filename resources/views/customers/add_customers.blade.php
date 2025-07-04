@@ -176,8 +176,7 @@
                     },
 
                     street: {
-                        required: true
-                    , },
+                        required: true , },
 
                     phone: {
                         required: true
