@@ -101,4 +101,12 @@ class UserBuilderController extends Controller
 
         return redirect()->route('user_builders.index');
     }
+
+    //  public function destroytest($id)
+    // {
+    //     $user = UserBuilder::findOrFail($id);
+    //     $user->delete();
+
+    //     return redirect()->route('user_builders.index');
+    // }
 }
