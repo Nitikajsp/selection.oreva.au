@@ -7,30 +7,29 @@
 @section('content')
 <div id="app" class="layout-wrapper">
     @include('include.sidebar')
-    <div class="container">
-        @include('include.navbar')
+    <div class="layout-page">
+        <div class="content-wrapper pl-30 ">
 
-        <div class="row">
-            <div class="col-md-12 d-flex justify-content-between align-items-center editpadding">
-                <div class="col-md-12">
-                    <a href="{{ url()->previous() }}" class="float-left d-flex text-black">
-                        <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black rounded"></i>Back
+            <div class="flex-grow-1  container-fluid">
+
+   
+
+                    <div class="page-header">
+                            <a href="{{ url()->previous() }}" class="back-btn">
+                    <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black"></i>Back
                     </a>
-                </div>
+            
+              
+
             </div>
-        </div>
-        <div class="container mt-5">
-            <div class="inner-container custmrmt0">
-                <div class="row">
-                    <div class="col-lg-12 margin-tb">
-                        <div class="pull-left">
+        <div class="container ">
+            <div class="inner-container ">
+             
+
+                   <div class="page-wrapper-title" >
                             <h2>Add Customer</h2>
-                        </div>
-                        <div class="pull-left">
-                            <h5>Please enter your details</h5>
-                        </div>
-                    </div>
-                </div>
+             
+ <h5>Please enter your details</h5>                   </div>
 
                 @if ($errors->any())
                 <div class="alert alert-danger">
@@ -47,49 +46,50 @@
                     @csrf
 
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+                        <div class="col-xs-12 col-sm-6 mb-3">
                             <div class="form-group">
                                 <label for="name" class="text-secondary mb-1">Name</label>
                                 <input type="text" id="name" name="name" class="form-control border border-white-50">
                                 <span class="text-danger error-text name-error"></span>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+                        <div class="col-xs-12 col-sm-6 mb-3">
                             <div class="form-group">
                                 <label for="phone" class="text-secondary mb-1">Phone</label>
                                 <input type="text" id="phone" name="phone" class="form-control border border-white-50">
                                 <span class="text-danger error-text phone-error"></span>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+                        <div class="col-xs-12 col-sm-6 mb-3">
                             <div class="form-group">
                                 <label for="email" class="text-secondary mb-1">E-mail Address</label>
                                 <input type="email" id="email" name="email" class="form-control border border-white-50">
                                 <span class="text-danger error-text email-error"></span>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
-                            <div class="form-group">
-                                <label for="street" class="text-secondary mb-1">Property Address</label>
-                                <input type="text" id="street" name="street" class="form-control border border-white-50">
-                                <span class="text-danger error-text street-error"></span>
-                            </div>
-                        </div>
-                        <!-- <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+           
+                        <!-- <div class="col-xs-12 col-sm-6 mb-3">
                             <div class="form-group">
                                 <label for="house_number" class="text-secondary mb-1">House Number</label>
                                 <input type="text" id="house_number" name="house_number" class="form-control border border-white-50">
                                 <span class="text-danger error-text street-error"></span>
                             </div>
                             </div> -->
-                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+                        <div class="col-xs-12 col-sm-6 mb-3">
                             <div class="form-group">
                                 <label for="suburb" class="text-secondary mb-1">Suburb</label>
                                 <input type="text" id="suburb" name="suburb" class="form-control border border-white-50">
                                 <span class="text-danger error-text suburb-error"></span>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+                                     <div class="col-xs-12 col-sm-12 mb-3">
+                            <div class="form-group">
+                                <label for="street" class="text-secondary mb-1">Property Address</label>
+                                <input type="text" id="street" name="street" class="form-control border border-white-50">
+                                <span class="text-danger error-text street-error"></span>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 mb-3">
                             <div class="form-group">
                                 <label for="State" class="text-secondary mb-1">State</label>
                                 <select name="state" class="form-control border border-white-50">
@@ -106,7 +106,7 @@
                                 <span class="text-danger error-text state-error"></span>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+                        <div class="col-xs-12 col-sm-6 mb-3">
                             <div class="form-group">
                                 <label for="pincod" class="text-secondary mb-1">Pincode</label>
                                 <input type="text" id="pincod" name="pincod" class="form-control border border-white-50">
@@ -114,13 +114,15 @@
                             </div>
                         </div>
 
-                        <div class="pull-right mt-1 text-center">
-                            <button type="submit" class="btn btn-primary btn btn-dark me-1 rounded">Save</button>
+                              <div class="d-flex justify-content-center gap-2 mt-2">
+                                <button type="submit" class="btn btn-primary  rounded">Save</button>
                             <a href="{{ url()->previous() }}" class="btn btn-outline-dark waves-effect rounded">Cancel</a>
                         </div>
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
         </div>
     </div>
     @endsection

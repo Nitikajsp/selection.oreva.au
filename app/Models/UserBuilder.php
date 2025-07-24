@@ -9,6 +9,12 @@ class UserBuilder extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'admin_user_id','builder_name', 'contact_email'
+        'admin_user_id','customer_id','builder_name', 'contact_email'
     ];
+
+    public function customer()
+    {
+        return $this->belongsTo(customer::class);
+    }
+
 }

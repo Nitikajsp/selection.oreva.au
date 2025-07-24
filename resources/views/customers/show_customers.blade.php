@@ -6,30 +6,30 @@
 <div id="app" class="layout-wrapper">
   @include('include.sidebar') 
 
-<div class="container">
-@include('include.navbar') 
+    <div class="layout-page">
+        <div class="content-wrapper pl-30 ">
 
-<div class="listpadding">
-    <div class="row">
-        <div class="col-md-12">
-            <a href="{{ url()->previous() }}" class="float-left d-flex text-black"><i
+            <div class="flex-grow-1  container-fluid">
+
+            <div class="page-header">
+           
+                 <a href="{{ url()->previous() }}" class="back-btn"><i
                     class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 "></i>Back</a>
-        </div>
-    </div>
+              
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left head-label">  
-                <h2>View Customer Detail</h2>
             </div>
-        </div>
-    </div>
+<div class="container mt-5">
 
-    <div class="card px-3 py-4 table_scroll customer_table_width">
-        <div class="d-flex flex-end ms-auto">
-        <a href="{{ route('customers.edit', $customer->id) }}" class="btn p-0 edit-btn text-info">
-    <i class="ti ti-pencil me-1"></i>
+
+      <div class="inner-container ">
+            <div class="page-wrapper-title" >
+                <h2>View Customer Detail</h2>
+       
+    </div>
+        <div class="d-flex justify-content-end gap-2 ms-auto">
+    
+        <a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-icon btn-sm btn-label-primary waves-effect">
+    <i class="ti ti-pencil "></i>
 </a>
 
 
@@ -37,8 +37,8 @@
                 @csrf
                 @method('DELETE')
             </form>
-            <button type="button" class="btn p-0 delete-btn text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                <i class="ti ti-trash me-1"></i>
+            <button type="button" class="btn btn-icon btn-sm btn-label-danger waves-effect delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <i class="ti ti-trash"></i>
                 </button>
 
         </div>
@@ -75,35 +75,35 @@
                 </div>
             </div>
         </div>
-
-        <table id="customerListsTable" class="table table-bordered mt-3 show_custmer " style="border: 1px solid #DDDDDD; border-spacing: 0 10px;">
-            <thead class="table-dark">
+<div class="table-responsive">
+        <table id="customerListsTable" class="datatables-projects table dataTable"  style="min-width:600px" >
+            <thead >
                 <tr>
                     <th>Street Name</th>
                     <th>Description</th>
                     <th>Product Count</th>
-                    <th>Action</th>
+                    <th class="text-end" >Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($customer->lists as $list)
                     <tr class="mt-2">
-                        <td style="border: 1px solid #DDDDDD !important">{{ $list->name }}</td>
-                        <td style="border: 1px solid #DDDDDD !important;">{{ $list->description }}</td>
-                        <td  style="border: 1px solid #DDDDDD !important;">
+                        <td >{{ $list->name }}</td>
+                        <td >{{ $list->description }}</td>
+                        <td  >
                             {{ $list->orders->count() }}
                         </td>
-                        <td class="p-2" style="border: 1px solid #DDDDDD !important;">
-                            <div class="d-flex justify-content-between">
-                            <a href="{{ route('lists.edit', $list->id) }}" class="btn p-2 edit-btn text-dark me-1 show-customer-btn">
+                        <td class="p-2" >
+                            <div class="d-flex justify-content-end">
+                            <a href="{{ route('lists.edit', $list->id) }}" class="btn btn-icon">
                            <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
 
-                                    <a href="{{ route('showlistcustomer', ['listId' => $list->id, 'customerId' => $customer->id]) }}" class="btn p-2 view-btn text-dark me-1 show-customer-btn">
+                                    <a href="{{ route('showlistcustomer', ['listId' => $list->id, 'customerId' => $customer->id]) }}" class="btn btn-icon">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
 
-                                            <a href="{{ route('lists.addcartproduct', ['list' => $list->id, 'customer' => $list->customer_id]) }}" class="btn p-2 view-btn text-dark show-customer-btn">
+                                            <a href="{{ route('lists.addcartproduct', ['list' => $list->id, 'customer' => $list->customer_id]) }}" class="btn btn-icon">
                                                 <span><i class="fa-solid fa-plus"></i></span>
                                        </a>
 
@@ -117,6 +117,9 @@
 </div>
 </div>
 </div>
+</div>
+</div>
+
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

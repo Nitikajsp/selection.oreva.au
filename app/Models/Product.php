@@ -19,4 +19,9 @@ class Product extends Model
         'admin_user_id',
 
     ];
+
+     public function category()
+    {
+        return $this->belongsTo(Category::class, 'product_category');
+    }
 }

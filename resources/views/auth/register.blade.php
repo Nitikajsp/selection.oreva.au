@@ -22,8 +22,8 @@
                     <!-- Logo -->
                     <div class="app-brand justify-content-center mb-4 mt-2">
                         <a href="javascript:void(0)" class="app-brand-link gap-2">
-                            <span style="background: black !important; border-radius: 5px;" class="p-3 w-75 text-center m-auto">
-                                <img src="{{ asset('img/dashboardlogo.svg') }}" alt="Logo" class="w-100">
+                            <span style="background: transparent !important; border-radius: 5px;" class="p-3 w-75 text-center m-auto">
+                                <img src="{{ asset('img/dashboard-logo.png') }}" alt="Logo" class="w-100">
                             </span>
                         </a>
                     </div>
