@@ -7,8 +7,10 @@
 <div id="app" class="layout-wrapper">
     @include('include.sidebar')
 
-    <div class="container">
-        @include('include.navbar')
+     <div class="layout-page">
+        <div class="content-wrapper pl-30 ">
+
+            <div class="flex-grow-1  container-fluid">
         <div class="row">
             <div class="col-md-12 d-flex justify-content-between align-items-center editpadding">
                 <a href="{{ url()->previous() }}" class="float-left d-flex text-black"><i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black"></i>Back</a>
@@ -24,7 +26,7 @@
                 <div class="row">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Add New Product</h2>
+                            <h2>Add Product</h2>
                         </div>
                         <div class="pull-left">
                             <h5>Please enter product detail</h5>
@@ -99,11 +101,15 @@
                         <!-- Submit Buttons -->
                         <div class="pull-right mt-1 text-center">
                             <button type="submit" class="btn btn-primary btn btn-dark me-1 rounded">Save</button>
-                            <button type="reset" class="btn btn-outline-dark waves-effect rounded" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                            {{-- <button type="reset" class="btn btn-outline-dark waves-effect rounded" data-bs-dismiss="modal" aria-label="Close">Cancel</button> --}}
+                            <a href="{{ url()->previous() }}" class="btn btn-outline-dark waves-effect rounded">Cancel</a>
+
                         </div>
                     </div>
                 </form>
 
+            </div>
+        </div>
             </div>
         </div>
         @endsection

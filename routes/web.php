@@ -12,6 +12,9 @@ use App\Http\Controllers\MailController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserBuilderController;
+use App\Exports\ProductsExport;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 // Authentication routes
 Auth::routes();
@@ -30,6 +33,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('customers', CustomerController::class);
         Route::put('/customers/{id}/updateStatus', 'updateStatus')->name('customers.updateStatus');
         Route::post('/check-email', 'checkEmail')->name('check.email');
+
+        Route::get('/get-customers', [CustomerController::class, 'getCustomers']);
+
     });
 
     // Product Routes
@@ -39,6 +45,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/products/add', 'addproduct')->name('addproduct');
         Route::get('/showproduct', 'showallproductdata')->name('showproduct');
         Route::post('/products/update-stock', 'updateStock')->name('products.updateStock');
+        Route::post('/products/import', 'import')->name('products.import');
+        Route::get('/export-products', 'export')->name('products.export');
     });
 
     // List Routes
@@ -69,7 +77,7 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(OrdersController::class)->group(function () {
         Route::get('/showorder', 'showallorderdata')->name('showorder');
         Route::get('/viewsingalorders/{listId}', 'viewsingalorders')->name('vieworders');
-    });   
+    });
 
     // Category Routes
     Route::controller(CategoryController::class)->group(function () {

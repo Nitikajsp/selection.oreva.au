@@ -5,192 +5,196 @@
 @endpush
 
 @section('content')
-<div id="app" class="layout-wrapper">
-  @include('include.sidebar') 
-  <div class="container">
-    @include('include.navbar') 
+    <div id="app" class="layout-wrapper">
+        @include('include.sidebar')
+        <div class="layout-page">
+            <div class="content-wrapper pl-30">
+                <div class="flex-grow-1 container-fluid">
 
-    <div class="row">
-      <div class="col-md-12 d-flex justify-content-between align-items-center editpadding">
-        <div class="col-md-12">
-          <a href="{{ url()->previous() }}" class="float-left d-flex text-black">
-            <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black rounded"></i>Back
-          </a>
+                    <div class="page-header">
+                        <a href="{{ url()->previous() }}" class="back-btn">
+                            <i
+                                class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black"></i>Back
+                        </a>
+                    </div>
+
+                    <div class="container">
+                        <div class="inner-container">
+
+                            <div class="page-wrapper-title">
+                                <h2>Add Builder</h2>
+                                <h5>Please enter your details</h5>
+                            </div>
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+
+
+                            <form id="builderForm" action="{{ route('user_builders.store') }}" method="POST">
+                                @csrf
+
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 mb-3">
+                                        <div class="form-group">
+                                            <label for="customer_autocomplete" class="text-secondary mb-1">Select
+                                                Customer</label>
+                                            {{-- <input type="text" id="customer_autocomplete"
+                                                class="form-control border border-white-50"
+                                                placeholder="Type customer name"> --}}
+
+                                            <input type="text" id="customer_autocomplete"
+                                                class="form-control border border-white-50"
+                                                placeholder="Type customer name">
+                                            <input type="hidden" name="customer_id" id="customer_id">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 mb-3">
+                                        <div class="form-group">
+                                            <p class="text-secondary mb-1">Builder Email</p>
+                                            <input type="email" name="contact_email"
+                                                class="form-control border border-white-50">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 mb-3">
+                                        <div class="form-group">
+                                            <label for="builder" class="text-secondary mb-1">Builder Name</label>
+                                            <input type="text" id="builder" name="builder_name"
+                                                class="form-control border border-white-50">
+                                            <span class="text-danger error-text builder-error"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center gap-2 mt-2">
+                                        <button type="submit" class="btn btn-primary rounded">Save</button>
+                                        <a href="{{ url()->previous() }}"
+                                            class="btn btn-outline-dark waves-effect rounded">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    <div class="container mt-5">
-      <div class="inner-container custmrmt0">
-        <div class="row">
-          <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-              <h2>Add Builder</h2>
-            </div>
-            <div class="pull-left">
-              <h5>Please enter your details</h5>
-            </div>
-          </div>
-        </div>
-
-        @if ($errors->any())
-          <div class="alert alert-danger">
-            <strong>Whoops!</strong> There were some problems with your input.<br><br>
-            <ul>
-              @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-            </ul>
-          </div>
-        @endif
-        <script>
-            $(document).ready(function() {
-                $("#customer_autocomplete").autocomplete({
-                    minLength: 3, // Start filtering after 3 characters
-                    source: function(request, response) {
-                        $.ajax({
-                            url: "/get-customers",
-                            type: "GET",
-                            dataType: "json",
-                            data: { term: request.term }, // Send user input
-                            success: function(data) {
-                                console.log('data', data);
-                                let filteredResults = data.filter(customer => 
-                                    customer.builder_name.toLowerCase().includes(request.term.toLowerCase())
-                                );
-                                response($.map(filteredResults, function(customer) {
-                                    return {
-                                        value: customer.builder_name,
-                                        email: customer.contact_email
-                                    };
-                                }));
-                            },
-                            error: function(xhr) {
-                                console.log("Error fetching data:", xhr);
-                            }
-                        });
-                    },
-                    select: function(event, ui) {
-                        $("#customer_autocomplete").val(ui.item.value);
-                        $("#builder").val(ui.item.value);
-                        $("input[name='contact_email']").val(ui.item.email);
-                        return false; // Prevent default form submission
-                    }
-                });
-            });
-        </script>
-        <form id="builderForm" action="{{ route('user_builders.store') }}" method="POST">
-          @csrf
-
-          <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
-                    <div class="form-group">
-                        <label for="customer_dropdown" class="text-secondary mb-1">Select Customer</label>
-                        <input type="text" id="customer_autocomplete" class="form-control border border-white-50" placeholder="Type customer name">
-                    </div>
-                </div>
-
-                <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
-                    <div class="form-group">
-                        <p class="text-secondary mb-1">Builder Email</p>
-                        <input type="email" name="contact_email" class="form-control border border-white-50">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
-                    <div class="form-group">
-                        <label for="builder" class="text-secondary mb-1">Builder Name</label>
-                        <input type="text" id="builder" name="builder_name" class="form-control border border-white-50">
-                        <span class="text-danger error-text builder-error"></span>
-                    </div>
-                </div>
-
-            <div class="pull-right mt-1 text-center">
-              <button type="submit" class="btn btn-primary btn btn-dark me-1 rounded">Save</button>
-              <a href="{{ url()->previous() }}" class="btn btn-outline-dark waves-effect rounded">Cancel</a>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 @endsection
 
 @push('scripts')
-
-
-<script>
-  
- $(document).ready(function () {
-    // Add CSRF token to all AJAX requests
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    $.validator.addMethod("validName", function(value, element) {
-        return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
-    }, "Name should contain only letters.");
-
-    $.validator.addMethod("validEmail", function(value, element) {
-    // General regex for email validation
-    return this.optional(element) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}, "Please enter a valid email address.");
-   
-   
-
-    $('#builderForm').validate({
-        rules: {
-            name: {
-                required: true,
-                validName: true,
-                minlength: 3
-            },
-            email: {
-                required: true,
-                validEmail: true,
-                remote: {
-                    url: "{{ route('check.email') }}",
-                    type: "POST",
+    <script>
+        // Autocomplete for customer + builder + email
+        $("#customer_autocomplete").autocomplete({
+            minLength: 1,
+            source: function(request, response) {
+                $.ajax({
+                    url: "/get-customers",
+                    type: "GET",
                     data: {
-                        email: function() {
-                            return $('#email').val();
+                        term: request.term
+                    },
+                    success: function(data) {
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.name,
+                                value: item.name,
+                                builder: item.builder_name,
+                                email: item.contact_email,
+                                id: item.id // ✅ You are passing `id` correctly here
+                            };
+                        }));
+                    }
+                });
+            },
+            select: function(event, ui) {
+                $("#customer_autocomplete").val(ui.item.value); // customer name
+                $("#builder").val(ui.item.builder); // builder name
+                $("input[name='contact_email']").val(ui.item.email); // email
+                $("#customer_id").val(ui.item.id);
+                return false;
+            }
+        });
+
+        $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.validator.addMethod("validName", function(value, element) {
+                return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+            }, "Name should contain only letters.");
+
+            $.validator.addMethod("validEmail", function(value, element) {
+                return this.optional(element) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            }, "Please enter a valid email address.");
+
+            $('#builderForm').validate({
+                rules: {
+                    builder_name: {
+                        required: true,
+                        validName: true,
+                        minlength: 3
+                    },
+                    contact_email: {
+                        required: true,
+                        validEmail: true,
+                        remote: {
+                            url: "{{ route('check.email') }}",
+                            type: "POST",
+                            data: {
+                                email: function() {
+                                    return $('[name="contact_email"]').val();
+                                }
+                            },
+                            dataFilter: function(response) {
+                                var json = JSON.parse(response);
+                                return json.available ? 'true' : 'false';
+                            }
                         }
                     },
-                    dataFilter: function(response) {
-                        var json = JSON.parse(response);
-                        return json.available ? 'true' : 'false';
+                },
+                messages: {
+                    builder_name: {
+                        required: "Please enter builder name"
+                    },
+                    contact_email: {
+                        required: "Please enter email",
+                        remote: "The email address has already been taken"
                     }
+                },
+
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    error.appendTo(element.parent().find('.error-text'));
+                },
+
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid').removeClass('is-valid');
+                },
+
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid').addClass('is-valid');
+                },
+
+                submitHandler: function(form) {
+                    form.submit();
                 }
-            },
-        },
-        messages: {
-            name: {
-                required: "Please enter your name"
-            },
-            email: {
-                required: "Please enter your email address",
-                remote: "The email address has already been taken"
-            },
-        },
-
-        errorPlacement: function (error, element) {
-            error.addClass('invalid-feedback');
-            error.appendTo(element.parent().find('.error-text'));
-        },
-
-        highlight: function (element, errorClass, validClass) {
-            $(element).addClass('is-invalid').removeClass('is-valid');
-        },
-
-        unhighlight: function (element, errorClass, validClass) {
-            $(element).removeClass('is-invalid').addClass('is-valid');
-        },
-
-        submitHandler: function (form) {
-            form.submit();
-        }
-    });
-});
-</script>
+            });
+        });
+    </script>
 @endpush

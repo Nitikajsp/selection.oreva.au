@@ -7,9 +7,10 @@
 @section('content')
 <div id="app" class="layout-wrapper">
     @include('include.sidebar') 
+    <div class="layout-page">
+        <div class="content-wrapper pl-30 ">
 
-    <div class="container">
-        @include('include.navbar') 
+            <div class="flex-grow-1  container-fluid">
         <div class="listpadding">
             <div class="row">
                 <div class="col-md-12">
@@ -66,8 +67,11 @@
                 </div>
             </div>
         </div>
+            </div>
+        </div>
     </div>
 </div>  
+
 
 @push('scripts')
 

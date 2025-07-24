@@ -13,7 +13,7 @@ class UserBuilderController extends Controller
     {
         $admin_user_id = auth()->user()->id;
 
-        $builders = UserBuilder::where('admin_user_id',$admin_user_id)->orderBy('created_at', 'desc')->get();
+        $builders = UserBuilder::where('admin_user_id', $admin_user_id)->orderBy('created_at', 'desc')->get();
         return view('user_builders.builder_list', compact('builders'));
     }
 
@@ -24,33 +24,48 @@ class UserBuilderController extends Controller
 
     public function store(Request $request)
     {
-      $admin_user_id = auth()->user()->id;
+        $admin_user_id = auth()->user()->id;
 
 
         $request->validate([
             'builder_name' => 'required|string|max:255',
             // 'contact_email' => 'required|email|unique:user_builders,contact_email',
             'contact_email' => [
-            'required',
-            'email',
-            Rule::unique('user_builders')->where(function ($query) use ($admin_user_id) {
-                return $query->where('admin_user_id', $admin_user_id);
-            }),
-        ],
+                'required',
+                'email',
+                Rule::unique('user_builders')->where(function ($query) use ($admin_user_id) {
+                    return $query->where('admin_user_id', $admin_user_id);
+                }),
+            ],
+            'customer_id' => 'nullable|exists:customers,id',
         ]);
 
         UserBuilder::create([
             'builder_name' => $request->builder_name,
             'contact_email' => $request->contact_email,
-            'admin_user_id' => $admin_user_id, 
+            'admin_user_id' => $admin_user_id,
+            'customer_id' => $request->customer_id,
         ]);
 
         return redirect()->route('user_builders.index');
     }
+    public function show($id)
+    {
+        $admin_user_id = auth()->id();
+
+        $userBuilder = UserBuilder::with('customer') // eager load customer
+            ->where('id', $id)
+            ->where('admin_user_id', $admin_user_id)
+            ->firstOrFail();
+
+        return view('user_builders.show_builder', compact('userBuilder'));
+    }
+
 
     public function edit($id)
     {
-        $builders = UserBuilder::findOrFail($id);
+        // $builders = UserBuilder::findOrFail($id);
+        $builders = UserBuilder::with('customer')->findOrFail($id);
         return view('user_builders.edit_builder', compact('builders'));
     }
 
@@ -60,6 +75,7 @@ class UserBuilderController extends Controller
         $request->validate([
             'builder_name' => 'required|string|max:255',
             'contact_email' => 'required|email|unique:user_builders,contact_email,' . $id, // Ensuring unique email except for the current record
+            'customer_id' => 'nullable|exists:customers,id',
         ]);
 
         // Find the builder by ID
@@ -69,6 +85,7 @@ class UserBuilderController extends Controller
         $builder->update([
             'builder_name' => $request->builder_name,
             'contact_email' => $request->contact_email,
+            'customer_id' => $request->customer_id,
             // Add other fields here if needed
         ]);
 

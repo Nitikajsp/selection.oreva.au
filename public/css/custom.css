@@ -25,15 +25,17 @@
 
 /* responsive css start */
 
+
+
 @media (max-width: 940px) {
     .content-wrapper {
         width: 80vw;
     }
 
-    .sidebar {
+    /* .sidebar {
         max-width: 20%;
 
-    }
+    } */
 
     .displaycenter {
         margin: auto !important;
@@ -236,8 +238,13 @@ p {
 /* side bar amd dashboard */
 
 body {
-    max-width: 800px;
+    /* max-width: 800px; */
     margin: 0 auto;
+
+}
+
+* {
+    font-family: "Inter-Medium";
 }
 
 .layout-wrapper {
@@ -246,17 +253,40 @@ body {
 }
 
 .sidebar {
-    width: 80px;
+    /* width: 80px; */
     background-color: #630660;
 }
 
 .content-wrapper {
     flex-grow: 1;
-    padding: 20px;
+    padding: 30px;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    color: var(--bd-body-color);
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.back-btn:hover {
+    color: var(--bd-body-color);
 }
 
 .content-wrapper {
     justify-content: flex-start !important;
+}
+
+.page-wrapper-title {
+    margin-bottom: 14px;
+}
+
+.page-wrapper-title h2 {
+    /* font-weight: 600;
+    font-size: 14px;
+    line-height: 24px; */
+
 }
 
 .navbar {
@@ -287,6 +317,8 @@ body {
 .sidebar .nav-logo-wrap {
     padding: 22px 5px;
     background-color: #FFF;
+    max-height: 80px;
+    text-align: center;
 }
 
 .sidebar .nav-item {
@@ -315,15 +347,7 @@ body {
     flex-direction: column;
 }
 
-.dashboard-card {
-    box-shadow: 0px 4px 44px 0px #0000001a;
-    border-radius: 10px;
-    padding: 18px 20px;
-}
 
-.dashboard-card svg {
-    color: #000;
-}
 
 .dashboard-tabs .nav-item .nav-link {
     font-size: 12px;
@@ -349,6 +373,10 @@ body {
 /* side bar amd dashboard  over*/
 
 /* customer listing css start */
+
+.w-85 {
+    width: 85%;
+}
 
 .bg_clr {
     background-color: #630660;
@@ -533,14 +561,14 @@ td {
 
 .container {
     width: 100% !important;
-    max-width: 780px !important;
+    /* max-width: 780px !important; */
     padding: 0px !important;
     margin: 0px !important;
 }
 
 div#DataTables_Table_0_wrapper {
-    padding-left: 20px;
-    padding-right: 20px;
+    /* padding-left: 20px;
+    padding-right: 20px; */
 }
 
 .table th {
@@ -562,14 +590,13 @@ a {
     color: #630660;
 }
 
-h2 {
-    color: #000 !important;
-    font-family: Inter;
+table.dataTable>thead>tr>th {
+    border-bottom: 0px;
 }
 
-h5 {
-    font-family: Inter;
-}
+
+
+
 
 .table-dark {
     background-color: #630660 !important;
@@ -750,8 +777,8 @@ div.text-dark {
 }
 
 .sidebar-logo {
-    height: auto;
-    width: 60px;
+    height: 100%;
+    width: auto;
 }
 
 .reset-password-form {
@@ -775,7 +802,8 @@ select#dt-length-0 {
 } */
 
 .container-customerlist {
-    max-width: calc(100% - 80px);
+    /* max-width: calc(100% - 80px); */
+    width: 100%
 }
 
 .table_scroll .dt-layout-row:nth-child(2) .dt-layout-cell {
@@ -826,6 +854,50 @@ div#app {
     margin-right: 10px;
 }
 
-table thead {
-    background-color: #630660;
+
+
+.page-header {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 34px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dashboard-card {
+    display: flex;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 12px;
+    padding: 18px;
+}
+
+.dashboard-card .icon-wrap {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(249, 245, 249, 1);
+    color: var(--bs-primary);
+    border-radius: 4px;
+}
+
+.dashboard-card h5 {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 34px;
+    margin-bottom: 2px;
+}
+
+.dashboard-card p {
+    font-size: 18px;
+    line-height: 28px;
+}
+
+@media (width<=1024px) {
+    .inner-container {
+        max-width: 100%;
+    }
 }

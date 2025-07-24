@@ -12,24 +12,24 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    
+
     protected function authorizeCustomer(Customer $customer)
     {
         $admin_user_id = auth()->user()->id;
         if ($customer->admin_user_id != auth()->id()) {
             abort(403, 'Unauthorized access to this customer.');
         }
-    } 
+    }
 
     public function index()
     {
         $admin_user_id = auth()->user()->id;
         $customers = Customer::where('admin_user_id', $admin_user_id)
-                         ->orderBy('created_at', 'desc')
-                         ->get(); 
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('customers.customers_list', compact('customers'));
     }
-    
+
     /**
      * Show the form for creating a new resource.
      */
@@ -80,48 +80,48 @@ class CustomerController extends Controller
     // }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required',
-        'email' => [
-            'required',
-            'email',
-            Rule::unique('customers')->where(function ($query) {
-                return $query->where('admin_user_id', auth()->user()->id);
-            }),
-        ],
-        'phone' => 'required',
-        'street'=> 'required',
-        'suburb'=> 'required',
-        'state'=> 'required',
-        'pincod'=> 'required',
-    ], [
-        'email.unique' => 'This email is already used under your admin account.',
-        'phone.regex' => 'The phone number must be in international format, e.g., +1234567890.',
-    ]);
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('customers')->where(function ($query) {
+                    return $query->where('admin_user_id', auth()->user()->id);
+                }),
+            ],
+            'phone' => 'required',
+            'street' => 'required',
+            'suburb' => 'required',
+            'state' => 'required',
+            'pincod' => 'required',
+        ], [
+            'email.unique' => 'This email is already used under your admin account.',
+            'phone.regex' => 'The phone number must be in international format, e.g., +1234567890.',
+        ]);
 
-    $data = $request->only(['name', 'email', 'phone', 'street', 'house_number', 'suburb', 'state', 'pincod']);
-    $data['admin_user_id'] = auth()->user()->id;
+        $data = $request->only(['name', 'email', 'phone', 'street', 'house_number', 'suburb', 'state', 'pincod']);
+        $data['admin_user_id'] = auth()->user()->id;
 
-    Customer::create($data);
+        Customer::create($data);
 
-    return redirect()->route('customers.index')->with('success', 'Customer created successfully.');
-}
+        return redirect()->route('customers.index')->with('success', 'Customer created successfully.');
+    }
 
     /**
      * Display the specified resource.
      */
 
     public function show(Customer $customer)
-{
-    // Ensure lists are sorted by 'created_at' in descending order
-    $this->authorizeCustomer($customer);
-    $lists = $customer->lists()->orderBy('created_at', 'desc')->get();
+    {
+        // Ensure lists are sorted by 'created_at' in descending order
+        $this->authorizeCustomer($customer);
+        $lists = $customer->lists()->orderBy('created_at', 'desc')->get();
 
-    return view('customers.show_customers', compact('customer', 'lists'));
-}
+        return view('customers.show_customers', compact('customer', 'lists'));
+    }
 
-     
+
 
     /**
      * Show the form for editing the specified resource.
@@ -138,36 +138,36 @@ class CustomerController extends Controller
      * Update the specified resource in storage.
      */
 
-     public function update(Request $request, Customer $customer)
+    public function update(Request $request, Customer $customer)
 
-     {
+    {
         $this->authorizeCustomer($customer);
 
-         $request->validate([
-             'name' => 'required',
+        $request->validate([
+            'name' => 'required',
             //  'email' => 'required|email|unique:customers,email,' . $customer->id,
             'email' => [
-            'required',
-            'email',
-            Rule::unique('customers')->ignore($customer->id)->where(function ($query) {
-                return $query->where('admin_user_id', auth()->user()->id);
-            }),
-        ],
-             'phone' => 'required',
-             'street'=> 'required',
-             'suburb'=> 'required',
-             'state'=> 'required',
-             'pincod'=> 'required',
-         ], [
-             'phone.regex' => 'The phone number must be in international format, e.g., +1234567890.',
-             'email.unique' => 'The email address has already been taken.',
-         ]);
-     
-         $customer->update($request->only(['name', 'email', 'phone', 'street', 'house_number', 'suburb', 'state', 'pincod']));
-     
-         return redirect()->route('customers.edit', ['customer' => $customer->id])->with('success', 'Customer updated successfully.');
-     }
-     
+                'required',
+                'email',
+                Rule::unique('customers')->ignore($customer->id)->where(function ($query) {
+                    return $query->where('admin_user_id', auth()->user()->id);
+                }),
+            ],
+            'phone' => 'required',
+            'street' => 'required',
+            'suburb' => 'required',
+            'state' => 'required',
+            'pincod' => 'required',
+        ], [
+            'phone.regex' => 'The phone number must be in international format, e.g., +1234567890.',
+            'email.unique' => 'The email address has already been taken.',
+        ]);
+
+        $customer->update($request->only(['name', 'email', 'phone', 'street', 'house_number', 'suburb', 'state', 'pincod']));
+
+        return redirect()->route('customers.edit', ['customer' => $customer->id])->with('success', 'Customer updated successfully.');
+    }
+
 
     /**
      * Remove the specified resource from storage.
@@ -182,14 +182,13 @@ class CustomerController extends Controller
         $customer->delete();
 
         return redirect()->route('customers.index')->with('success', 'Customer deleted successfully.');
-
     }
 
     public function updateStatus(Request $request, $id)
 
     {
         $customer = Customer::findOrFail($id);
-        $this->authorizeCustomer($customer);      
+        $this->authorizeCustomer($customer);
 
         $customer->status = $request->input('status');
 
@@ -212,38 +211,46 @@ class CustomerController extends Controller
 
     public function showlistcoustomer($id)
 
-{
-    // Fetch the customer details based on $id
-    $customer = Customer::findOrFail($id); 
-    $this->authorizeCustomer($customer);  
+    {
+        // Fetch the customer details based on $id
+        $customer = Customer::findOrFail($id);
+        $this->authorizeCustomer($customer);
 
-    return view('list.show_list', compact('customer'));
-}
+        return view('list.show_list', compact('customer'));
+    }
 
-// public function checkEmail(Request $request)
-// {
-//     $email = $request->input('email');
-//     $exists = Customer::where('email', $email)->exists();
+    // public function checkEmail(Request $request)
+    // {
+    //     $email = $request->input('email');
+    //     $exists = Customer::where('email', $email)->exists();
 
-//     return response()->json(['available' => !$exists]);
-// }
+    //     return response()->json(['available' => !$exists]);
+    // }
 
-public function checkEmail(Request $request)
-{
+    public function checkEmail(Request $request)
+    {
 
-    $adminId = auth()->user()->id;
+        $adminId = auth()->user()->id;
 
-    $email = $request->input('email');
+        $email = $request->input('email');
 
-    $exists = Customer::where('email', $email)
-        ->where('admin_user_id', $adminId)
-        ->exists();
+        $exists = Customer::where('email', $email)
+            ->where('admin_user_id', $adminId)
+            ->exists();
 
-    return response()->json(['available' => !$exists]);
-}
+        return response()->json(['available' => !$exists]);
+    }
 
+    public function getCustomers(Request $request)
+    {
+        $term = $request->get('term');
 
+        $customers = Customer::where('name', 'LIKE', "%{$term}%")
+            ->orWhere('builder_name', 'LIKE', "%{$term}%")
+            ->orWhere('email', 'LIKE', "%{$term}%")
+            ->limit(10)
+            ->get(['name', 'builder_name', 'email']);
 
-
-
+        return response()->json($customers);
+    }
 }

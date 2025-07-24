@@ -10,9 +10,10 @@
 
   @include('include.sidebar')
 
-  <div class="container-customerlist">
+    <div class="layout-page">
+        <div class="content-wrapper pl-30 ">
 
-    @include('include.navbar')
+            <div class="flex-grow-1  container-fluid">
     
     <div class="row mb-3">
       <div class="col-12 editpadding">
@@ -92,7 +93,8 @@
         </div>
     </div>
   </div>
-
+        </div>
+    </div>
   <!-- Delete Confirmation Modal -->
 
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

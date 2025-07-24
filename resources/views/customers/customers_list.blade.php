@@ -4,35 +4,21 @@
 <div id="app" class="layout-wrapper">
   @include('include.sidebar')
 
-  <div class="container-customerlist">
+    <div class="layout-page">
+        <div class="content-wrapper pl-30 ">
 
-  @include('include.navbar')
+            <div class="flex-grow-1  container-fluid">
 
-    <div class="row mb-3">
-      <div class="col-12">
-        
-        <!-- <a href="{{ route('home') }}">
-          <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2"></i> Back
-        </a> -->
-        
-      </div>  
-    </div>
-
-    <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
-      <div class="card-header flex-column flex-md-row">
-        <div class="head-label text-center">
-          <h2 class="card-title mb-0">All Customers</h2>
-        </div>
-        <div class="dt-action-buttons text-end pt-6 pt-md-0">
-          <div class="dt-buttons flex-wrap">
-          <a href="{{ route('customers.create') }}" class="btn btn-primary create-new waves-effect waves-light btn-dark rounded" 
+  <div class="page-header">
+                    <h1>All Customers</h1>
+                            <a href="{{ route('customers.create') }}" class="btn btn-primary create-new waves-effect waves-light btn-dark rounded" 
    tabindex="0" aria-controls="DataTables_Table_0">
     <span><i class="ti ti-plus me-sm-1"></i> Add Customer</span>
 </a>
+                </div>
 
-          </div>
-        </div>
-      </div>
+    <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+    
 
       @if ($message = Session::get('success'))
         <div class="alert alert-success">
@@ -41,9 +27,9 @@
       @endif
 
       <div class="card mt-4 p-2 ">
-        <div class="customerscroll" style="width: 664px;">
-        <table class="table datatables-projects" id="customerlist">
-          <thead class="table-dark">
+        <div class="customerscroll" >
+        <table class="datatables-projects table dataTable" id="customerlist">
+          <thead >
             <tr>
               <th>ID</th>
               <th>Customer Name</th>
@@ -73,10 +59,10 @@
                       <i class="ti ti-dots-vertical ti-md"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end m-0">
-                    <a href="{{ route('customers.edit', $customer->id) }}" class="btn p-0 edit-btn dropdown-item">
+                    <a href="{{ route('customers.edit', $customer->id) }}" class=" dropdown-item">
                       <i class="ti ti-pencil me-1"></i> Edit
                   </a>
-                  <a href="{{ route('customers.show', $customer->id) }}" class="btn p-0 view-btn dropdown-item">
+                  <a href="{{ route('customers.show', $customer->id) }}" class=" dropdown-item">
                       <i class="ti ti-eye me-1"></i> View
                   </a>
 
@@ -84,7 +70,7 @@
                       <form id="deleteCustomerForm" action="{{ route('customers.destroy', $customer->id) }}" method="POST">
                       @csrf
                       @method('DELETE')
-                      <button type="button" class="btn p-0 delete-btn text-danger dropdown-item" data-customer-id="{{ $customer->id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                      <button type="button" class=" text-danger delete-btn dropdown-item" data-customer-id="{{ $customer->id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                         <i class="ti ti-trash me-1"></i> Delete
                       </button>
                     </form>
@@ -99,7 +85,8 @@
       </div>
     </div>
   </div>
-
+        </div>
+    </div>
 
   <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
