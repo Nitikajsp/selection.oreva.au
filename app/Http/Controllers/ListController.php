@@ -12,8 +12,10 @@ use App\Models\UserBuilder;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 // Make sure to import Product model    
-use App\Models\Product; 
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 class ListController extends Controller
 
 
@@ -27,13 +29,13 @@ class ListController extends Controller
     }
 
 
-// insert new list controller start //
+    // insert new list controller start //
 
     public function store(Request $request)
 
 
     {
-        
+
         $request->validate([
 
             'list_name' => 'required|max:255',
@@ -48,10 +50,10 @@ class ListController extends Controller
             'customer_id' => 'required|exists:customers,id',
 
         ]);
-    
+
 
         ListModel::create([
-            
+
             'name' => $request->input('list_name'),
             'suburb' => $request->input('suburb'),
             'state' => $request->input('state'),
@@ -65,9 +67,9 @@ class ListController extends Controller
 
         ]);
 
-    
+
         return redirect()->route('customers.show', $request->input('customer_id'))
-                         ->with('success', 'List created successfully.');
+            ->with('success', 'List created successfully.');
     }
 
 
@@ -81,7 +83,7 @@ class ListController extends Controller
             $query->where('admin_user_id', $admin_user_id);
         })->findOrFail($id);
         //$list = ListModel::findOrFail($id);
-        
+
         return view('list.show_list', compact('list'));
     }
 
@@ -116,15 +118,15 @@ class ListController extends Controller
             //'status' => 'required|max:255',
 
         ]);
-        
+
         $list = ListModel::findOrFail($id);
-    
+
         $list->update($request->all());
-    
+
         return redirect()->route('customers.show', $list->customer_id)
-                         ->with('success', 'List updated successfully.');
+            ->with('success', 'List updated successfully.');
     }
-    
+
 
     // list delete controller start  //
 
@@ -134,108 +136,107 @@ class ListController extends Controller
         $list = ListModel::findOrFail($id);
 
         $customer_id = $list->customer_id;
-        
+
         $list->delete();
 
         return redirect()->route('showorder')->with('success', 'List deleted successfully.');
-
-    }  
+    }
 
     // add cart product controller start  //
 
     public function addcartproduct(ListModel $list, $customerId)
     {
         $adminId = auth()->id();
-       $lists = ListModel::where('customer_id', $customerId)
-        ->whereHas('customer', function ($query) use ($adminId) {
-            $query->where('admin_user_id', $adminId);
-        })
-        ->with(['products', 'customer'])
-        ->get();
+        $lists = ListModel::where('customer_id', $customerId)
+            ->whereHas('customer', function ($query) use ($adminId) {
+                $query->where('admin_user_id', $adminId);
+            })
+            ->with(['products', 'customer'])
+            ->get();
         $products = Product::where('in_stock', 1)
             ->where('delete_status', '1')
             ->where('admin_user_id', $adminId)
             ->orderBy('created_at', 'desc')
             ->get();
-    
+
         // Fetch all categories
-        $categories = \DB::table('categories')
-        ->where('admin_user_id', $adminId)
-        ->pluck('category_name', 'id');
-    
+        $categories = DB::table('categories')
+            ->where('admin_user_id', $adminId)
+            ->pluck('category_name', 'id');
+
         // Add category names to products
         foreach ($products as $product) {
             $categoryIds = explode(',', $product->product_category);
-            $product->category_names = array_map(function($id) use ($categories) {
+            $product->category_names = array_map(function ($id) use ($categories) {
                 return $categories[$id] ?? 'Unknown';
             }, $categoryIds);
         }
 
         return view('list.add_cart_product', compact('list', 'products',));
     }
-    
-    
 
-     // addtocart product  create a session listid wise code //
 
-     public function addToCart(Request $request, $listId)
-     {
-         $productId = $request->input('product_id');
-         $quantity = $request->input('quantity');
-         $comment = $request->input('comment'); // Capture the comment
-     
-         $customerId = session()->get('customer_id');
-         
-         $cart = session()->get('cart', []);
-     
-         if (!isset($cart[$listId])) {
-             $cart[$listId] = [];
-         }
-         
-         if (!isset($cart[$listId][$customerId])) {
-             $cart[$listId][$customerId] = [];
-         }
-     
-         // Store the product, quantity, and comment
-         $cart[$listId][$customerId][$productId] = [
-             'product_id' => $productId,
-             'quantity' => $quantity,
-             'comment' => $comment, // Store the comment
-         ];
-         
-         session()->put('cart', $cart);
-     
-         return redirect()->back()->with('success', 'Product added to cart successfully.');
-     }
-     
+
+    // addtocart product  create a session listid wise code //
+
+    public function addToCart(Request $request, $listId)
+    {
+        $productId = $request->input('product_id');
+        $quantity = $request->input('quantity');
+        $comment = $request->input('comment'); // Capture the comment
+
+        $customerId = session()->get('customer_id');
+
+        $cart = session()->get('cart', []);
+
+        if (!isset($cart[$listId])) {
+            $cart[$listId] = [];
+        }
+
+        if (!isset($cart[$listId][$customerId])) {
+            $cart[$listId][$customerId] = [];
+        }
+
+        // Store the product, quantity, and comment
+        $cart[$listId][$customerId][$productId] = [
+            'product_id' => $productId,
+            'quantity' => $quantity,
+            'comment' => $comment, // Store the comment
+        ];
+
+        session()->put('cart', $cart);
+
+        return redirect()->back()->with('success', 'Product added to cart successfully.');
+    }
+
 
     // add to cart product is a view listid wise //
 
     public function viewCart($listId)
 
-    {   
+    {
 
         $list = ListModel::findOrFail($listId);
 
 
-           $customerId = $list->customer_id;
-    
-           $customer = Customer::findOrFail($customerId); 
-    
+        $customerId = $list->customer_id;
+
+        $customer = Customer::findOrFail($customerId);
+
         $customerId = session()->get('customer_id');
 
         $cart = session()->get('cart', []);
-        
+
         $cartItems = [];
-    
+
         if (isset($cart[$listId][$customerId])) {
 
             $productIds = array_keys($cart[$listId][$customerId]);
 
             $products = Product::whereIn('id', $productIds)->get();
-    
+
             foreach ($products as $product) {
-                
+
                 if (isset($cart[$listId][$customerId][$product->id])) {
 
                     $cartItems[] = [
@@ -251,11 +252,9 @@ class ListController extends Controller
 
                     ];
                 }
-
-               }
-
+            }
         }
-    
+
         return view('list.view_cart', compact('list', 'customer', 'cartItems'));
     }
 
@@ -263,389 +262,651 @@ class ListController extends Controller
     {
         $customerId = session()->get('customer_id');
         $cart = session()->get('cart', []);
-    
+
         // Get quantity and comment from the request
         $quantity = $request->input('quantity');
         $comment = $request->input('comment');
-    
+
         if (isset($cart[$listId][$customerId][$productId])) {
             $cart[$listId][$customerId][$productId]['quantity'] = $quantity;
             $cart[$listId][$customerId][$productId]['comment'] = $comment;
-    
+
             session()->put('cart', $cart);
-    
+
             return redirect()->route('cart.view', $listId)->with('success', 'Quantity and comment updated successfully.');
         }
-    
+
         return redirect()->route('cart.view', $listId)->with('error', 'Product not found in cart.');
     }
-    
-
-  //  remove product in add to cart product //
-
-  public function removeFromCart($listId, $productId, $customerId)
-  
-  {
-
-      $sessionCustomerId = session()->get('customer_id');
-  
-   
-      $cart = session()->get('cart', []);
-  
-      if (isset($cart[$listId][$sessionCustomerId]) && array_key_exists($productId, $cart[$listId][$sessionCustomerId])) {
-
-          unset($cart[$listId][$sessionCustomerId][$productId]);
-  
-          session()->put('cart', $cart);
-
-          return redirect()->route('lists.view-cart', ['list' => $listId, 'customer_id' => $customerId])
-                         ->with('success', 'Product removed from cart successfully.');
-
-      }
-  
-   return redirect()->route('lists.view-cart', ['list' => $listId, 'customer_id' => $customerId])
-                     ->with('error', 'Product not found in cart.');
-
-  }
-  
-  public function saveOrder(Request $request)
-
-  {
-      if ($request->isMethod('post')) {
-          $listId = $request->input('list_id');
-          $customerId = $request->input('customer_id');
-          $cartItems = $request->input('cart_items');
-          $listEmail = $request->input('list_email');
-          $customerEmail = $request->input('customer_email');
-          $actionType = $request->input('action_type'); // Get the action type
-  
-          try {
-              // Retrieve the list data based on the list_id
-              $list = ListModel::find($listId);
-  
-              if (!$list) {
-                  throw new \Exception("List not found.");
-              }
-  
-              $ordersData = [];
-              $orderId = null;
-  
-              foreach ($cartItems as $item) {
-                  $productCode = $item['product_code'];
-                  $productName = $item['product_name'];
-                  $quantity = $item['quantity'];
-                  $productImage = $item['product_image'];
-                  $productId = $item['product_id']; // Make sure this exists in your cart items
-                  $comment = $item['comment'];  // Get the comment
-
-  
-                  // Check if an order with the same product_code and list_id exists
-                  $existingOrder = Order::where('product_id', $productId)
-                      ->where('list_id', $listId)
-                      ->where('customer_id', $customerId)
-                      ->first();
-  
-                  if ($existingOrder) {
-                      // Update the quantity of the existing order
-                      $existingOrder->quantity = $quantity;
-                      $existingOrder->comment = $comment;  // Update the comment
-
-                      $existingOrder->save();
-                      
-                      // Add the updated order details to ordersData
-                      $ordersData[] = [
-                          'product_name' => $productName,
-                          'product_code' => $productCode,
-                          'quantity' => $existingOrder->quantity, // Updated quantity
-                          'comment' => $comment,  // Add comment to the order data
-                          'product_image' => $productImage,
-                          'order_id' => $existingOrder->id, // Existing order ID
-                      ];
-                  } else {
-                      // Create a new order
-                      $order = Order::create([
-                          'quantity' => $quantity,
-                          'customer_id' => $customerId,
-                          'list_id' => $listId,
-                          'product_id' => $productId, // Include the product_id
-                          'comment' => $comment,  // Save the comment in the new order
-
-                      ]);
-  
-                      // Add the order ID to the ordersData array
-                      $ordersData[] = [
-                          'product_name' => $productName,
-                          'product_code' => $productCode,
-                          'quantity' => $quantity,
-                          'comment' => $comment,  // Add comment to the new order data
-                          'product_image' => $productImage,
-                          'order_id' => $order->id, // New order ID
-                      ];
-  
-                      if (!$orderId) {
-                          $orderId = $order->id;
-                      }
-                  }
-              }
-  
-              // Clear the cart from session
-              $request->session()->forget('cart.' . $listId);
-  
-              $customer = Customer::find($customerId); // Ensure $customer is correctly retrieved
-              $customerName = $customer ? $customer->name : 'Customer';
-  
-              $orderDate = now()->format('Y-m-d H:i:s');
-  
-              $orderData = [
-                  'customerName' => $customerName,
-                  'orderId' => $orderId,
-                  'orderDate' => $orderDate,
-                  'ordersData' => $ordersData,
-                  'customerEmail' => $customerEmail,
-                  'customer' => $customer, // Pass all customer details to the view
-                  'list' => $list, // Use the retrieved $list data here
-              ];
-  
-              // Check if action_type is "save_send"
-              if ($actionType == 'save_send') {
-                  $pdf = Pdf::loadView('emails.order_confirmation', compact('orderData'));
-  
-                  // Send the email to the customer with the PDF attachment
-                  Mail::send([], [], function ($message) use ($customer, $list, $pdf) {
-                      $message->to($customer->email)
-                              ->subject('Product List Received from Oreva Selection')
-                              ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
-                  });
-  
-                  // Send the email to the list email with the PDF attachment
-                  Mail::send([], [], function ($message) use ($list, $pdf) {
-                      $message->to($list->contact_email)
-                              ->subject('Product List Received from Oreva Selection')
-                              ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
-                  });
-  
-              
-                  
-                  $adminEmails = get_setting('email'); // e.g., "email1@example.com,email2@example.com"
-                    if ($adminEmails) {
-                        $emails = array_map('trim', explode(',', $adminEmails));
-                        Mail::send([], [], function ($message) use ($emails, $list, $pdf) {
-                            $message->to($emails)
-                                    ->subject('Product List Received from Oreva Selection (Admin Copy)')
-                                    ->attachData($pdf->output(), "Selection Oreva_{$list->id}_Admin.pdf");
-                        });
-                    }
-  
-                  return redirect()->route('showlistcustomer', [
-                      'listId' => $listId,
-                      'customerId' => $customerId
-                      ])->with('success', 'Order saved successfully and email sent successfully.');
-              }
-  
-              return redirect()->route('showlistcustomer', [
-                  'listId' => $listId,
-                  'customerId' => $customerId
-                  ])->with('success', 'Order saved successfully.');
-  
-          } catch (\Exception $e) {
-              return redirect()->back()->with('error', 'Failed to save order. ' . $e->getMessage());
-          }
-  
-      } else {
-          return redirect()->back();
-      }
-  }
-  
-
-  public function removeShowListFromCart($listId, $productId, $customerId)
-  
-  {
-
-      $sessionCustomerId = session()->get('customer_id');
-     
-      $cart = session()->get('cart', []);
-  
-      if (isset($cart[$listId][$sessionCustomerId]) && array_key_exists($productId, $cart[$listId][$sessionCustomerId])) {
-
-          unset($cart[$listId][$sessionCustomerId][$productId]);
-  
-          session()->put('cart', $cart);
 
 
-          return redirect()->route('lists.showlistcoustomer', ['list' => $listId, 'customer_id' => $customerId])
-                         ->with('success', 'Product removed from cart successfully.');
+    //  remove product in add to cart product //
 
-      }
-  
-   return redirect()->route('lists.showlistcoustomer', ['list' => $listId, 'customer_id' => $customerId])
-                     ->with('error', 'Product not found in cart.');
-  }
+    public function removeFromCart($listId, $productId, $customerId)
 
-  public function showListCustomer($listId, $customerId)
+    {
 
-  {
-      $adminId = auth()->id();
-      $list = ListModel::where('id', $listId)
-        ->where('customer_id', $customerId)
-        ->whereHas('customer', function ($query) use ($adminId) {
-            $query->where('admin_user_id', $adminId);
-        })
-        ->firstOrFail();
+        $sessionCustomerId = session()->get('customer_id');
 
-      $customer = $list->customer;
-  
-      $orders = Order::where('list_id', $listId)
-          ->where('customer_id', $customerId)
-          ->orderBy('created_at', 'desc')
-          ->get();
-  
-      $products = Product::whereIn('id', $orders->pluck('product_id')->unique())->get()->keyBy('id');
-      $categories = \DB::table('categories')->pluck('category_name', 'id')->toArray();
-  
-      foreach ($orders as $order) {
-          $product = $products->get($order->product_id);
-          if ($product) {
-              $categoryIds = explode(',', $product->product_category);
-              $product->category_names = array_map(function($id) use ($categories) {
-                  return $categories[$id] ?? 'Unknown';
-              }, $categoryIds);
-          }
-          $order->product = $product;
-      }
-  
-      return view('list.show_list', compact('list', 'customer', 'orders', 'categories'));
-  }
-  
-//  show list order update qty //
 
-public function updateQuantity(Request $request, $orderId)
+        $cart = session()->get('cart', []);
 
-{
-    $order = Order::find($orderId);
-    
-    if ($order) {
+        if (isset($cart[$listId][$sessionCustomerId]) && array_key_exists($productId, $cart[$listId][$sessionCustomerId])) {
 
-        $order->quantity = $request->input('quantity');
+            unset($cart[$listId][$sessionCustomerId][$productId]);
 
-        $order->save();
+            session()->put('cart', $cart);
 
-        return response()->json(['success' => true, 'message' => 'Quantity updated successfully']);
+            return redirect()->route('lists.view-cart', ['list' => $listId, 'customer_id' => $customerId])
+                ->with('success', 'Product removed from cart successfully.');
+        }
+
+        return redirect()->route('lists.view-cart', ['list' => $listId, 'customer_id' => $customerId])
+            ->with('error', 'Product not found in cart.');
     }
 
-    return response()->json(['success' => false, 'message' => 'Order not found'], 404);
-}
+    // public function saveOrder(Request $request)
+
+    // {
+    //     if ($request->isMethod('post')) {
+    //         $listId = $request->input('list_id');
+    //         $customerId = $request->input('customer_id');
+    //         $cartItems = $request->input('cart_items');
+    //         $listEmail = $request->input('list_email');
+    //         $customerEmail = $request->input('customer_email');
+    //         $actionType = $request->input('action_type'); // Get the action type
+
+    //         try {
+    //             // Retrieve the list data based on the list_id
+    //             $list = ListModel::find($listId);
+
+    //             if (!$list) {
+    //                 throw new \Exception("List not found.");
+    //             }
+
+    //             $ordersData = [];
+    //             $orderId = null;
+
+    //             foreach ($cartItems as $item) {
+    //                 $productCode = $item['product_code'];
+    //                 $productName = $item['product_name'];
+    //                 $quantity = $item['quantity'];
+    //                 $productImage = $item['product_image'];
+    //                 $productId = $item['product_id']; // Make sure this exists in your cart items
+    //                 $comment = $item['comment'];  // Get the comment
 
 
-//  show list delete order  //
+    //                 // Check if an order with the same product_code and list_id exists
+    //                 $existingOrder = Order::where('product_id', $productId)
+    //                     ->where('list_id', $listId)
+    //                     ->where('customer_id', $customerId)
+    //                     ->first();
 
-public function destroyOrders(Order $order)
+    //                 if ($existingOrder) {
+    //                     // Update the quantity of the existing order
+    //                     $existingOrder->quantity = $quantity;
+    //                     $existingOrder->comment = $comment;  // Update the comment
 
+    //                     $existingOrder->save();
+
+    //                     // Add the updated order details to ordersData
+    //                     $ordersData[] = [
+    //                         'product_name' => $productName,
+    //                         'product_code' => $productCode,
+    //                         'quantity' => $existingOrder->quantity, // Updated quantity
+    //                         'comment' => $comment,  // Add comment to the order data
+    //                         'product_image' => $productImage,
+    //                         'order_id' => $existingOrder->id, // Existing order ID
+    //                     ];
+    //                 } else {
+    //                     // Create a new order
+    //                     $order = Order::create([
+    //                         'quantity' => $quantity,
+    //                         'customer_id' => $customerId,
+    //                         'list_id' => $listId,
+    //                         'product_id' => $productId, // Include the product_id
+    //                         'comment' => $comment,  // Save the comment in the new order
+
+    //                     ]);
+
+    //                     // Add the order ID to the ordersData array
+    //                     $ordersData[] = [
+    //                         'product_name' => $productName,
+    //                         'product_code' => $productCode,
+    //                         'quantity' => $quantity,
+    //                         'comment' => $comment,  // Add comment to the new order data
+    //                         'product_image' => $productImage,
+    //                         'order_id' => $order->id, // New order ID
+    //                     ];
+
+    //                     if (!$orderId) {
+    //                         $orderId = $order->id;
+    //                     }
+    //                 }
+    //             }
+
+    //             // Clear the cart from session
+    //             $request->session()->forget('cart.' . $listId);
+
+    //             $customer = Customer::find($customerId); // Ensure $customer is correctly retrieved
+    //             $customerName = $customer ? $customer->name : 'Customer';
+
+    //             $orderDate = now()->format('Y-m-d H:i:s');
+
+    //             $orderData = [
+    //                 'customerName' => $customerName,
+    //                 'orderId' => $orderId,
+    //                 'orderDate' => $orderDate,
+    //                 'ordersData' => $ordersData,
+    //                 'customerEmail' => $customerEmail,
+    //                 'customer' => $customer, // Pass all customer details to the view
+    //                 'list' => $list, // Use the retrieved $list data here
+    //             ];
+
+    //             // Check if action_type is "save_send"
+    //             if ($actionType == 'save_send') {
+    //                 $pdf = Pdf::loadView('emails.order_confirmation', compact('orderData'));
+
+    //                 // Send the email to the customer with the PDF attachment
+    //                 Mail::send([], [], function ($message) use ($customer, $list, $pdf) {
+    //                     $message->to($customer->email)
+    //                         ->subject('Product List Received from Oreva Selection')
+    //                         ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
+    //                 });
+
+    //                 // Send the email to the list email with the PDF attachment
+    //                 Mail::send([], [], function ($message) use ($list, $pdf) {
+    //                     $message->to($list->contact_email)
+    //                         ->subject('Product List Received from Oreva Selection')
+    //                         ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
+    //                 });
+
+
+
+    //                 $adminEmails = get_setting('email'); // e.g., "email1@example.com,email2@example.com"
+    //                 if ($adminEmails) {
+    //                     $emails = array_map('trim', explode(',', $adminEmails));
+    //                     Mail::send([], [], function ($message) use ($emails, $list, $pdf) {
+    //                         $message->to($emails)
+    //                             ->subject('Product List Received from Oreva Selection (Admin Copy)')
+    //                             ->attachData($pdf->output(), "Selection Oreva_{$list->id}_Admin.pdf");
+    //                     });
+    //                 }
+
+    //                 return redirect()->route('showlistcustomer', [
+    //                     'listId' => $listId,
+    //                     'customerId' => $customerId
+    //                 ])->with('success', 'Order saved successfully and email sent successfully.');
+    //             }
+
+    //             return redirect()->route('showlistcustomer', [
+    //                 'listId' => $listId,
+    //                 'customerId' => $customerId
+    //             ])->with('success', 'Order saved successfully.');
+    //         } catch (\Exception $e) {
+    //             return redirect()->back()->with('error', 'Failed to save order. ' . $e->getMessage());
+    //         }
+    //     } else {
+    //         return redirect()->back();
+    //     }
+    // }
+
+
+    // public function saveOrder(Request $request)
+    // {
+    //     ini_set('max_execution_time', 300);
+    //     set_time_limit(300);
+
+    //     if ($request->isMethod('post')) {
+    //         $listId = $request->input('list_id');
+    //         $customerId = $request->input('customer_id');
+    //         $cartItems = $request->input('cart_items');
+    //         $customerEmail = $request->input('customer_email');
+    //         $actionType = $request->input('action_type');
+
+    //         try {
+    //             $list = ListModel::find($listId);
+    //             if (!$list) throw new \Exception("List not found.");
+
+    //             $ordersData = [];
+    //             $orderId = null;
+
+    //             foreach ($cartItems as $item) {
+    //                 $productId = $item['product_id'];
+    //                 $productCode = $item['product_code'];
+    //                 $productName = $item['product_name'];
+    //                 $quantity = $item['quantity'];
+    //                 $comment = $item['comment'];
+    //                 $productImage = $item['product_image'];
+
+    //                 $existingOrder = Order::where('product_id', $productId)
+    //                     ->where('list_id', $listId)
+    //                     ->where('customer_id', $customerId)
+    //                     ->first();
+
+    //                 if ($existingOrder) {
+    //                     $existingOrder->update([
+    //                         'quantity' => $quantity,
+    //                         'comment' => $comment
+    //                     ]);
+
+    //                     $ordersData[] = [
+    //                         'product_name' => $productName,
+    //                         'product_code' => $productCode,
+    //                         'quantity' => $existingOrder->quantity,
+    //                         'comment' => $comment,
+    //                         'product_image' => $productImage,
+    //                         'order_id' => $existingOrder->id,
+    //                     ];
+    //                 } else {
+    //                     $order = Order::create([
+    //                         'quantity' => $quantity,
+    //                         'customer_id' => $customerId,
+    //                         'list_id' => $listId,
+    //                         'product_id' => $productId,
+    //                         'comment' => $comment,
+    //                     ]);
+
+    //                     $ordersData[] = [
+    //                         'product_name' => $productName,
+    //                         'product_code' => $productCode,
+    //                         'quantity' => $quantity,
+    //                         'comment' => $comment,
+    //                         'product_image' => $productImage,
+    //                         'order_id' => $order->id,
+    //                     ];
+
+    //                     if (!$orderId) {
+    //                         $orderId = $order->id;
+    //                     }
+    //                 }
+    //             }
+
+    //             // Clear cart session
+    //             $request->session()->forget('cart.' . $listId);
+
+    //             $customer = Customer::find($customerId);
+    //             $customerName = $customer ? $customer->name : 'Customer';
+
+    //             $orderDate = now()->format('Y-m-d H:i:s');
+
+    //             $orderData = [
+    //                 'customerName' => $customerName,
+    //                 'orderId' => $orderId,
+    //                 'orderDate' => $orderDate,
+    //                 'ordersData' => $ordersData,
+    //                 'customerEmail' => $customerEmail,
+    //                 'customer' => $customer,
+    //                 'list' => $list,
+    //             ];
+
+    //             // Email logic
+    //             if ($actionType == 'save_send') {
+    //                 $pdfContent = Pdf::loadView('emails.order_confirmation', compact('orderData'))->output();
+
+    //                 // Send to customer
+    //                 Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
+
+    //                 // Send to list contact
+    //                 Mail::to($list->contact_email)->send(new OrderConfirmation($orderData, $pdfContent));
+
+    //                 // Send to admin(s)
+    //                 $adminEmails = get_setting('email');
+    //                 if ($adminEmails) {
+    //                     $emails = array_map('trim', explode(',', $adminEmails));
+    //                     foreach ($emails as $adminEmail) {
+    //                         Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
+    //                     }
+    //                 }
+
+    //                 return redirect()->route('showlistcustomer', [
+    //                     'listId' => $listId,
+    //                     'customerId' => $customerId
+    //                 ])->with('success', 'Order saved successfully and email with PDF sent.');
+    //             }
+
+    //             return redirect()->route('showlistcustomer', [
+    //                 'listId' => $listId,
+    //                 'customerId' => $customerId
+    //             ])->with('success', 'Order saved successfully.');
+    //         } catch (\Exception $e) {
+    //             return redirect()->back()->with('error', 'Failed to save order. ' . $e->getMessage());
+    //         }
+    //     }
+
+    //     return redirect()->back();
+    // }
+
+    public function saveOrder(Request $request)
 {
-    $order->delete();
+    ini_set('max_execution_time', 300);
+    set_time_limit(300);
 
-    return redirect()->back()->with('success', 'Order deleted successfully.');
-}
+    if ($request->isMethod('post')) {
+        $listId = $request->input('list_id');
+        $customerId = $request->input('customer_id');
+        $cartItems = $request->input('cart_items');
+        $customerEmail = $request->input('customer_email');
+        $actionType = $request->input('action_type');
 
-public function getLists(Request $request)
+        try {
+            $list = ListModel::find($listId);
+            if (!$list) throw new \Exception("List not found.");
 
-{
-    $customerId = $request->input('customer_id');
-    // $lists = ListModel::where('customer_id', $customerId)->get(['id', 'name']);
-    $adminId = auth()->id();
-     $lists = ListModel::where('customer_id', $customerId)
-        ->whereHas('customer', function ($query) use ($adminId) {
-            $query->where('admin_user_id', $adminId);
-        })
-        ->get(['id', 'name']);
+            $ordersData = [];
+            $orderId = null;
 
-    return response()->json($lists);
-}
+            foreach ($cartItems as $item) {
+                $productId = $item['product_id'];
+                $productCode = $item['product_code'];
+                $productName = $item['product_name'];
+                $quantity = (int) $item['quantity'];
+                $comment = $item['comment'];
+                $productImage = $item['product_image'];
 
+                $existingOrder = Order::where('product_id', $productId)
+                    ->where('list_id', $listId)
+                    ->where('customer_id', $customerId)
+                    ->first();
 
-public function showList($list, $customer_id)
+                if ($existingOrder) {
+                    $existingOrder->update([
+                        'quantity' => $quantity,
+                        'comment' => $comment
+                    ]);
 
-{
-    // Fetch the necessary data based on $list and $customer_id
-    // For example, fetch list details, customer details, etc.
-    
-    // Return a view with the data
-    return view('lists.show_list', compact('list', 'customer_id'));
+                    $ordersData[] = [
+                        'product_name' => $productName,
+                        'product_code' => $productCode,
+                        'quantity' => $existingOrder->quantity,
+                        'comment' => $comment,
+                        'product_image' => $productImage,
+                        'order_id' => $existingOrder->id,
+                    ];
+                } else {
+                    $order = Order::create([
+                        'quantity' => $quantity,
+                        'customer_id' => $customerId,
+                        'list_id' => $listId,
+                        'product_id' => $productId,
+                        'comment' => $comment,
+                    ]);
 
-}
+                    $ordersData[] = [
+                        'product_name' => $productName,
+                        'product_code' => $productCode,
+                        'quantity' => $quantity,
+                        'comment' => $comment,
+                        'product_image' => $productImage,
+                        'order_id' => $order->id,
+                    ];
 
-        public function sendEmail($list_id, $customer_id)
-        
-        {
-            // Retrieve the list and customer based on the IDs
-            $list = ListModel::find($list_id);
-            $customer = Customer::find($customer_id);
-            
-            // Check if list and customer exist
-            if (!$list || !$customer) {
-                return redirect()->back()->with('error', 'List or Customer not found');
+                    if (!$orderId) {
+                        $orderId = $order->id;
+                    }
+                }
+
+                // ✅ Deduct stock only if Save & Send
+                if ($actionType === 'save_send') {
+                    $product = Product::find($productId);
+                    if ($product) {
+                        $newStock = $product->product_stock - $quantity;
+
+                        if ($newStock < 0) {
+                            return redirect()->back()->with('error', "Not enough stock for product: {$product->product_name}");
+                        }
+
+                        $product->product_stock = $newStock;
+                        $product->save();
+                    }
+                }
             }
 
-            // Retrieve all orders with product details using product_id
-            $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image')
-                ->join('products', 'orders.product_id', '=', 'products.id')
-                ->where('orders.list_id', $list_id)
-                ->where('orders.customer_id', $customer_id) // Ensure we're filtering by customer_id as well
-                ->get();
-           
-            // Prepare the order data to be sent to the email view
+            // Clear cart session
+            $request->session()->forget('cart.' . $listId);
+
+            $customer = Customer::find($customerId);
+            $customerName = $customer ? $customer->name : 'Customer';
+
+            $orderDate = now()->format('Y-m-d H:i:s');
+
             $orderData = [
-                'list' => $list,
+                'customerName' => $customerName,
+                'orderId' => $orderId,
+                'orderDate' => $orderDate,
+                'ordersData' => $ordersData,
+                'customerEmail' => $customerEmail,
                 'customer' => $customer,
-                'ordersData' => $ordersData
+                'list' => $list,
             ];
 
-            // Generate the PDF from the Blade view
-            $pdf = Pdf::loadView('emails.order_confirmation', ['orderData' => $orderData]);
+            // ✅ Email logic
+            if ($actionType === 'save_send') {
+                $pdfContent = Pdf::loadView('emails.order_confirmation', compact('orderData'))->output();
 
-            // Send the email to the customer with the PDF attachment
-            Mail::send([], [], function ($message) use ($customer, $list, $pdf) {
-                $message->to($customer->email)
-                        ->subject('Product List Received from Oreva Selection')
-                        ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
-            });
+                // Send to customer
+                Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
 
-            // Send the email to the list email with the PDF attachment
-            Mail::send([], [], function ($message) use ($list, $pdf) {
-                $message->to($list->contact_email)
-                        ->subject('Product List Received from Oreva Selection')
-                        ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
-            });
+                // Send to list contact
+                Mail::to($list->contact_email)->send(new OrderConfirmation($orderData, $pdfContent));
 
-           $adminEmails = get_setting('email'); // e.g., "email1@example.com,email2@example.com"
-                    if ($adminEmails) {
-                        $emails = array_map('trim', explode(',', $adminEmails));
-                        Mail::send([], [], function ($message) use ($emails, $list, $pdf) {
-                            $message->to($emails)
-                                    ->subject('Product List Received from Oreva Selection (Admin Copy)')
-                                    ->attachData($pdf->output(), "Selection Oreva_{$list->id}_Admin.pdf");
-                        });
+                // Send to admin(s)
+                $adminEmails = get_setting('email');
+                if ($adminEmails) {
+                    $emails = array_map('trim', explode(',', $adminEmails));
+                    foreach ($emails as $adminEmail) {
+                        Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
                     }
+                }
 
-            // Redirect back with a success message
-            return redirect()->back()->with('success', 'Email sent successfully!');
+                return redirect()->route('showlistcustomer', [
+                    'listId' => $listId,
+                    'customerId' => $customerId
+                ])->with('success', 'Order saved successfully and email with PDF sent.');
+            }
+
+            return redirect()->route('showlistcustomer', [
+                'listId' => $listId,
+                'customerId' => $customerId
+            ])->with('success', 'Order saved successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to save order. ' . $e->getMessage());
         }
-        public function getCustomer(Request $request){
-            // dd($request->all());
-            $search = $request->query('term');
-            $customers = Customer::where('name', 'LIKE', "%{$search}%")
-                ->where('admin_user_id', auth()->id())
-                ->select('id', 'name', 'email') 
-                ->get();
-            return response()->json($customers);
+    }
+
+    return redirect()->back();
+}
+
+
+
+    public function removeShowListFromCart($listId, $productId, $customerId)
+
+    {
+
+        $sessionCustomerId = session()->get('customer_id');
+
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$listId][$sessionCustomerId]) && array_key_exists($productId, $cart[$listId][$sessionCustomerId])) {
+
+            unset($cart[$listId][$sessionCustomerId][$productId]);
+
+            session()->put('cart', $cart);
+
+
+            return redirect()->route('lists.showlistcoustomer', ['list' => $listId, 'customer_id' => $customerId])
+                ->with('success', 'Product removed from cart successfully.');
         }
-        // public function getCustomer(Request $request){
-        //     // dd($request->all());
-        //     $search = $request->query('term');
-        //     $customers = UserBuilder::where('builder_name', 'LIKE', "%{$search}%")
-        //         ->select('id', 'builder_name', 'contact_email') 
-        //         ->get();
-        //     //dd($customers->all());
-        //     return response()->json($customers);
-        // }
+
+        return redirect()->route('lists.showlistcoustomer', ['list' => $listId, 'customer_id' => $customerId])
+            ->with('error', 'Product not found in cart.');
+    }
+
+    public function showListCustomer($listId, $customerId)
+
+    {
+        $adminId = auth()->id();
+        $list = ListModel::where('id', $listId)
+            ->where('customer_id', $customerId)
+            ->whereHas('customer', function ($query) use ($adminId) {
+                $query->where('admin_user_id', $adminId);
+            })
+            ->firstOrFail();
+
+        $customer = $list->customer;
+
+        $orders = Order::where('list_id', $listId)
+            ->where('customer_id', $customerId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $products = Product::whereIn('id', $orders->pluck('product_id')->unique())->get()->keyBy('id');
+        $categories = DB::table('categories')->pluck('category_name', 'id')->toArray();
+
+        foreach ($orders as $order) {
+            $product = $products->get($order->product_id);
+            if ($product) {
+                $categoryIds = explode(',', $product->product_category);
+                $product->category_names = array_map(function ($id) use ($categories) {
+                    return $categories[$id] ?? 'Unknown';
+                }, $categoryIds);
+            }
+            $order->product = $product;
+        }
+
+        return view('list.show_list', compact('list', 'customer', 'orders', 'categories'));
+    }
+
+    //  show list order update qty //
+
+    public function updateQuantity(Request $request, $orderId)
+
+    {
+        $order = Order::find($orderId);
+
+        if ($order) {
+
+            $order->quantity = $request->input('quantity');
+
+            $order->save();
+
+            return response()->json(['success' => true, 'message' => 'Quantity updated successfully']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Order not found'], 404);
+    }
+
+
+    //  show list delete order  //
+
+    public function destroyOrders(Order $order)
+
+    {
+        $order->delete();
+
+        return redirect()->back()->with('success', 'Order deleted successfully.');
+    }
+
+    public function getLists(Request $request)
+
+    {
+        $customerId = $request->input('customer_id');
+        // $lists = ListModel::where('customer_id', $customerId)->get(['id', 'name']);
+        $adminId = auth()->id();
+        $lists = ListModel::where('customer_id', $customerId)
+            ->whereHas('customer', function ($query) use ($adminId) {
+                $query->where('admin_user_id', $adminId);
+            })
+            ->get(['id', 'name']);
+
+        return response()->json($lists);
+    }
+
+
+    public function showList($list, $customer_id)
+
+    {
+        // Fetch the necessary data based on $list and $customer_id
+        // For example, fetch list details, customer details, etc.
+
+        // Return a view with the data
+        return view('lists.show_list', compact('list', 'customer_id'));
+    }
+
+    public function sendEmail($list_id, $customer_id)
+
+    {
+        // Retrieve the list and customer based on the IDs
+        $list = ListModel::find($list_id);
+        $customer = Customer::find($customer_id);
+
+        // Check if list and customer exist
+        if (!$list || !$customer) {
+            return redirect()->back()->with('error', 'List or Customer not found');
+        }
+
+        // Retrieve all orders with product details using product_id
+        $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image')
+            ->join('products', 'orders.product_id', '=', 'products.id')
+            ->where('orders.list_id', $list_id)
+            ->where('orders.customer_id', $customer_id) // Ensure we're filtering by customer_id as well
+            ->get();
+
+        // Prepare the order data to be sent to the email view
+        $orderData = [
+            'list' => $list,
+            'customer' => $customer,
+            'ordersData' => $ordersData
+        ];
+
+        // Generate the PDF from the Blade view
+        $pdf = Pdf::loadView('emails.order_confirmation', ['orderData' => $orderData]);
+
+        // Send the email to the customer with the PDF attachment
+        Mail::send([], [], function ($message) use ($customer, $list, $pdf) {
+            $message->to($customer->email)
+                ->subject('Product List Received from Oreva Selection')
+                ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
+        });
+
+        // Send the email to the list email with the PDF attachment
+        Mail::send([], [], function ($message) use ($list, $pdf) {
+            $message->to($list->contact_email)
+                ->subject('Product List Received from Oreva Selection')
+                ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
+        });
+
+        $adminEmails = get_setting('email'); // e.g., "email1@example.com,email2@example.com"
+        if ($adminEmails) {
+            $emails = array_map('trim', explode(',', $adminEmails));
+            Mail::send([], [], function ($message) use ($emails, $list, $pdf) {
+                $message->to($emails)
+                    ->subject('Product List Received from Oreva Selection (Admin Copy)')
+                    ->attachData($pdf->output(), "Selection Oreva_{$list->id}_Admin.pdf");
+            });
+        }
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Email sent successfully!');
+    }
+    public function getCustomer(Request $request)
+    {
+        // dd($request->all());
+        $search = $request->query('term');
+        $customers = Customer::where('name', 'LIKE', "%{$search}%")
+            ->where('admin_user_id', auth()->id())
+            ->select('id', 'name', 'email')
+            ->get();
+        return response()->json($customers);
+    }
+    // public function getCustomer(Request $request){
+    //     // dd($request->all());
+    //     $search = $request->query('term');
+    //     $customers = UserBuilder::where('builder_name', 'LIKE', "%{$search}%")
+    //         ->select('id', 'builder_name', 'contact_email') 
+    //         ->get();
+    //     //dd($customers->all());
+    //     return response()->json($customers);
+    // }
 
 }

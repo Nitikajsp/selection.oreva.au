@@ -2,6 +2,8 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 @endpush
 
 @section('content')
@@ -12,12 +14,12 @@
 
                 <div class="flex-grow-1  container-fluid">
                     <!-- <div class="row mb-3">
-                  <div class="col-12 editpadding">
-                    <a href="{{ route('home') }}" class="d-flex align-items-center text-dark">
-                        <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2"></i> Back
-                    </a>
-                  </div>
-                </div> -->
+                              <div class="col-12 editpadding">
+                                <a href="{{ route('home') }}" class="d-flex align-items-center text-dark">
+                                    <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2"></i> Back
+                                </a>
+                              </div>
+                            </div> -->
 
                     {{-- <div class="page-header">
                         <h1>Product</h1>
@@ -49,6 +51,20 @@
                                 <i class="ti ti-upload me-1"></i>
                                 <span>Import Products</span>
                             </a>
+
+                            {{-- <a href="{{ route('products.sample.download') }}"
+                                class="btn btn-sm btn-light border rounded d-flex align-items-center px-2">
+                                <i class="ti ti-download me-1 text-secondary"></i>
+                                <span class="text-dark">Sample</span>
+                            </a> --}}
+
+                            <a href="{{ route('products.sample.download') }}"
+                                class="btn btn-sm btn-light border rounded d-flex align-items-center px-2">
+                                <i class="bi bi-arrow-down-circle-fill text-dark fs-5"></i>
+                                {{-- <span class="text-dark">Download Sample</span> --}}
+                            </a>
+
+
                         </div>
                     </div>
 
@@ -311,7 +327,7 @@
 
                 // Show loader on submit
                 importForm.addEventListener('submit', function() {
-                    importSpinner.classList.remove('d-none'); 
+                    importSpinner.classList.remove('d-none');
                     importBtnText.innerHTML = 'Importing...';
                     importBtn.disabled = true; // Disable button
                 });

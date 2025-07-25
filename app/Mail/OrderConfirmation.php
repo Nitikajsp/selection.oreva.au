@@ -26,10 +26,18 @@ class OrderConfirmation extends Mailable
         $this->pdf = $pdf;
     }
 
+    // public function build()
+    // {
+    //     return $this->view('emails.order_confirmation')
+    //                 ->with('orderData', $this->orderData)
+    //                 ->attachData($this->pdf, "invoice_{$this->orderData['list']['id']}.pdf");
+    // }
+
     public function build()
     {
-        return $this->view('emails.order_confirmation')
-                    ->with('orderData', $this->orderData)
-                    ->attachData($this->pdf, "invoice_{$this->orderData['list']['id']}.pdf");
+        return $this->subject('Product List Received from Oreva Selection')
+            ->view('emails.order_confirmation')
+            ->with('orderData', $this->orderData)
+            ->attachData($this->pdf, "invoice_{$this->orderData['list']['id']}.pdf");
     }
 }

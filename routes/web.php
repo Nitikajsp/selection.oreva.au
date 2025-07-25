@@ -47,6 +47,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/products/update-stock', 'updateStock')->name('products.updateStock');
         Route::post('/products/import', 'import')->name('products.import');
         Route::get('/export-products', 'export')->name('products.export');
+
+        Route::get('sample-download', 'downloadSample')->name('products.sample.download');
+
     });
 
     // List Routes

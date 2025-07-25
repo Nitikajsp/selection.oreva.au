@@ -20,22 +20,22 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
- 
+
     protected function credentials(Request $request)
     {
         return [
             'email' => $request->email,
             'password' => $request->password,
-            'user_status' => 'active', 
+            'user_status' => 'active',
         ];
     }
 
 
     protected function sendFailedLoginResponse(Request $request)
-    
+
     {
         $user = User::where('email', $request->email)->first();
-        
+
         if ($user && $user->user_status !== 'active') {
             throw ValidationException::withMessages([
                 'email' => ['This email is deactivated.'],
@@ -45,5 +45,11 @@ class LoginController extends Controller
         throw ValidationException::withMessages([
             'email' => [trans('auth.failed')],
         ]);
+    }
+
+    function get_setting($key)
+    {
+        $setting = \App\Models\Setting::where('setting_key', $key)->first();
+        return $setting ? $setting->setting_value : null;
     }
 }
