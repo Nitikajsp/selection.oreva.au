@@ -5,10 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductImport;
 use App\Exports\ProductsExport;
+use Illuminate\Support\Facades\DB;
 
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Excel as ExcelFormat;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ProductController extends Controller
 
@@ -26,14 +35,14 @@ class ProductController extends Controller
     {
         // Fetch products with delete_status = '1' (products that are not marked as deleted)
         $admin_user_id = auth()->user()->id;
-        $products = \DB::table('products')
+        $products = DB::table('products')
             ->where('delete_status', '1')
             ->where('admin_user_id', $admin_user_id)
             ->orderBy('created_at', 'asc')
             ->get();  // Use get() to fetch all products without pagination
 
         // Fetch all categories
-        $categories = \DB::table('categories')->pluck('category_name', 'id');
+        $categories = DB::table('categories')->pluck('category_name', 'id');
 
         // Add category names to products
         foreach ($products as $product) {
@@ -221,5 +230,118 @@ class ProductController extends Controller
     public function export()
     {
         return Excel::download(new ProductsExport, 'products_export.xlsx');
+    }
+
+    // public function downloadSample(): BinaryFileResponse
+    // {
+    //     $sampleData = [
+    //         [
+    //             'product_name'      => 'Towel Ring Black',
+    //             'category_name'     => 'Towel Rings',
+    //             'product_description' => 'Towel Ring Black',
+    //             'product_code'      => 'A022b',
+    //             'product_stock'     => 10,
+    //             'in_stock'          => 5,
+    //             'product_image'     => 'https://oreva.com.au/cdn/shop/files/TowelRingBlack-A022b-Copy_2.jpg?v=1718600952&width=493',
+    //         ],
+    //         [
+    //             'product_name'      => 'Towel ring Chrome',
+    //             'category_name'     => 'Towel Rings',
+    //             'product_description' => 'Towel ring Chrome',
+    //             'product_code'      => 'A022',
+    //             'product_stock'     => 10,
+    //             'in_stock'          => 5,
+    //             'product_image'     => 'https://oreva.com.au/cdn/shop/files/TowelringChrome-Copy_2.jpg?v=1718601860&width=493',
+    //         ],
+    //     ];
+
+    //     $collection = collect($sampleData);
+
+    //     return Excel::download(new class($collection) implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize {
+    //         private $collection;
+
+    //         public function __construct($collection)
+    //         {
+    //             $this->collection = $collection;
+    //         }
+
+    //         public function collection()
+    //         {
+    //             return $this->collection;
+    //         }
+
+    //         public function headings(): array
+    //         {
+    //             return [
+    //                 'product_name',
+    //                 'category_name',
+    //                 'product_description',
+    //                 'product_code',
+    //                 'product_stock',
+    //                 'in_stock',
+    //                 'product_image',
+    //             ];
+    //         }
+    //     }, 'product_sample.xlsx', ExcelFormat::XLSX);
+    // }
+
+    public function downloadSample(): BinaryFileResponse
+    {
+        $sampleData = [
+            [
+                'product_name' => 'Towel Ring Black',
+                'category_name' => 'Towel Rings',
+                'product_description' => 'Towel Ring Black',
+                'product_code' => 'A022b',
+                'product_stock' => 10,
+                'in_stock' => 5,
+                'product_image' => 'http://selection.oreva.au/images/products/example.jpg',
+            ],
+            [
+                'product_name' => 'Towel ring Chrome',
+                'category_name' => 'Towel Rings',
+                'product_description' => 'Towel ring Chrome',
+                'product_code' => 'A022',
+                'product_stock' => 10,
+                'in_stock' => 5,
+                'product_image' => 'http://selection.oreva.au/images/products/example-2.jpg',
+            ],
+        ];
+
+        return Excel::download(new class(collect($sampleData)) implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
+        {
+            protected $rows;
+
+            public function __construct($rows)
+            {
+                $this->rows = $rows;
+            }
+
+            public function collection()
+            {
+                return $this->rows;
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'product_name',
+                    'category_name',
+                    'product_description',
+                    'product_code',
+                    'product_stock',
+                    'in_stock',
+                    'product_image',
+                ];
+            }
+
+            // ✅ This fixes the error you got
+            public function styles(Worksheet $sheet)
+            {
+                return [
+                    1 => ['font' => ['bold' => true]],
+                ];
+            }
+        }, 'product_sample.xlsx', ExcelFormat::XLSX);
     }
 }

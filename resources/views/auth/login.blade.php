@@ -33,7 +33,7 @@
                             </span>
                         </a>
                     </div>
-                    <!-- /Logo -->
+                    <!-- /Logo -->  
                     
                     <form method="POST" action="{{ route('login') }}" id="formAuthentication" class="mb-3">
                         @csrf
