@@ -192,6 +192,7 @@
                 },
 
                 submitHandler: function(form) {
+                    $('button[type="submit"]').prop('disabled', true).text('Saving...');
                     form.submit();
                 }
             });
