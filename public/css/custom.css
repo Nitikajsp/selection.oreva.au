@@ -575,16 +575,6 @@ div#DataTables_Table_0_wrapper {
     text-transform: unset !important;
 }
 
-.btn-primary,
-.btn-primary:hover,
-.btn-primary:active,
-.btn-primary:visited {
-    background-color: #630660 !important;
-    border-color: #630660 !important;
-    border-radius: 0 !important;
-    font-size: 16px !important;
-    font-weight: 700 !important;
-}
 
 a {
     color: #630660;
@@ -857,12 +847,14 @@ div#app {
 
 
 .page-header {
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 34px;
     margin-bottom: 14px;
     display: flex;
     justify-content: space-between;
+}
+.page-header  h1{
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 34px;
 }
 
 .dashboard-card {

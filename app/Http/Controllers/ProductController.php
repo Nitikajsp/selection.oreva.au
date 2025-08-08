@@ -18,6 +18,7 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Excel as ExcelFormat;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 
@@ -30,29 +31,95 @@ class ProductController extends Controller
         }
     }
 
+    // public function showallproductdata()
+
+    // {
+    //     // Fetch products with delete_status = '1' (products that are not marked as deleted)
+    //     $admin_user_id = auth()->user()->id;
+    //     $products = DB::table('products')
+    //         ->where('delete_status', '1')
+    //         ->where('admin_user_id', $admin_user_id)
+    //         ->orderBy('created_at', 'asc')
+    //         ->get();  // Use get() to fetch all products without pagination
+
+    //     // Fetch all categories
+    //     $categories = DB::table('categories')->pluck('category_name', 'id');
+
+    //     // Add category names to products
+    //     foreach ($products as $product) {
+    //         $categoryIds = explode(',', $product->product_category);
+    //         $product->category_names = array_map(function ($id) use ($categories) {
+    //             return $categories[$id] ?? 'Unknown';
+    //         }, $categoryIds);
+    //     }
+
+    //     return view('products.product_list', compact('products'));
+    // }
+
     public function showallproductdata()
-
     {
-        // Fetch products with delete_status = '1' (products that are not marked as deleted)
-        $admin_user_id = auth()->user()->id;
-        $products = DB::table('products')
-            ->where('delete_status', '1')
-            ->where('admin_user_id', $admin_user_id)
-            ->orderBy('created_at', 'asc')
-            ->get();  // Use get() to fetch all products without pagination
+        if (request()->ajax()) {
+            $admin_user_id = auth()->user()->id;
 
-        // Fetch all categories
-        $categories = DB::table('categories')->pluck('category_name', 'id');
+            $data = DB::table('products')
+                ->where('delete_status', '1')
+                ->where('admin_user_id', $admin_user_id)
+                ->orderBy('created_at', 'desc')
+                ->select(['id', 'product_image', 'product_category', 'product_name', 'product_code', 'product_stock', 'in_stock']);
 
-        // Add category names to products
-        foreach ($products as $product) {
-            $categoryIds = explode(',', $product->product_category);
-            $product->category_names = array_map(function ($id) use ($categories) {
-                return $categories[$id] ?? 'Unknown';
-            }, $categoryIds);
+            $categories = DB::table('categories')->pluck('category_name', 'id');
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('product_image', function ($row) {
+                    $imageUrl = asset('images/products/' . $row->product_image);
+                    return '<img src="' . $imageUrl . '" alt="' . e($row->product_name) . '" width="80">';
+                })
+                ->addColumn('product_category', function ($row) use ($categories) {
+                    $categoryIds = explode(',', $row->product_category);
+                    $names = array_map(function ($id) use ($categories) {
+                        return $categories[$id] ?? 'Unknown';
+                    }, $categoryIds);
+                    return implode(', ', $names);
+                })
+                ->addColumn('stock', function ($row) {
+                    $checked = $row->in_stock ? 'checked' : '';
+                    return '
+                    <div class="form-check form-switch">
+                        <input class="form-check-input stock-toggle on-off-setbutton" type="checkbox" data-id="' . $row->id . '" ' . $checked . '>
+                    </div>
+                ';
+                })
+                ->addColumn('action', function ($row) {
+                    $editUrl = route('products.edit', $row->id);
+                    $viewUrl = route('products.show', $row->id);
+                    $deleteForm = '
+                    <form id="deleteForm' . $row->id . '" action="' . route('products.destroy', $row->id) . '" method="POST">
+                        ' . csrf_field() . method_field('DELETE') . '
+                        <button type="button" class="delete-btn text-danger dropdown-item" data-id="' . $row->id . '">
+                            <i class="ti ti-trash me-1"></i> Delete
+                        </button>
+                    </form>
+                ';
+                    return '
+                    <div class="d-inline-block">
+                        <a href="javascript:;" class="btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow text-black" data-bs-toggle="dropdown">
+                            <i class="ti ti-dots-vertical ti-md"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end m-0">
+                            <a href="' . $editUrl . '" class="dropdown-item"><i class="ti ti-pencil me-1"></i> Edit</a>
+                            <a href="' . $viewUrl . '" class="dropdown-item"><i class="ti ti-eye me-1"></i> View</a>
+                            <div class="dropdown-divider"></div>
+                            ' . $deleteForm . '
+                        </div>
+                    </div>
+                ';
+                })
+                ->rawColumns(['product_image', 'product_category', 'stock', 'action'])
+                ->make(true);
         }
 
-        return view('products.product_list', compact('products'));
+        return view('products.product_list');
     }
 
 
@@ -173,10 +240,13 @@ class ProductController extends Controller
     //  product delete controller start //
     public function destroy(Product $product)
     {
-        // Update the delete_status to '0' (as a string)
         $this->authorizeProduct($product);
         $product->delete_status = '0';
         $product->save();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => true]);
+        }
 
         return redirect()->route('showproduct')->with('success', 'Product marked as deleted successfully.');
     }
@@ -194,24 +264,23 @@ class ProductController extends Controller
 
 
     public function updateStock(Request $request)
-
     {
         $validated = $request->validate([
-
             'id' => 'required|integer|exists:products,id',
             'in_stock' => 'required|boolean',
-
         ]);
 
         try {
-
             $product = Product::find($validated['id']);
             $product->in_stock = $validated['in_stock'];
             $product->save();
 
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['success' => true]);
+            }
 
+            return back()->with('success', 'Stock updated successfully.');
+        } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
