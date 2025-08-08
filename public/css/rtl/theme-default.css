@@ -389,8 +389,8 @@ button.list-group-item-primary.active {
 .btn-primary:focus,
 .btn-primary.focus {
   color: #fff;
-  background-color: #55a0d5;
-  border-color: #55a0d5;
+  background-color: #630460;
+  border-color: #630460;
   box-shadow: none;
 }
 

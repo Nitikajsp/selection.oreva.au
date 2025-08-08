@@ -3,7 +3,6 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
 @endpush
 
 @section('content')
@@ -13,28 +12,7 @@
             <div class="content-wrapper pl-30 ">
 
                 <div class="flex-grow-1  container-fluid">
-                    <!-- <div class="row mb-3">
-                              <div class="col-12 editpadding">
-                                <a href="{{ route('home') }}" class="d-flex align-items-center text-dark">
-                                    <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2"></i> Back
-                                </a>
-                              </div>
-                            </div> -->
 
-                    {{-- <div class="page-header">
-                        <h1>Product</h1>
-                        <a href="{{ route('products.create') }}"
-                            class="btn btn-primary create-new waves-effect waves-light btn-dark rounded" tabindex="0"
-                            aria-controls="DataTables_Table_0">
-                            <span><i class="ti ti-plus me-sm-1"></i> Add Product</span>
-                        </a>
-
-                        <a href="#" class="btn btn-primary create-new waves-effect waves-light btn-dark rounded"
-                            data-bs-toggle="modal" data-bs-target="#importModal"><i class="ti ti-upload me-sm-1"></i> Import
-                            Products</a>
-
-
-                    </div> --}}
 
                     <div class="page-header flex-wrap gap-2">
                         <h1 class="mb-0">Product</h1>
@@ -52,16 +30,12 @@
                                 <span>Import Products</span>
                             </a>
 
-                            {{-- <a href="{{ route('products.sample.download') }}"
-                                class="btn btn-sm btn-light border rounded d-flex align-items-center px-2">
-                                <i class="ti ti-download me-1 text-secondary"></i>
-                                <span class="text-dark">Sample</span>
-                            </a> --}}
+
 
                             <a href="{{ route('products.sample.download') }}"
                                 class="btn btn-sm btn-light border rounded d-flex align-items-center px-2">
                                 <i class="bi bi-arrow-down-circle-fill text-dark fs-5"></i>
-                                {{-- <span class="text-dark">Download Sample</span> --}}
+
                             </a>
 
 
@@ -81,9 +55,11 @@
                         @endif
 
                         <div class="mt-3 card p-2 table_scroll">
-                            <table id="productTable" class="table table-bordered">
+
+                            <table id="productTable" class="table">
                                 <thead>
                                     <tr>
+                                        <th>ID</th>
                                         <th>Product Image</th>
                                         <th>Product Category</th>
                                         <th>Product Name</th>
@@ -93,69 +69,7 @@
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach ($products as $product)
-                                        <tr>
-                                            <td><img src="{{ asset('images/products/' . $product->product_image) }}"
-                                                    alt="{{ $product->product_name }}" width="100"></td>
-                                            <td>
-                                                @if (isset($product->category_names))
-                                                    {{ implode(', ', $product->category_names) }}
-                                                @else
-                                                    N/A
-                                                @endif
-                                            </td>
-                                            <td>{{ $product->product_name }}</td>
-                                            <td>{{ $product->product_code }}</td>
-                                            <td>{{ $product->product_stock }}</td>
-
-                                            <td>
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input stock-toggle on-off-setbutton"
-                                                        type="checkbox" role="switch" id="stockSwitch{{ $product->id }}"
-                                                        data-id="{{ $product->id }}"
-                                                        {{ $product->in_stock ? 'checked' : '' }}>
-                                                    <label class="form-check-label"
-                                                        for="stockSwitch{{ $product->id }}"></label>
-                                                </div>
-                                            </td>
-
-                                            <td class="d-flex justify-content-center align-items-center">
-
-                                                <div class="d-inline-block">
-                                                    <a href="javascript:;"
-                                                        class="btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow show text-black"
-                                                        data-bs-toggle="dropdown" aria-expanded="true">
-                                                        <i class="ti ti-dots-vertical ti-md"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu dropdown-menu-end m-0">
-                                                        <a href="{{ route('products.edit', $product->id) }}"
-                                                            class="dropdown-item">
-                                                            <i class="ti ti-pencil me-1"></i> Edit
-                                                        </a>
-                                                        <a href="{{ route('products.show', $product->id) }}"
-                                                            class="dropdown-item">
-                                                            <i class="ti ti-eye me-1"></i> View
-                                                        </a>
-
-                                                        <div class="dropdown-divider"></div>
-                                                        <form id="deleteForm{{ $product->id }}"
-                                                            action="{{ route('products.destroy', $product->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="button"
-                                                                class="delete-btn text-danger dropdown-item"
-                                                                data-id="{{ $product->id }}">
-                                                                <i class="ti ti-trash me-1"></i> Delete
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -217,11 +131,10 @@
                                 <i class="ti ti-check me-1"></i> Import
                             </button> --}}
 
-                            <button type="submit"
-                                class="btn btn-success d-flex align-items-center justify-content-center"
+                            <button type="submit" class="btn btn-success d-flex align-items-center justify-content-center"
                                 id="importSubmitBtn">
-                                <span class="spinner-border spinner-border-sm me-2 d-none" role="status"
-                                    aria-hidden="true" id="importSpinner"></span>
+                                <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"
+                                    id="importSpinner"></span>
                                 <span id="importBtnText"><i class="ti ti-check me-1"></i> Import</span>
                             </button>
 
@@ -235,78 +148,135 @@
 
     @push('scripts')
         <script>
-            $(document).ready(function() {
-
-                // Initialize DataTable
-                let table = new DataTable('#productTable', {
+            $(function() {
+                let table = $('#productTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ route('showproduct') }}",
                     order: [
                         [0, 'desc']
+                    ],
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'product_image',
+                            name: 'product_image',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'product_category',
+                            name: 'product_category'
+                        },
+                        {
+                            data: 'product_name',
+                            name: 'product_name'
+                        },
+                        {
+                            data: 'product_code',
+                            name: 'product_code'
+                        },
+                        {
+                            data: 'product_stock',
+                            name: 'product_stock'
+                        },
+                        {
+                            data: 'stock',
+                            name: 'stock',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        }
                     ]
                 });
 
-                // Use event delegation for handling the toggle switch change
-                $('#productTable').on('change', '.stock-toggle', function() {
-                    const productId = $(this).data('id');
-                    const inStock = $(this).is(':checked');
+                // Track ID for deletion
+                let deleteId = null;
 
-                    $.ajax({
-                        url: '{{ route('products.updateStock') }}',
-                        type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            id: productId,
-                            in_stock: inStock ? 1 : 0
-                        },
-                        success: function(response) {
-                            const alertType = response.success ? 'success' : 'danger';
-                            const message = response.success ?
-                                'Stock status updated successfully!' :
-                                'Failed to update stock status.';
-
-                            // Append Bootstrap alert message
-                            $('#alert-container').html(`
-                    <div class="alert alert-${alertType} alert-dismissible fade show" role="alert">
-                        <strong>${message}</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                `);
-
-                            if (!response.success) {
-                                // Optionally, revert the toggle state if update fails
-                                $(this).prop('checked', !inStock);
-                            }
-                        }.bind(this)
-                    });
-                });
-
-                // Handle delete button click with event delegation
-                let deleteForm; // Variable to hold the form reference
-                $('#productTable').on('click', '.delete-btn', function() {
-                    const productId = $(this).data('id');
-                    deleteForm = $(`#deleteForm${productId}`); // Assign the correct form to deleteForm
+                // When delete button is clicked, open modal
+                $('#productTable').on('click', '.delete-btn', function(e) {
+                    e.preventDefault();
+                    deleteId = $(this).data('id');
                     $('#deleteModal').modal('show');
                 });
 
-                // Confirm delete action
+                // When confirm delete button is clicked in modal
                 $('#confirmDeleteBtn').on('click', function() {
-                    if (deleteForm) {
-                        deleteForm.submit(); // Submit the form
-                    }
+                    if (!deleteId) return;
+
+                    $.ajax({
+                        url: `/products/${deleteId}`,
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(res) {
+                            $('#deleteModal').modal('hide');
+                            if (res.success) {
+                                showAlert('success', 'Product deleted successfully.');
+                                table.ajax.reload(null, false);
+                            } else {
+                                showAlert('danger', 'Error deleting product.');
+                            }
+                        },
+                        error: function() {
+                            $('#deleteModal').modal('hide');
+                            showAlert('danger', 'Error deleting product.');
+                        }
+                    });
                 });
+
+                // Stock toggle AJAX
+                $('#productTable').on('change', '.stock-toggle', function() {
+                    const productId = $(this).data('id');
+                    const inStock = $(this).is(':checked') ? 1 : 0;
+
+                    $.ajax({
+                        url: "{{ route('products.updateStock') }}",
+                        type: "POST",
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            id: productId,
+                            in_stock: inStock
+                        },
+                        success: function(res) {
+                            if (res.success) {
+                                showAlert('success', 'Stock status updated successfully.');
+                            } else {
+                                showAlert('danger', 'Error updating stock.');
+                            }
+                        },
+                        error: function() {
+                            showAlert('danger', 'Error updating stock.');
+                        }
+                    });
+                });
+
+                // Alert function
+                function showAlert(type, message) {
+                    const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+                    $('#alert-container').html(alertHtml);
+                    setTimeout(() => {
+                        $('.alert').alert('close');
+                    }, 3000);
+                }
             });
         </script>
 
-        {{-- <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const importModal = document.getElementById('importModal');
-                const importForm = document.getElementById('importForm');
-
-                // Reset form on modal hide (X button or Cancel)
-                importModal.addEventListener('hidden.bs.modal', function() {
-                    importForm.reset();
-                });
-            });
-        </script> --}}
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {

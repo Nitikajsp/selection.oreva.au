@@ -29,63 +29,16 @@
 
                         <div class="card mt-4 p-2 ">
                             <div class="customerscroll">
-                                <table class="table datatables-projects" id="customerlist">
+                                <table class="table" id="builderlist">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Builder Name</th>
+                                            <th>Name</th>
                                             <th>Email</th>
-                                            <!-- <th>Status</th> -->
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-
-                                    <tbody class="table-border-bottom-0">
-
-                                        @foreach ($builders as $builder)
-                                            <tr>
-
-                                                <td>{{ $builder->id }}</td>
-                                                <td>{{ $builder->builder_name }}</td>
-                                                <td>{{ $builder->contact_email }}</td>
-
-                                                <td class="d-flex justify-content-center align-items-center">
-                                                    <div class="d-inline-block">
-                                                        <a href="javascript:;"
-                                                            class="btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow show text-black"
-                                                            data-bs-toggle="dropdown" aria-expanded="true">
-                                                            <i class="ti ti-dots-vertical ti-md"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-end m-0">
-                                                            <a href="{{ route('user_builders.edit', $builder->id) }}"
-                                                                class="dropdown-item">
-                                                                <i class="ti ti-pencil me-1"></i> Edit
-                                                            </a>
-
-                                                            <a href="{{ route('user_builders.show', $builder->id) }}"
-                                                                class=" dropdown-item">
-                                                                <i class="ti ti-eye me-1"></i> View
-                                                            </a>
-
-                                                            <div class="dropdown-divider"></div>
-                                                            <form id="deleteCustomerForm"
-                                                                action="{{ route('user_builders.destroy', $builder->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="button"
-                                                                    class="text-danger delete-btn dropdown-item"
-                                                                    data-customer-id="{{ $builder->id }}"
-                                                                    data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                                                    <i class="ti ti-trash me-1"></i> Delete
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
+                                    <tbody></tbody> <!-- Empty tbody -->
                                 </table>
                             </div>
                         </div>
@@ -144,101 +97,127 @@
 
         @push('scripts')
             <script>
-                $(document).ready(function() {
-
-                    let customerIdToDelete;
-
-                    // Store the form to submit on confirmation
-                    $(document).on('click', '.delete-btn', function() {
-
-                        customerIdToDelete = $(this).data('customer-id');
-
-                        var form = $(this).closest('form');
-
-                        $('#confirmDeleteBtn').data('form', form);
-
-                    });
-
-                    // Submit the form when the confirm button is clicked
-                    $('#confirmDeleteBtn').on('click', function() {
-
-                        var form = $(this).data('form');
-
-                        form.submit();
-
-                    });
-
-                });
-            </script>
-
-
-            <script>
-                $(document).ready(function() {
-                    $('#customerlist').DataTable({
+                $(function() {
+                    // Datatable load
+                    var builderTable = $('#builderlist').DataTable({
+                        processing: true,
+                        serverSide: true,
+                        ajax: "{{ route('user_builders.index') }}",
                         order: [
                             [0, 'desc']
+                        ],
+                        columns: [{
+                                data: 'DT_RowIndex',
+                                name: 'DT_RowIndex',
+                                orderable: false,
+                                searchable: false
+                            },
+                            {
+                                data: 'builder_name',
+                                name: 'builder_name'
+                            },
+                            {
+                                data: 'contact_email',
+                                name: 'contact_email'
+                            },
+                            {
+                                data: 'action',
+                                name: 'action',
+                                orderable: false,
+                                searchable: false
+                            }
                         ]
                     });
 
-                    // Handle "Set" button click
-                    $(document).on('click', '.set-btn', function() {
-                        var customerId = $(this).data('customer-id');
-                        $('#selectedCustomerId').val(customerId);
+                    // DELETE CONFIRM WITH AJAX
+                    let deleteUrl = null;
 
-                        // Fetch the list options from the server
+                    $(document).on('click', '.delete-btn', function(e) {
+                        e.preventDefault();
+                        deleteUrl = $(this).closest('form').attr('action'); // Get form action URL
+                        $('#deleteModal').modal('show');
+                    });
+
+                    $('#confirmDeleteBtn').on('click', function() {
+                        if (!deleteUrl) return;
+
                         $.ajax({
-                            url: '/get-lists',
-                            method: 'GET',
+                            url: deleteUrl,
+                            type: 'POST',
                             data: {
-                                customer_id: customerId
+                                _token: '{{ csrf_token() }}',
+                                _method: 'DELETE'
                             },
                             success: function(response) {
-                                // Populate dropdown with options or show a message if no lists are available
-                                var options =
-                                    '<option value="" disabled selected required>Select...</option>';
-                                if (response.length > 0) {
-                                    response.forEach(function(list) {
-                                        options +=
-                                            `<option value="${list.id}">${list.name}</option>`;
-                                    });
-                                    $('#dropdownList').html(options);
-                                } else {
-                                    $('#dropdownList').html(
-                                        '<option value="" disabled>No lists available</option>');
-                                }
-                                // Set the create list link
-                                var createUrl =
-                                    '{{ route('createlist', ['customer_id' => ':customer_id']) }}';
-                                createUrl = createUrl.replace(':customer_id', customerId);
-                                $('#createListLink').attr('href', createUrl);
+                                $('#deleteModal').modal('hide');
 
-                                $('#setModal').modal('show');
+                                // Remove any old alerts
+                                $('.alert').remove();
+
+                                // Show success message
+                                $('.page-header').after(
+                                    `<div class="alert alert-success mt-2">${response.message}</div>`
+                                );
+
+                                // Reload DataTable
+                                builderTable.ajax.reload(null, false);
                             },
-                            error: function(xhr, status, error) {
-                                console.error('Error fetching lists:', error);
+                            error: function(xhr) {
+                                $('#deleteModal').modal('hide');
+                                alert('Something went wrong while deleting the builder.');
                             }
                         });
                     });
 
-                    // Handle form submission
-                    $('#setCustomerForm').on('submit', function(event) {
-                        event.preventDefault();
-                        var customerId = $('#selectedCustomerId').val();
-                        var selectedOption = $('#dropdownList').val();
+                    // SET BUTTON AJAX
+                    $(document).on('click', '.set-btn', function() {
+                        const builderId = $(this).data('builder-id');
+                        $('#selectedCustomerId').val(builderId);
 
-                        if (!selectedOption) {
+                        $.ajax({
+                            url: '/get-lists',
+                            method: 'GET',
+                            data: {
+                                customer_id: builderId
+                            },
+                            success: function(response) {
+                                let options = '<option value="" disabled selected>Select...</option>';
+                                if (response.length) {
+                                    response.forEach(list => {
+                                        options +=
+                                            `<option value="${list.id}">${list.name}</option>`;
+                                    });
+                                } else {
+                                    options = '<option value="" disabled>No lists available</option>';
+                                }
+                                $('#dropdownList').html(options);
+
+                                const createUrl = '{{ route('createlist', ':id') }}'.replace(':id',
+                                    builderId);
+                                $('#createListLink').attr('href', createUrl);
+
+                                $('#setModal').modal('show');
+                            }
+                        });
+                    });
+
+                    // SET FORM SUBMIT
+                    $('#setCustomerForm').on('submit', function(e) {
+                        e.preventDefault();
+                        const listId = $('#dropdownList').val();
+                        const builderId = $('#selectedCustomerId').val();
+
+                        if (!listId) {
                             alert('Please select a list.');
                             return;
                         }
 
-                        // Construct the URL
-                        var url =
-                            '{{ route('lists.addcartproduct', ['list' => 'LIST_ID', 'customer' => 'CUSTOMER_ID']) }}';
-                        url = url.replace('LIST_ID', selectedOption).replace('CUSTOMER_ID', customerId);
+                        const url =
+                            '{{ route('lists.addcartproduct', ['list' => 'LIST_ID', 'customer' => 'CUSTOMER_ID']) }}'
+                            .replace('LIST_ID', listId)
+                            .replace('CUSTOMER_ID', builderId);
 
-                        // Redirect to the constructed URL
                         window.location.href = url;
-
                     });
                 });
             </script>

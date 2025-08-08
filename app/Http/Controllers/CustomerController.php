@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use Illuminate\Validation\Rule;
+use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 
@@ -21,13 +22,57 @@ class CustomerController extends Controller
         }
     }
 
+    // public function index()
+    // {
+    //     $admin_user_id = auth()->user()->id;
+    //     $customers = Customer::where('admin_user_id', $admin_user_id)
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
+    //     return view('customers.customers_list', compact('customers'));
+    // }
+
     public function index()
     {
-        $admin_user_id = auth()->user()->id;
-        $customers = Customer::where('admin_user_id', $admin_user_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-        return view('customers.customers_list', compact('customers'));
+        if (request()->ajax()) {
+            $admin_user_id = auth()->user()->id;
+
+            $data = Customer::where('admin_user_id', $admin_user_id)
+                ->orderBy('created_at', 'desc')
+                ->select(['id', 'name', 'email']); // only needed columns
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '
+                    <div class="d-flex gap-1 align-items-center">
+                <button class="btn btn-primary btn-sm" data-customer-id="' . $row->id . '">Set</button>
+                <div class="d-inline-block">
+                    <a href="javascript:;" class="btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow text-black" data-bs-toggle="dropdown">
+                        <i class="ti ti-dots-vertical ti-md"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end m-0">
+                        <a href="' . route('customers.edit', $row->id) . '" class="dropdown-item">
+                            <i class="ti ti-pencil me-1"></i> Edit
+                        </a>
+                        <a href="' . route('customers.show', $row->id) . '" class="dropdown-item">
+                            <i class="ti ti-eye me-1"></i> View
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <form action="' . route('customers.destroy', $row->id) . '" method="POST" style="display:inline;">
+                            ' . csrf_field() . method_field("DELETE") . '
+                            <button type="button" class="text-danger dropdown-item delete-btn" data-customer-id="' . $row->id . '">
+                                <i class="ti ti-trash me-1"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div> </div>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('customers.customers_list');
     }
 
     /**

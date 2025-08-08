@@ -5,16 +5,54 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserBuilder;
 use Illuminate\Validation\Rule;
-
+use Yajra\DataTables\Facades\DataTables;
 
 class UserBuilderController extends Controller
 {
+    // public function index()
+    // {
+    //     $admin_user_id = auth()->user()->id;
+
+    //     $builders = UserBuilder::where('admin_user_id', $admin_user_id)->orderBy('created_at', 'desc')->get();
+    //     return view('user_builders.builder_list', compact('builders'));
+    // }
+
     public function index()
     {
-        $admin_user_id = auth()->user()->id;
+        if (request()->ajax()) {
+            $admin_user_id = auth()->user()->id;
 
-        $builders = UserBuilder::where('admin_user_id', $admin_user_id)->orderBy('created_at', 'desc')->get();
-        return view('user_builders.builder_list', compact('builders'));
+            $data = UserBuilder::where('admin_user_id', $admin_user_id)
+                ->orderBy('created_at', 'desc')
+                ->select(['id', 'builder_name', 'contact_email']);
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '
+                    <div class="d-flex gap-1 align-items-center">
+               
+               
+                    <a href="javascript:;" class="btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow text-black" data-bs-toggle="dropdown">
+                        <i class="ti ti-dots-vertical ti-md"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end m-0">
+                        <a href="' . route('user_builders.edit', $row->id) . '" class="dropdown-item"><i class="ti ti-pencil me-1"></i> Edit</a>
+                        <a href="' . route('user_builders.show', $row->id) . '" class="dropdown-item"><i class="ti ti-eye me-1"></i> View</a>
+                        <div class="dropdown-divider"></div>
+                        <form action="' . route('user_builders.destroy', $row->id) . '" method="POST">
+                            ' . csrf_field() . method_field("DELETE") . '
+                            <button type="submit" class="text-danger dropdown-item delete-btn"><i class="ti ti-trash me-1"></i> Delete</button>
+                        </form>
+                    </div>
+                </div> </div>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('user_builders.builder_list');
     }
 
     public function create()
@@ -96,11 +134,15 @@ class UserBuilderController extends Controller
 
     public function destroy($id)
     {
-        $user = UserBuilder::findOrFail($id);
-        $user->delete();
+        $builder = UserBuilder::findOrFail($id);
+        $builder->delete();
 
-        return redirect()->route('user_builders.index');
+        return response()->json([
+            'success' => true,
+            'message' => 'Builder deleted successfully!'
+        ]);
     }
+
 
     //  public function destroytest($id)
     // {
