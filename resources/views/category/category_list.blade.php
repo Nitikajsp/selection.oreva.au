@@ -20,6 +20,8 @@
                             <span><i class="ti ti-plus me-sm-1"></i> Add Category</span>
                         </a>
                     </div>
+                    <div class="container">
+
 
                     <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
 
@@ -29,22 +31,22 @@
                             </div>
                         @endif
 
-                        <div class="card mt-4 p-2">
-                            <div class="customerscroll">
+                        <div class="card p-2">
+                            <!-- <div class="customerscroll"> -->
                                 <table class="table" id="categorylist">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
                                             <th>Category Name</th>
                                             <th>Created At</th>
-                                            <th>Action</th>
+                                            <th >Action</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody> {{-- Empty tbody --}}
                                 </table>
-                            </div>
+                            <!-- </div> -->
                         </div>
-
+</div>
                     </div>
                 </div>
             </div>

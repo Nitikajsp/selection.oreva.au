@@ -162,6 +162,31 @@
                 </tbody>
             </table>
 
+            @if (!empty($orderData['posCustomerName'] ?? null) || !empty($orderData['posCustomerSignature'] ?? null))
+                <table width="100%" cellpadding="10" cellspacing="0" border="0" style="margin-top: 10px;">
+                    <tr>
+                        <td style="width: 50%; font-size: 14px; vertical-align: top;">
+                            @if (!empty($orderData['posCustomerName'] ?? null))
+                                <p style="margin: 0 0 6px 0;"><strong>Customer Name:</strong>
+                                    {{ $orderData['posCustomerName'] }}</p>
+                            @endif
+                        </td>
+                        <td style="width: 50%; font-size: 14px; vertical-align: top; text-align: right;">
+                            @if (!empty($orderData['posCustomerSignature'] ?? null))
+                                <div style="display: inline-block; text-align: center;">
+                                    <div
+                                        style="border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-bottom: 4px;">
+                                        <img src="{{ $orderData['posCustomerSignature'] }}" alt="Customer Signature"
+                                            style="max-width: 180px; max-height: 80px;">
+                                    </div>
+                                    <span style="font-size: 12px; color: #777;">Customer Signature</span>
+                                </div>
+                            @endif
+                        </td>
+                    </tr>
+                </table>
+            @endif
+
             <div class="note" style="font-size: 14px; color: #555; margin-top: 20px;">
                 Thank you for your business!
             </div>

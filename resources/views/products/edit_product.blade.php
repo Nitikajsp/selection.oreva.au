@@ -9,7 +9,7 @@
         @include('include.sidebar')
 
         <div class="layout-page">
-            <div class="content-wrapper pl-30">
+            <div class="content-wrapper ">
                 <div class="flex-grow-1 container-fluid">
 
                     <div class="page-header">
@@ -23,11 +23,10 @@
                         </a> --}}
                     </div>
 
-                    <div class="container">
                         <div class="inner-container">
                             <div class="page-wrapper-title">
-                                <h2>Edit Product</h2>
-                                <h5>Please enter product detail</h5>
+                                <h1>Edit Product</h1>
+                                <h6 >Please enter product detail</h6>
                             </div>
 
                             @if ($errors->any())
@@ -125,7 +124,6 @@
                                 </div>
                             </form>
                         </div>
-                    </div>
 
                 </div>
             </div>

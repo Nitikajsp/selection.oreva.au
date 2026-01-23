@@ -7,7 +7,7 @@
         @include('include.sidebar')
 
         <div class="layout-page">
-            <div class="content-wrapper pl-30 ">
+            <div class="content-wrapper">
 
                 <div class="flex-grow-1  container-fluid">
 
@@ -33,13 +33,13 @@
                     </div>
 
 
-                    <div class="container">
+                 
                         <div class="inner-container">
 
                              <div class="page-wrapper-title">
-                                <h2>Edit Category</h2>
+                                <h1>Edit Category</h1>
 
-                                <h5>Please update category detail</h5>
+                                <h6>Please update category detail</h6>
                             </div>
 
                             @if ($errors->any())
@@ -76,7 +76,7 @@
                                 </div>
                             </form>
                         </div>
-                    </div>
+                 
                 </div>
             </div>
         </div>

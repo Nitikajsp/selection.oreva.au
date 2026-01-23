@@ -18,9 +18,11 @@ class SettingController extends Controller
     {
         $request->validate([
             'logo' => 'required',
-            'phone_number' => 'required',
+            'phone_number' => ['required', 'regex:/^\d+$/'],
             'address' => 'required',
             'email' => 'required',
+        ], [
+            'phone_number.regex' => 'The phone number may contain digits only.',
         ]);
 
         $settings = [];

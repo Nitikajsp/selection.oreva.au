@@ -13,19 +13,19 @@
                 <div class="flex-grow-1  container-fluid">
 
                     {{-- <div class="row">
-      <div class="col-md-12 d-flex justify-content-between align-items-center editpadding">
-        <div class="col-md-12">
-          <a href="{{ route('home') }}" class="float-left d-flex text-black">
-            <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black rounded"></i>Back
-          </a>
-        </div>
-      </div>
-    </div> --}}
+                        <div class="col-md-12 d-flex justify-content-between align-items-center editpadding">
+                            <div class="col-md-12">
+                            <a href="{{ route('home') }}" class="float-left d-flex text-black">
+                                <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black rounded"></i>Back
+                            </a>
+                            </div>
+                        </div>
+                    </div> --}}
 
                     <div class="page-header">
                         <a href="{{ route('home') }}" class="back-btn">
-                            <i
-                                class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black"></i>Back
+                            <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black">
+                            </i>Back
                         </a>
                     </div>
 
@@ -127,8 +127,6 @@
                                     </div>
                                 </div>
 
-
-
                                 <div class="pull-right mt-1 text-center">
                                     <button type="submit" class="btn btn-primary btn btn-dark me-1 rounded">Save
                                         Setting</button>
@@ -145,6 +143,10 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            $('#phone_number').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
             // jQuery validation
             $('#settings-form').validate({
                 rules: {
@@ -156,6 +158,7 @@
                     },
                     phone_number: {
                         required: true,
+                        digits: true,
                     }
                 },
                 messages: {
@@ -167,6 +170,7 @@
                     },
                     phone_number: {
                         required: "Please provide a phone number.",
+                        digits: "Please enter only numbers for the phone number."
                     }
                 },
                 errorElement: 'div',

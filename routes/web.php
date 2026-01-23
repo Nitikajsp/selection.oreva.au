@@ -7,6 +7,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ListController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\CategoryController;
@@ -14,6 +15,8 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserBuilderController;
 use App\Exports\ProductsExport;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
 use Maatwebsite\Excel\Facades\Excel;
 
 // Authentication routes
@@ -26,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(HomeController::class)->group(function () {
         Route::get('/', 'index')->name('home');
         Route::get('/home', 'index')->name('home');
+        Route::get('/home/customers-data', 'customersData')->name('home.customers.data');
     });
 
     // Customer Routes
@@ -35,7 +39,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/check-email', 'checkEmail')->name('check.email');
 
         Route::get('/get-customers', [CustomerController::class, 'getCustomers']);
-
     });
 
     // Product Routes
@@ -49,7 +52,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export-products', 'export')->name('products.export');
 
         Route::get('sample-download', 'downloadSample')->name('products.sample.download');
-
     });
 
     // List Routes
@@ -71,8 +73,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/orders/save', 'saveOrder')->name('orders.save');
         Route::get('/list/{listId}/customer/{customerId}', 'showListCustomer')->name('showlistcustomer');
         Route::patch('/orders/{order}/updateQuantity', 'updateQuantity')->name('orders.updateQuantity');
+        Route::post('/orders/bulk-update-quantities', 'bulkUpdateQuantities')->name('orders.bulkUpdateQuantities');
         Route::delete('/orders/{order}', 'destroyOrders')->name('orders.destroyOrders');
-        Route::get('/send-email/{list_id}/{customer_id}', 'sendEmail')->name('send.email');
+        // Route::get('/send-email/{list_id}/{customer_id}', 'sendEmail')->name('send.email');
+        Route::match(['get', 'post'], '/send-email/{list_id}/{customer_id}', 'sendEmail')
+            ->name('send.email');
+
         Route::get('/get-customers', 'getCustomer')->name('get.customer');
     });
 
@@ -80,6 +86,15 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(OrdersController::class)->group(function () {
         Route::get('/showorder', 'showallorderdata')->name('showorder');
         Route::get('/viewsingalorders/{listId}', 'viewsingalorders')->name('vieworders');
+    });
+
+    // POS Routes
+    Route::controller(PosController::class)->group(function () {
+        Route::get('/pos', 'index')->name('pos.index');
+        Route::get('/pos/products', 'products')->name('pos.products');
+        Route::get('/pos/customers', 'customers')->name('pos.customers');
+        Route::get('/pos/orders', 'orders')->name('pos.orders.index');
+        Route::post('/pos/orders', 'store')->name('pos.orders.store');
     });
 
     // Category Routes
@@ -101,4 +116,14 @@ Route::middleware(['auth'])->group(function () {
 
     //Builder Routes
     Route::resource('user_builders', UserBuilderController::class);
+
+    // Logout Route
+    Route::post('/logout', function (Request $request) {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login'); // or redirect('/')
+    })->name('logout');
 });

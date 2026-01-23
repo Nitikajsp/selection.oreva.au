@@ -44,9 +44,7 @@ class CategoryController extends Controller
                     $btn = '
                      <div class="d-flex gap-1 align-items-center">
                     <div class="d-flex justify-content-center align-items-center">
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="' . route('editcategory', $row->id) . '" class="btn btn-primary btn-sm rounded set-btn set-btn-class">Edit</a>
-                        </div>
+             
                         <div class="d-inline-block">
                             <a href="javascript:;" class="btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow text-black" data-bs-toggle="dropdown">
                                 <i class="ti ti-dots-vertical ti-md"></i>

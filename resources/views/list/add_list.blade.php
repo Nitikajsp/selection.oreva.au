@@ -9,10 +9,10 @@
         @include('include.sidebar')
 
         <div class="layout-page">
-            <div class="content-wrapper pl-30 ">
+            <div class="content-wrapper ">
 
                 <div class="flex-grow-1  container-fluid">
-                    {{-- <div class="row">
+                    <!-- {{-- <div class="row">
                         <div class="col-md-12 d-flex justify-content-between align-items-center editpadding">
                             <a href="{{ url()->previous() }}" class="float-left d-flex text-black">
                                 <i
@@ -23,7 +23,7 @@
                                 View
                             </button>
                         </div>
-                    </div> --}}
+                    </div> --}} -->
                     <div class="page-header">
                         <a href="{{ url()->previous() }}" class="back-btn">
                             <i
@@ -35,18 +35,15 @@
 
                     </div>
 
-                    <div class="container">
-                        <div class="inner-container custmrmt0">
-                            <div class="row">
-                                <div class="col-lg-12 margin-tb">
-                                    <div class="pull-left">
-                                        <h2>Create Project</h2>
-                                    </div>
-                                    <div class="pull-left">
-                                        <h5>Please enter detail</h5>
-                                    </div>
+                   
+                        <div class="inner-container ">
+                           
+                                <div class="page-wrapper-title">
+                                        <h1>Create Project</h1>
+                                        <h6>Please enter detail</h6>
+                                 
                                 </div>
-                            </div>
+                         
 
                             @if ($errors->any())
                                 <div class="alert alert-danger">
@@ -218,7 +215,7 @@
 
                             </form>
                         </div>
-                    </div>
+               
                 </div>
             </div>
         </div>
@@ -231,6 +228,9 @@
                     // General regex for email validation
                     return this.optional(element) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
                 }, "Please enter a valid email address.");
+                $('input[name="contact_number"]').on('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
 
                 $("#createBranchForm").validate({
                     rules: {
@@ -255,6 +255,7 @@
                         // },
                         contact_number: {
                             required: true,
+                            digits: true,
                         },
                         contact_email: {
                             required: true,
@@ -289,7 +290,8 @@
                         //     required: "Please enter the list description",
                         // },
                         contact_number: {
-                            required: "Please enter the contact number"
+                            required: "Please enter the contact number",
+                            digits: "Please enter only numbers for the contact number"
                         },
                         contact_email: {
                             required: "Please enter the contact email",

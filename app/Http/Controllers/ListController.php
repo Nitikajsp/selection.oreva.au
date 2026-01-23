@@ -43,12 +43,14 @@ class ListController extends Controller
             // 'state' => 'required|max:255',
             // 'pincod' => 'required|max:255',
             //'list_description' => 'required',
-            'contact_number' => 'max:20',
+            'contact_number' => ['nullable', 'max:20', 'regex:/^\d+$/'],
             'contact_email' => 'required|email|max:255',
             //'builder_name' => 'required|max:255',
             //'status' => 'required|max:255',
             'customer_id' => 'required|exists:customers,id',
 
+        ], [
+            'contact_number.regex' => 'The contact number may contain digits only.',
         ]);
 
 
@@ -112,11 +114,13 @@ class ListController extends Controller
             //'state' => 'required|max:255',
             //'pincod' => 'required|max:255',
             //'description' => 'required',
-            'contact_number' => 'max:20',
+            'contact_number' => ['nullable', 'max:20', 'regex:/^\d+$/'],
             'contact_email' => 'required|email|max:255',
             //'builder_name' => 'required|max:255',
             //'status' => 'required|max:255',
 
+        ], [
+            'contact_number.regex' => 'The contact number may contain digits only.',
         ]);
 
         $list = ListModel::findOrFail($id);
@@ -578,144 +582,152 @@ class ListController extends Controller
     // }
 
     public function saveOrder(Request $request)
-{
-    ini_set('max_execution_time', 300);
-    set_time_limit(300);
+    {
+        ini_set('max_execution_time', 300);
+        set_time_limit(300);
 
-    if ($request->isMethod('post')) {
-        $listId = $request->input('list_id');
-        $customerId = $request->input('customer_id');
-        $cartItems = $request->input('cart_items');
-        $customerEmail = $request->input('customer_email');
-        $actionType = $request->input('action_type');
+        if ($request->isMethod('post')) {
+            $listId = $request->input('list_id');
+            $customerId = $request->input('customer_id');
+            $cartItems = $request->input('cart_items');
+            $customerEmail = $request->input('customer_email');
+            $actionType = $request->input('action_type');
+            $posCustomerName = trim((string) $request->input('customer_name', ''));
+            $posSignature = $request->input('signature');
 
-        try {
-            $list = ListModel::find($listId);
-            if (!$list) throw new \Exception("List not found.");
+            try {
+                $list = ListModel::find($listId);
+                if (!$list) throw new \Exception("List not found.");
 
-            $ordersData = [];
-            $orderId = null;
+                $ordersData = [];
+                $orderId = null;
 
-            foreach ($cartItems as $item) {
-                $productId = $item['product_id'];
-                $productCode = $item['product_code'];
-                $productName = $item['product_name'];
-                $quantity = (int) $item['quantity'];
-                $comment = $item['comment'];
-                $productImage = $item['product_image'];
+                foreach ($cartItems as $item) {
+                    $productId = $item['product_id'];
+                    $productCode = $item['product_code'];
+                    $productName = $item['product_name'];
+                    $quantity = (int) $item['quantity'];
+                    $comment = $item['comment'];
+                    $productImage = $item['product_image'];
 
-                $existingOrder = Order::where('product_id', $productId)
-                    ->where('list_id', $listId)
-                    ->where('customer_id', $customerId)
-                    ->first();
+                    $existingOrder = Order::where('product_id', $productId)
+                        ->where('list_id', $listId)
+                        ->where('customer_id', $customerId)
+                        ->first();
 
-                if ($existingOrder) {
-                    $existingOrder->update([
-                        'quantity' => $quantity,
-                        'comment' => $comment
-                    ]);
+                    if ($existingOrder) {
+                        $existingOrder->update([
+                            'quantity' => $quantity,
+                            'comment' => $comment,
+                            'pos_customer_name' => $posCustomerName ?: null,
+                            'pos_customer_signature' => $posSignature ?: null,
+                        ]);
 
-                    $ordersData[] = [
-                        'product_name' => $productName,
-                        'product_code' => $productCode,
-                        'quantity' => $existingOrder->quantity,
-                        'comment' => $comment,
-                        'product_image' => $productImage,
-                        'order_id' => $existingOrder->id,
-                    ];
-                } else {
-                    $order = Order::create([
-                        'quantity' => $quantity,
-                        'customer_id' => $customerId,
-                        'list_id' => $listId,
-                        'product_id' => $productId,
-                        'comment' => $comment,
-                    ]);
+                        $ordersData[] = [
+                            'product_name' => $productName,
+                            'product_code' => $productCode,
+                            'quantity' => $existingOrder->quantity,
+                            'comment' => $comment,
+                            'product_image' => $productImage,
+                            'order_id' => $existingOrder->id,
+                        ];
+                    } else {
+                        $order = Order::create([
+                            'quantity' => $quantity,
+                            'customer_id' => $customerId,
+                            'list_id' => $listId,
+                            'product_id' => $productId,
+                            'comment' => $comment,
+                            'pos_customer_name' => $posCustomerName ?: null,
+                            'pos_customer_signature' => $posSignature ?: null,
+                        ]);
 
-                    $ordersData[] = [
-                        'product_name' => $productName,
-                        'product_code' => $productCode,
-                        'quantity' => $quantity,
-                        'comment' => $comment,
-                        'product_image' => $productImage,
-                        'order_id' => $order->id,
-                    ];
+                        $ordersData[] = [
+                            'product_name' => $productName,
+                            'product_code' => $productCode,
+                            'quantity' => $quantity,
+                            'comment' => $comment,
+                            'product_image' => $productImage,
+                            'order_id' => $order->id,
+                        ];
 
-                    if (!$orderId) {
-                        $orderId = $order->id;
-                    }
-                }
-
-                // ✅ Deduct stock only if Save & Send
-                if ($actionType === 'save_send') {
-                    $product = Product::find($productId);
-                    if ($product) {
-                        $newStock = $product->product_stock - $quantity;
-
-                        if ($newStock < 0) {
-                            return redirect()->back()->with('error', "Not enough stock for product: {$product->product_name}");
+                        if (!$orderId) {
+                            $orderId = $order->id;
                         }
+                    }
 
-                        $product->product_stock = $newStock;
-                        $product->save();
+                    // ✅ Deduct stock only if Save & Send
+                    if ($actionType === 'save_send') {
+                        $product = Product::find($productId);
+                        if ($product) {
+                            $newStock = $product->product_stock - $quantity;
+
+                            if ($newStock < 0) {
+                                return redirect()->back()->with('error', "Not enough stock for product: {$product->product_name}");
+                            }
+
+                            $product->product_stock = $newStock;
+                            $product->save();
+                        }
                     }
                 }
-            }
 
-            // Clear cart session
-            $request->session()->forget('cart.' . $listId);
+                // Clear cart session
+                $request->session()->forget('cart.' . $listId);
 
-            $customer = Customer::find($customerId);
-            $customerName = $customer ? $customer->name : 'Customer';
+                $customer = Customer::find($customerId);
+                $customerName = $customer ? $customer->name : 'Customer';
 
-            $orderDate = now()->format('Y-m-d H:i:s');
+                $orderDate = now()->format('Y-m-d H:i:s');
 
-            $orderData = [
-                'customerName' => $customerName,
-                'orderId' => $orderId,
-                'orderDate' => $orderDate,
-                'ordersData' => $ordersData,
-                'customerEmail' => $customerEmail,
-                'customer' => $customer,
-                'list' => $list,
-            ];
+                $orderData = [
+                    'customerName' => $customerName,
+                    'orderId' => $orderId,
+                    'orderDate' => $orderDate,
+                    'ordersData' => $ordersData,
+                    'customerEmail' => $customerEmail,
+                    'customer' => $customer,
+                    'list' => $list,
+                    'posCustomerName' => $posCustomerName ?: null,
+                    'posCustomerSignature' => $posSignature ?: null,
+                ];
 
-            // ✅ Email logic
-            if ($actionType === 'save_send') {
-                $pdfContent = Pdf::loadView('emails.order_confirmation', compact('orderData'))->output();
+                // ✅ Email logic
+                if ($actionType === 'save_send') {
+                    $pdfContent = Pdf::loadView('emails.order_confirmation', compact('orderData'))->output();
 
-                // Send to customer
-                Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
+                    // Send to customer
+                    Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
 
-                // Send to list contact
-                Mail::to($list->contact_email)->send(new OrderConfirmation($orderData, $pdfContent));
+                    // Send to list contact
+                    Mail::to($list->contact_email)->send(new OrderConfirmation($orderData, $pdfContent));
 
-                // Send to admin(s)
-                $adminEmails = get_setting('email');
-                if ($adminEmails) {
-                    $emails = array_map('trim', explode(',', $adminEmails));
-                    foreach ($emails as $adminEmail) {
-                        Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
+                    // Send to admin(s)
+                    $adminEmails = get_setting('email');
+                    if ($adminEmails) {
+                        $emails = array_map('trim', explode(',', $adminEmails));
+                        foreach ($emails as $adminEmail) {
+                            Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
+                        }
                     }
+
+                    return redirect()->route('showlistcustomer', [
+                        'listId' => $listId,
+                        'customerId' => $customerId
+                    ])->with('success', 'Order saved successfully and email with PDF sent.');
                 }
 
                 return redirect()->route('showlistcustomer', [
                     'listId' => $listId,
                     'customerId' => $customerId
-                ])->with('success', 'Order saved successfully and email with PDF sent.');
+                ])->with('success', 'Order saved successfully.');
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Failed to save order. ' . $e->getMessage());
             }
-
-            return redirect()->route('showlistcustomer', [
-                'listId' => $listId,
-                'customerId' => $customerId
-            ])->with('success', 'Order saved successfully.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to save order. ' . $e->getMessage());
         }
-    }
 
-    return redirect()->back();
-}
+        return redirect()->back();
+    }
 
 
 
@@ -790,10 +802,46 @@ class ListController extends Controller
 
             $order->save();
 
-            return response()->json(['success' => true, 'message' => 'Quantity updated successfully']);
+            return response()->json(['success' => true, 'message' => 'Quantity updated successfully!']);
         }
 
         return response()->json(['success' => false, 'message' => 'Order not found'], 404);
+    }
+
+    /**
+     * Bulk update quantities for multiple orders from the Show List page.
+     */
+    public function bulkUpdateQuantities(Request $request)
+    {
+        $ordersPayload = $request->input('orders', []);
+
+        if (!is_array($ordersPayload) || empty($ordersPayload)) {
+            return redirect()->back()->with('error', 'No quantities to update.');
+        }
+
+        $updated = 0;
+
+        foreach ($ordersPayload as $orderId => $data) {
+            $quantity = isset($data['quantity']) ? (int) $data['quantity'] : null;
+            if ($quantity === null) {
+                continue;   
+            }
+
+            $order = Order::find($orderId);
+            if (!$order) {
+                continue;
+            }
+
+            $order->quantity = max(0, $quantity);
+            $order->save();
+            $updated++;
+        }
+
+        if ($updated === 0) {
+            return redirect()->back()->with('error', 'No orders were updated.');
+        }
+
+        return redirect()->back()->with('success', 'Quantity updated successfully!');
     }
 
 
@@ -833,62 +881,132 @@ class ListController extends Controller
         return view('lists.show_list', compact('list', 'customer_id'));
     }
 
-    public function sendEmail($list_id, $customer_id)
+    // public function sendEmail(Request $request, $list_id, $customer_id)
+    // {
+    //     $request->validate([
+    //         'customer_email' => 'required|email',
+    //     ]);
 
+    //     // Retrieve list & customer
+    //     $list = ListModel::find($list_id);
+    //     $customer = Customer::find($customer_id);
+
+    //     if (!$list || !$customer) {
+    //         return redirect()->back()->with('error', 'List or Customer not found');
+    //     }
+
+    //     // Orders fetch
+    //     $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image')
+    //         ->join('products', 'orders.product_id', '=', 'products.id')
+    //         ->where('orders.list_id', $list_id)
+    //         ->where('orders.customer_id', $customer_id)
+    //         ->get();
+
+    //     $orderData = [
+    //         'list' => $list,
+    //         'customer' => $customer,
+    //         'ordersData' => $ordersData
+    //     ];
+
+    //     $pdf = Pdf::loadView('emails.order_confirmation', ['orderData' => $orderData]);
+
+    //     // ✅ Send to selected email from form
+    //     $selectedEmail = $request->customer_email;
+    //     Mail::send([], [], function ($message) use ($selectedEmail, $list, $pdf) {
+    //         $message->to($selectedEmail)
+    //             ->subject('Product List Received from Oreva Selection')
+    //             ->attachData($pdf->output(), "Selection_Oreva_{$list->id}.pdf");
+    //     });
+
+    //     // Send to list contact email
+    //     if (!empty($list->contact_email)) {
+    //         Mail::send([], [], function ($message) use ($list, $pdf) {
+    //             $message->to($list->contact_email)
+    //                 ->subject('Product List Received from Oreva Selection')
+    //                 ->attachData($pdf->output(), "Selection_Oreva_{$list->id}.pdf");
+    //         });
+    //     }
+
+    //     // Send to admin emails
+    //     $adminEmails = get_setting('email');
+    //     if ($adminEmails) {
+    //         $emails = array_map('trim', explode(',', $adminEmails));
+    //         Mail::send([], [], function ($message) use ($emails, $list, $pdf) {
+    //             $message->to($emails)
+    //                 ->subject('Product List Received from Oreva Selection (Admin Copy)')
+    //                 ->attachData($pdf->output(), "Selection_Oreva_{$list->id}_Admin.pdf");
+    //         });
+    //     }
+
+    //     return redirect()->back()->with('success', 'Email sent successfully to ' . $selectedEmail);
+    // }
+
+    public function sendEmail(Request $request, $list_id, $customer_id)
     {
-        // Retrieve the list and customer based on the IDs
+        $request->validate([
+            'customer_email' => 'required|email',
+        ]);
+
+        // Retrieve list & customer
         $list = ListModel::find($list_id);
         $customer = Customer::find($customer_id);
 
-        // Check if list and customer exist
         if (!$list || !$customer) {
             return redirect()->back()->with('error', 'List or Customer not found');
         }
 
-        // Retrieve all orders with product details using product_id
+        // Orders fetch
         $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image')
             ->join('products', 'orders.product_id', '=', 'products.id')
             ->where('orders.list_id', $list_id)
-            ->where('orders.customer_id', $customer_id) // Ensure we're filtering by customer_id as well
+            ->where('orders.customer_id', $customer_id)
             ->get();
 
-        // Prepare the order data to be sent to the email view
         $orderData = [
             'list' => $list,
             'customer' => $customer,
             'ordersData' => $ordersData
         ];
 
-        // Generate the PDF from the Blade view
         $pdf = Pdf::loadView('emails.order_confirmation', ['orderData' => $orderData]);
 
-        // Send the email to the customer with the PDF attachment
-        Mail::send([], [], function ($message) use ($customer, $list, $pdf) {
-            $message->to($customer->email)
-                ->subject('Product List Received from Oreva Selection')
-                ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
+        // Subject with customer name
+        $subject = "Product List Received from {$customer->name} - Oreva Selection";
+
+        // ✅ Send to selected email from form
+        $selectedEmail = $request->customer_email;
+        Mail::send([], [], function ($message) use ($selectedEmail, $list, $pdf, $subject) {
+            $message->to($selectedEmail)
+                ->subject($subject)
+                ->attachData($pdf->output(), "Selection_Oreva_{$list->id}.pdf");
         });
 
-        // Send the email to the list email with the PDF attachment
-        Mail::send([], [], function ($message) use ($list, $pdf) {
-            $message->to($list->contact_email)
-                ->subject('Product List Received from Oreva Selection')
-                ->attachData($pdf->output(), "Selection Oreva_{$list->id}.pdf");
-        });
-
-        $adminEmails = get_setting('email'); // e.g., "email1@example.com,email2@example.com"
-        if ($adminEmails) {
-            $emails = array_map('trim', explode(',', $adminEmails));
-            Mail::send([], [], function ($message) use ($emails, $list, $pdf) {
-                $message->to($emails)
-                    ->subject('Product List Received from Oreva Selection (Admin Copy)')
-                    ->attachData($pdf->output(), "Selection Oreva_{$list->id}_Admin.pdf");
+        // Send to list contact email
+        if (!empty($list->contact_email)) {
+            Mail::send([], [], function ($message) use ($list, $pdf, $subject) {
+                $message->to($list->contact_email)
+                    ->subject($subject)
+                    ->attachData($pdf->output(), "Selection_Oreva_{$list->id}.pdf");
             });
         }
 
-        // Redirect back with a success message
-        return redirect()->back()->with('success', 'Email sent successfully!');
+        // Send to admin emails
+        $adminEmails = get_setting('email');
+        if ($adminEmails) {
+            $emails = array_map('trim', explode(',', $adminEmails));
+            $adminSubject = $subject . " (Admin Copy)";
+            Mail::send([], [], function ($message) use ($emails, $list, $pdf, $adminSubject) {
+                $message->to($emails)
+                    ->subject($adminSubject)
+                    ->attachData($pdf->output(), "Selection_Oreva_{$list->id}_Admin.pdf");
+            });
+        }
+
+        return redirect()->back()->with('success', 'Email sent successfully to ' . $selectedEmail);
     }
+
+
+
     public function getCustomer(Request $request)
     {
         // dd($request->all());
@@ -899,6 +1017,7 @@ class ListController extends Controller
             ->get();
         return response()->json($customers);
     }
+
     // public function getCustomer(Request $request){
     //     // dd($request->all());
     //     $search = $request->query('term');

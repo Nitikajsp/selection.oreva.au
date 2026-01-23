@@ -21,11 +21,8 @@
                         </a>
                     </div>
 
-                    <div class="container addcustomer_pad">
-                        <div class="row">
-                            <div class="col-md-12 d-flex justify-content-between align-items-center custmrmt0">
-                                <h2>Our Product</h2>
-
+                  <div class="page-header">
+                                <h1 class="mb-0">Our Product</h1>
                                 {{-- ✅ Dynamic Cart Count --}}
                                 <form action="{{ route('lists.view-cart', ['list' => $list->id, 'customer_id' => $list->customer_id]) }}" method="post">
                                     @csrf
@@ -42,11 +39,11 @@
 
                                     <button type="submit" class="border-0 position-relative" id="view-cart-btn">
                                         <i class="ti ti-shopping-cart ti-md"></i>
-                                        <span id="cart-count-badge" class="badge bg-danger">{{ $cartCount }}</span>
+                                        <span id="cart-count-badge" class="badge bg-primary">{{ $cartCount }}</span>
                                     </button>
                                 </form>
                             </div>
-                        </div>
+                        
 
                         @if (session('success'))
                             <div class="alert alert-success">
@@ -55,13 +52,13 @@
                         @endif
 
                         <div id="alert-placeholder"></div>
-
-                        <div class="table_scroll">
-                            <table id="product-table" class="table table-bordered mt-3 table_scroll tablewdth">
-                                <thead>
+    <div class="card  p-2">
+                            <div class="customerscroll">
+                            <table id="product-table" class="table ">
+                                <thead >
                                     <tr>
                                         <th class="col-md-2">Product</th>
-                                        <th class="col-md-2">Product Category</th>
+                                        {{-- <th class="col-md-2">Product Category</th> --}}
                                         <th>Code</th>
                                         <th class="col-md-3">Product Title</th>
                                         <th>Action</th>
@@ -71,7 +68,7 @@
                                 <tbody id="addtocartdatatabal">
                                     @foreach ($products as $product)
                                         <tr>
-                                            <td style="border: 1px solid #DDDDDD !important">
+                                            <td >
                                                 @if ($product->product_image)
                                                     <img src="{{ asset('images/products/' . $product->product_image) }}"
                                                         alt="{{ $product->product_name }}" width="70">
@@ -79,36 +76,36 @@
                                                     No Image
                                                 @endif
                                             </td>
-                                            <td style="border: 1px solid #DDDDDD !important">
+                                            {{-- <td >
                                                 @if (isset($product->category_names))
                                                     {{ implode(', ', $product->category_names) }}
                                                 @else
                                                     N/A
                                                 @endif
-                                            </td>
-                                            <td style="border: 1px solid #DDDDDD !important">{{ $product->product_code }}</td>
-                                            <td style="border: 1px solid #DDDDDD !important">
+                                            </td> --}}
+                                            <td >{{ $product->product_code }}</td>
+                                            <td >
                                                 <div>{{ $product->product_name }}</div>
                                             </td>
-                                            <td style="border: 1px solid #DDDDDD !important">
+                                            <td >
                                                 <div class="input-group justify-content-center">
                                                     <span class="d-flex align-items-center">
                                                         <span class="me-1">Qty: </span>
                                                         <input type="number" name="quantity" value="1" min="0"
-                                                            required class="form-control input-touchspin"
+                                                            required class="form-control input-touchspin text-center"
                                                             data-product-id="{{ $product->id }}">
                                                     </span>
                                                 </div>
                                                 <textarea name="comment" class="form-control mt-2" rows="2" data-product-id="{{ $product->id }}"
                                                     placeholder="Enter a comment..."></textarea>
 
-                                                <button type="button" class="btn btn-primary mt-2 add-to-cart rounded"
+                                                <button type="button"  class="btn btn-sm btn-primary d-block add-to-cart mt-2 mx-auto  rounded"
                                                     data-product-id="{{ $product->id }}">Add to Cart</button>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
+                            </table> </div>
                         </div>
                     </div> <!-- /.container -->
                 </div> <!-- /.container-fluid -->

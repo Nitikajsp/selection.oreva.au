@@ -7,7 +7,7 @@
         @include('include.sidebar')
 
         <div class="layout-page">
-            <div class="content-wrapper pl-30 ">
+            <div class="content-wrapper ">
 
                 <div class="flex-grow-1  container-fluid">
 
@@ -18,18 +18,16 @@
 
 
                     </div>
-                    <div class="container">
-
-
+                  
                         <div class="inner-container ">
                             <div class="page-wrapper-title">
                                 <h2>View Customer Detail</h2>
 
                             </div>
-                            <div class="d-flex justify-content-end gap-2 ms-auto">
+                            <div class="d-flex justify-content-end gap-2 ms-auto mb-2 mb-md-0">
 
                                 <a href="{{ route('customers.edit', $customer->id) }}"
-                                    class="btn btn-icon btn-sm btn-label-primary waves-effect">
+                                   class="btn btn-icon btn-sm btn-label-primary waves-effect">
                                     <i class="ti ti-pencil "></i>
                                 </a>
 
@@ -39,32 +37,32 @@
                                     @csrf
                                     @method('DELETE')
                                 </form>
-                                <button type="button" class="btn btn-icon btn-sm btn-label-danger waves-effect delete-btn"
+                                <button type="button" class="btn btn-icon btn-sm btn-label-danger waves-effect delete-btn" 
                                     data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="ti ti-trash"></i>
                                 </button>
 
-                            </div>
+                            </div> 
 
                             <div class="d-flex">
                                 <div class=" d-flex flex-column justify-content-center w-100">
                                     <div class="row mb-2">
-                                        <div class="col-sm-4 fw-bold">Customer Name:</div>
-                                        <div class="col-sm-8">{{ $customer->name }}</div>
+                                        <div class="col-6 col-sm-4 data-text">Customer Name:</div>
+                                        <div class="col-6 col-sm-8" > <h6 class="data-value"> {{ $customer  ->name }} </h6> </div>
                                     </div>
                                     <div class="row mb-2">
-                                        <div class="col-sm-4 fw-bold">Customer ID:</div>
-                                        <div class="col-sm-8">{{ $customer->id }}</div>
+                                        <div class="col-6 col-sm-4 data-text">Customer ID:</div>
+                                        <div class="col-6 col-sm-8"> <h6 class="data-value">{{ $customer->id }} </h6> </div>
                                     </div>
                                     <div class="row mb-2">
-                                        <div class="col-sm-4 fw-bold">Email ID:</div>
-                                        <div class="col-sm-8">{{ $customer->email }}</div>
+                                        <div class="col-6 col-sm-4 data-text">Email ID:</div>
+                                        <div class="col-6 col-sm-8"><a href="mailto:{{ $customer->email }}" class="data-value"> {{ $customer->email }}</a> </div>
                                     </div>
                                     <div class="row mb-2">
-                                        <div class="col-sm-4 fw-bold">Phone Number:</div>
-                                        <div class="col-sm-8">
+                                        <div class="col-6 col-sm-4 data-text">Phone Number:</div>
+                                        <div class="col-6 col-sm-8">
                                             <a href="tel:{{ $customer->phone }}"
-                                                class="text-dark">{{ $customer->phone }}</a>
+                                                class="data-value">{{ $customer->phone }}</a>
                                         </div>
                                     </div>
                                 </div>
@@ -74,7 +72,7 @@
                                 <div class="col-lg-12 margin-tb">
                                     <div class="pull-right text-end">
                                         <a href="{{ route('createlist', ['customer_id' => $customer->id]) }}"
-                                            class="btn btn-outline-dark text-dark rounded" tabindex="0"
+                                            class="btn btn-outline-dark" tabindex="0"
                                             aria-controls="DataTables_Table_0">
                                             <span><i class="ti ti-plus me-sm-1"></i> Create Project</span>
                                         </a>
@@ -87,7 +85,7 @@
                                     <thead>
                                         <tr>
                                             <th>Street Name</th>
-                                            <th>Description</th>
+                                            {{-- <th>Description</th> --}}
                                             <th>Product Count</th>
                                             <th class="text-end">Action</th>
                                         </tr>
@@ -96,7 +94,7 @@
                                         @foreach ($customer->lists as $list)
                                             <tr class="mt-2">
                                                 <td>{{ $list->name }}</td>
-                                                <td>{{ $list->description }}</td>
+                                                {{-- <td>{{ $list->description }}</td> --}}
                                                 <td>
                                                     {{ $list->orders->count() }}
                                                 </td>
@@ -125,7 +123,6 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
