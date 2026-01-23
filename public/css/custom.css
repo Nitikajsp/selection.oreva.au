@@ -23,168 +23,7 @@
     src: url(../../fonts/Inter-Light.ttf);
 }
 
-/* responsive css start */
 
-
-
-@media (max-width: 940px) {
-    .content-wrapper {
-        width: 80vw;
-    }
-
-    /* .sidebar {
-        max-width: 20%;
-
-    } */
-
-    .displaycenter {
-        margin: auto !important;
-    }
-
-
-    .customerscroll {
-        overflow: scroll;
-    }
-
-    .customer_table_width {
-        width: 80vw;
-    }
-
-    .table_scroll {
-        overflow: scroll;
-
-    }
-
-    .show_custmer {
-        width: 80vw;
-
-    }
-
-    .container.addcustomer_pad {
-        max-width: 85vw !important;
-        width: 100% !important;
-    }
-
-    .tablewdth {
-        max-width: 80% !important;
-        width: 80% !important;
-    }
-
-    .addcartwidth {
-        width: 80% !important;
-        max-width: 80% !important;
-    }
-
-    .modal-dialog.modal-dialog-centered {
-        margin: auto;
-    }
-
-}
-
-@media (max-width: 767px) {
-    .card-header .dt-buttons.flex-wrap {
-        text-align: center;
-    }
-
-    .centerwrap {
-        /* text-align: center !important; */
-        margin: auto;
-    }
-
-    .head-label {
-        text-align: center;
-    }
-
-    .customr_btn_centr {
-        margin: auto !important;
-    }
-
-    .gappingrow {
-        row-gap: 10px !important;
-    }
-
-    .showlstpad {
-        width: 80vw !important;
-
-
-    }
-
-    .gappingrow {
-        width: 90%;
-    }
-
-    .table_scrl {
-        overflow: scroll;
-    }
-
-    .container.mt-3.viewcardpad.viewresponsivecard {
-        width: 85vw !important;
-    }
-
-    .spacebtwn {
-        margin: 10px 0;
-    }
-
-    .d-flex.justify-content-between.productlistcenter {
-        display: block !important;
-    }
-
-    input#dt-search-0 {
-        width: 130px;
-    }
-
-    .custmrmt0 {
-        margin-top: -45px !important;
-    }
-
-    .inner-container {
-        padding: 15px !important;
-    }
-
-}
-
-@media (max-width: 600px) {
-    .customer_table_width {
-        width: 72vw;
-    }
-
-    .modal-dialog.modal-dialog-centered {
-        width: 75vw;
-        height: 60vw;
-    }
-
-}
-
-@media (max-width: 400px) {
-    .customer_table_width {
-        width: 68vw;
-    }
-
-    .showlstpad {
-        width: 80vw !important;
-
-    }
-}
-
-@media (max-width: 350px) {
-    .customer_table_width {
-        width: 64vw;
-    }
-}
-
-@media (min-width: 550px) and (max-width: 900px) {
-    .layout-wrapper .container {
-        max-width: 89vw !important;
-    }
-}
-
-@media screen and (min-width:941px) {
-    .modal-dialog.modal-dialog-centered {
-        margin: auto;
-    }
-}
-
-/* responsive css end */
 
 
 h1,
@@ -260,6 +99,7 @@ body {
 .content-wrapper {
     flex-grow: 1;
     padding: 30px;
+    justify-content: flex-start !important;
 }
 
 .back-btn {
@@ -274,18 +114,26 @@ body {
     color: var(--bd-body-color);
 }
 
-.content-wrapper {
-    justify-content: flex-start !important;
-}
 
 .page-wrapper-title {
-    margin-bottom: 14px;
+    margin-bottom: 18px;
 }
 
 .page-wrapper-title h2 {
-    /* font-weight: 600;
+    font-size: 1.6rem;
+}
+
+.page-wrapper-title h1 {
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 36px;
+}
+
+.page-wrapper-title h6 {
+    font-weight: 400;
     font-size: 14px;
-    line-height: 24px; */
+    line-height: 22px;
+    color: #7c7c7c;
 
 }
 
@@ -315,11 +163,17 @@ body {
 }
 
 .sidebar .nav-logo-wrap {
-    padding: 22px 5px;
+    padding: 14px 5px;
     background-color: #FFF;
-    max-height: 80px;
+    /* max-height: 80px; */
     text-align: center;
 }
+
+.sidebar-logo {
+    width: 100%;
+    height: auto;
+}
+
 
 .sidebar .nav-item {
     list-style-type: none;
@@ -449,8 +303,14 @@ body {
     margin-right: 5px;
 }
 
-td {
-    border: none !important;
+table.dataTable {
+    min-width: max-content;
+}
+
+table.dataTable>tbody>tr>th,
+table.dataTable>tbody>tr>td {
+    font-size: 14px;
+    border-bottom: 1px solid var(--bs-border-color);
 }
 
 .datatables-projects tr {
@@ -559,12 +419,11 @@ td {
     margin-left: 30px;
 }
 
-.container {
+/* .container {
     width: 100% !important;
-    /* max-width: 780px !important; */
     padding: 0px !important;
     margin: 0px !important;
-}
+} */
 
 div#DataTables_Table_0_wrapper {
     /* padding-left: 20px;
@@ -601,10 +460,7 @@ table.dataTable>thead>tr>th {
     padding: 40px;
 }
 
-.btn-outline-dark {
-    border-radius: 0 !important;
-    font-weight: 700 !important;
-}
+
 
 .profile-image .profile-img {
     width: 170px;
@@ -655,9 +511,7 @@ div.text-dark {
     box-shadow: unset !important;
 }
 
-.input-group.bootstrap-touchspin {
-    width: 50% !important;
-}
+
 
 .bootstrap-touchspin .btn {
     position: absolute !important;
@@ -766,10 +620,6 @@ div.text-dark {
     width: 100%;
 }
 
-.sidebar-logo {
-    height: 100%;
-    width: auto;
-}
 
 .reset-password-form {
     display: flex;
@@ -795,6 +645,8 @@ select#dt-length-0 {
     /* max-width: calc(100% - 80px); */
     width: 100%
 }
+
+
 
 .table_scroll .dt-layout-row:nth-child(2) .dt-layout-cell {
     overflow-x: scroll;
@@ -847,11 +699,12 @@ div#app {
 
 
 .page-header {
-    margin-bottom: 14px;
+    margin-bottom: 24px;
     display: flex;
     justify-content: space-between;
 }
-.page-header  h1{
+
+.page-header h1 {
     font-size: 1.5rem;
     font-weight: 500;
     line-height: 34px;
@@ -888,8 +741,612 @@ div#app {
     line-height: 28px;
 }
 
+.data-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1C001B66;
+}
+
+.data-value {
+    color: inherit;
+    word-break: break-all;
+}
+
+.qty-label {
+    white-space: nowrap;
+}
+
+
+
+/* responsive css start */
+@media (width<=1400px) {
+    .inner-container {
+        max-width: 90%;
+    }
+}
+
 @media (width<=1024px) {
     .inner-container {
         max-width: 100%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 940px) {
+    .content-wrapper {
+        /* width: 80vw; */
+        padding: 15px;
+    }
+
+
+
+    /* .sidebar {
+        max-width: 20%;
+
+    } */
+
+    .displaycenter {
+        margin: auto !important;
+    }
+
+
+    .customerscroll {
+        overflow: scroll;
+    }
+
+    .customer_table_width {
+        width: 80vw;
+    }
+
+    .table_scroll {
+        overflow: scroll;
+
+    }
+
+    .show_custmer {
+        width: 80vw;
+
+    }
+
+    .container.addcustomer_pad {
+        max-width: 85vw !important;
+        width: 100% !important;
+    }
+
+    .tablewdth {
+        max-width: 80% !important;
+        width: 80% !important;
+    }
+
+    .addcartwidth {
+        width: 80% !important;
+        max-width: 80% !important;
+    }
+
+    .modal-dialog.modal-dialog-centered {
+        margin: auto;
+    }
+
+}
+
+@media (max-width: 767px) {
+    .card-header .dt-buttons.flex-wrap {
+        text-align: center;
+    }
+
+    .centerwrap {
+        /* text-align: center !important; */
+        margin: auto;
+    }
+
+    .head-label {
+        text-align: center;
+    }
+
+    .customr_btn_centr {
+        margin: auto !important;
+    }
+
+    .gappingrow {
+        row-gap: 10px !important;
+    }
+
+    .showlstpad {
+        width: 80vw !important;
+
+
+    }
+
+    .gappingrow {
+        width: 90%;
+    }
+
+    .table_scrl {
+        overflow: scroll;
+    }
+
+    .container.mt-3.viewcardpad.viewresponsivecard {
+        width: 85vw !important;
+    }
+
+    .spacebtwn {
+        margin: 10px 0;
+    }
+
+    .d-flex.justify-content-between.productlistcenter {
+        display: block !important;
+    }
+
+    input#dt-search-0 {
+        width: 130px;
+    }
+
+    /* .custmrmt0 {
+        margin-top: -45px !important;
+    } */
+
+    .inner-container {
+        padding: 15px !important;
+    }
+
+    div.dt-container div.dt-layout-row:not(.dt-layout-table) {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 600px) {
+    .customer_table_width {
+        width: 72vw;
+    }
+
+    .modal-dialog.modal-dialog-centered {
+        width: 75vw;
+        height: 60vw;
+    }
+
+}
+
+@media (max-width: 400px) {
+    .customer_table_width {
+        width: 68vw;
+    }
+
+    .showlstpad {
+        width: 80vw !important;
+
+    }
+}
+
+@media (max-width: 350px) {
+    .customer_table_width {
+        width: 64vw;
+    }
+}
+
+/* 
+@media (min-width: 550px) and (max-width: 900px) {
+    .layout-wrapper .container {
+        max-width: 89vw !important;
+    }
+} */
+
+@media screen and (min-width:941px) {
+    .modal-dialog.modal-dialog-centered {
+        margin: auto;
+    }
+}
+
+/* responsive css end */
+
+/* POS page styles */
+
+.pos-pagination-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    padding: 6px 8px 4px 0;
+    margin-top: 4px !important;
+    border-top: 1px solid #f1e7f9;
+}
+
+#products-pagination {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 4px;
+    background-color: #fbf7ff;
+    border: 1px solid #eadcf5;
+}
+
+#products-pagination .page-link {
+    border: none;
+    color: #630660;
+    padding: 4px 8px;
+    margin: 0 2px;
+    background-color: transparent;
+    border-radius: 999px;
+    font-size: 11px;
+}
+
+#products-pagination .page-item:first-child .page-link {
+    margin-left: 0;
+}
+
+#products-pagination .page-item:last-child .page-link {
+    margin-right: 0;
+}
+
+#products-pagination .page-item.active .page-link {
+    background-color: #630660;
+    color: #ffffff;
+}
+
+#products-pagination .page-item.disabled .page-link {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.pos-page {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 0 40px 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.pos-shell {
+    background-color: #f9f5fc;
+    border-radius: 18px;
+    /* padding: 24px 24px 28px; */
+}
+
+.pos-header {
+    border-bottom: 1px solid #eadcf5;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.pos-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1f2933;
+}
+
+.pos-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.pos-card {
+    background-color: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #ebe3f4;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.03);
+}
+
+.pos-card-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1e7f9;
+}
+
+.pos-card-body {
+    padding: 14px 16px 18px;
+}
+
+.pos-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.pos-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #9ca3af;
+}
+
+.pos-input {
+    border-radius: 8px !important;
+    border: 1px solid #e5d8f2 !important;
+    background-color: #ffffff;
+    font-size: 13px;
+    padding: 6px 10px;
+    box-shadow: none !important;
+}
+
+.pos-input:focus {
+    border-color: #630660 !important;
+    box-shadow: 0 0 0 1px rgba(99, 6, 96, 0.08) !important;
+}
+
+.pos-customer-results .list-group-item {
+    font-size: 13px;
+    padding: 6px 10px;
+}
+
+.pos-summary-card {
+    background: linear-gradient(135deg, #630660, #440842);
+    border: none;
+    color: #ffffff;
+}
+
+.pos-summary-card .pos-card-header {
+    border-bottom-color: rgba(255, 255, 255, 0.18);
+}
+
+.pos-summary-card .pos-card-title {
+    color: #ffffff;
+}
+
+.pos-summary-value {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.pos-summary-amount {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.pos-complete-btn {
+    background-color: #f8efff !important;
+    color: #630660 !important;
+    font-weight: 600;
+    border-radius: 999px;
+    border: none;
+    padding: 10px 16px;
+}
+
+.pos-complete-btn:disabled {
+    background-color: #f8efff !important;
+    color: #630660 !important;
+    opacity: 0.7;
+}
+
+.pos-complete-btn:not(:disabled):hover,
+.pos-complete-btn:not(:disabled):focus,
+.pos-complete-btn:not(:disabled):active {
+    background-color: #f3e0ff !important;
+    color: #4b0350 !important;
+}
+
+.pos-table-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.pos-table thead th {
+    background-color: #faf5ff;
+    border-bottom: 1px solid #efe3ff;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+    padding: 8px 10px;
+    white-space: nowrap;
+}
+
+.pos-table tbody td {
+    padding: 8px 10px;
+    font-size: 13px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f3edf9;
+}
+
+.pos-product-image img {
+    object-fit: cover;
+}
+
+.pos-add-btn {
+    background-color: #ffffff;
+    color: #630660;
+    border-radius: 999px;
+    padding: 4px 14px;
+    border: 1px solid #e6d7f4;
+    font-size: 12px;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+}
+
+.pos-add-btn:hover {
+    background-color: #f8f2ff;
+    color: #4b0348;
+}
+
+.pos-remove-btn {
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 14px;
+}
+
+.pos-cart-product {
+    max-width: 220px;
+}
+
+.pos-product-description {
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pos-cart-total {
+    font-weight: 600;
+}
+
+.pos-table tbody tr:hover {
+    background-color: #fbf7ff;
+}
+
+.pos-qty-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid #e5d8f2;
+    background-color: #ffffff;
+    padding: 2px 4px;
+    max-width: 90px;
+}
+
+.pos-qty-control .product-qty,
+.pos-qty-control .cart-qty {
+    max-width: 40px;
+    padding: 2px 0;
+    border: none !important;
+    box-shadow: none !important;
+    font-size: 12px;
+}
+
+.pos-qty-btn {
+    border: none;
+    background: transparent;
+    color: #630660;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+}
+
+.pos-qty-btn:focus {
+    outline: none;
+}
+
+.pos-qty-btn:disabled {
+    opacity: 0.4;
+}
+
+/* POS responsive table behaviour */
+@media (max-width: 767.98px) {
+    /* Make POS tables display as blocks on small screens */
+    .pos-table {
+        display: block;
+        width: 100%;
+    }
+
+    .pos-table thead {
+        display: none;
+    }
+
+    .pos-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .pos-table tbody tr {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        border: 1px solid #f3edf9;
+        background-color: #ffffff;
+        padding: 8px 10px;
+    }
+
+    .pos-table tbody tr.pos-empty-row td,
+    #cart-empty-row td {
+        border: none;
+        background: transparent;
+        padding: 10px;
+    }
+
+    .pos-table tbody td {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 0;
+        border-bottom: none;
+    }
+
+    .pos-table tbody td::before {
+        content: attr(data-label);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #9ca3af;
+        margin-right: 8px;
+        flex: 0 0 35%;
+    }
+
+    .pos-table tbody td.pos-product-image,
+    .pos-table tbody td.pos-cart-image {
+        justify-content: flex-start;
+    }
+
+    .pos-table tbody td.pos-product-image::before,
+    .pos-table tbody td.pos-cart-image::before {
+        margin-right: 6px;
+        flex-basis: auto;
+    }
+
+    .pos-table tbody td input.form-control,
+    .pos-table tbody td .btn {
+        max-width: 160px;
+    }
+
+    .pos-cart-product,
+    .pos-product-name,
+    .pos-product-description {
+        word-break: break-word;
+        white-space: normal;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .pos-shell {
+        padding: 18px 14px 22px;
+    }
+
+    .pos-page {
+        margin-bottom: 24px;
+        margin-right: 0; /* avoid horizontal scroll on small screens */
+    }
+}
+
+@media (min-width: 992px) {
+    /* On desktop, extend POS content to the right edge of the padded content-wrapper */
+    .pos-page {
+        margin-right: -30px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .pos-page {
+        padding: 0 4px;
+    }
+
+    /* Reduce extra padding around POS shell on small screens so content uses more width */
+    .addcustomer_pad.pos-page {
+        padding: 12px 8px 16px !important;
+    }
+
+    .pos-card-body {
+        padding: 12px 12px 14px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        row-gap: 8px;
+    }
+
+    .pos-card-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pos-card-header .pos-search {
+        width: 100%;
+    }
+
+    .pos-actions {
+        flex-direction: column;
     }
 }

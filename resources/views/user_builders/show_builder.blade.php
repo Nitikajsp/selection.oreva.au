@@ -7,7 +7,7 @@
         @include('include.sidebar')
 
         <div class="layout-page">
-            <div class="content-wrapper pl-30 ">
+            <div class="content-wrapper ">
 
                 <div class="flex-grow-1  container-fluid">
 
@@ -18,15 +18,14 @@
 
 
                     </div>
-                    <div class="container mt-5">
-
+                
 
                         <div class="inner-container ">
                             <div class="page-wrapper-title">
                                 <h2>View Builder Detail</h2>
 
                             </div>
-                            <div class="d-flex justify-content-end gap-2 ms-auto">
+                            <div class="d-flex justify-content-end gap-2 ms-auto mb-2 mb-md-0">
 
                                 <a href="{{ route('user_builders.edit', $userBuilder->id) }}"
                                     class="btn btn-icon btn-sm btn-label-primary waves-effect">
@@ -51,24 +50,24 @@
                             <div class="d-flex">
                                 <div class=" d-flex flex-column justify-content-center w-100">
                                     <div class="row mb-2">
-                                        <div class="col-sm-4 fw-bold">Customer Name:</div>
-                                        <div class="col-sm-8">
-                                            {{ optional($userBuilder->customer)->name ?? '-' }}
+                                        <div class="col-6 col-sm-4 data-text">Customer Name:</div>
+                                        <div class="col-6 col-sm-8"><h6 class="data-value">
+                                            {{ optional($userBuilder->customer)->name ?? '-' }}</h6>
                                         </div>
                                     </div>
 
                                     <div class="row mb-2">
-                                        <div class="col-sm-4 fw-bold">Builder Name:</div>
-                                        <div class="col-sm-8">{{ $userBuilder->builder_name }}</div>
+                                        <div class="col-6 col-sm-4 data-text">Builder Name:</div>
+                                        <div class="col-6 col-sm-8"><h6 class="data-value"> {{ $userBuilder->builder_name }}</h6> </div>
                                     </div>
                                     <div class="row mb-2">
-                                        <div class="col-sm-4 fw-bold">Email ID:</div>
-                                        <div class="col-sm-8">{{ $userBuilder->contact_email }}</div>
+                                        <div class="col-6 col-sm-4 data-text">Email ID:</div>
+                                        <div class="col-6 col-sm-8"><a href="mailto:{{ $userBuilder->contact_email }} " class="data-value">  {{ $userBuilder->contact_email }} </h6> </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                   
                 </div>
             </div>
 

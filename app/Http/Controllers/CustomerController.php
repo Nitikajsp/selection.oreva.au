@@ -36,16 +36,14 @@ class CustomerController extends Controller
         if (request()->ajax()) {
             $admin_user_id = auth()->user()->id;
 
-            $data = Customer::where('admin_user_id', $admin_user_id)
-                ->orderBy('created_at', 'desc')
-                ->select(['id', 'name', 'email']); // only needed columns
+            $data = Customer::where('admin_user_id', $admin_user_id)->orderBy('created_at', 'desc')->select(['id', 'name', 'email']); 
 
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $btn = '
                     <div class="d-flex gap-1 align-items-center">
-                <button class="btn btn-primary btn-sm" data-customer-id="' . $row->id . '">Set</button>
+                <button class="btn btn-primary btn-sm set-btn" data-customer-id="' . $row->id . '">Set</button>
                 <div class="d-inline-block">
                     <a href="javascript:;" class="btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow text-black" data-bs-toggle="dropdown">
                         <i class="ti ti-dots-vertical ti-md"></i>
@@ -89,41 +87,6 @@ class CustomerController extends Controller
      * Store a newly created resource in storage.
      */
 
-    // public function store(Request $request)
-    // {
-
-    //     $request->validate([
-
-    //         'name' => 'required',
-    //         // 'email' => 'required|email|unique:customers,email',
-    //         'email'  => [
-    //         'required',
-    //         'email',
-    //         Rule::unique('customers')->where(function ($query) {
-    //             return $query->where('admin_user_id', auth()->user()->id);
-    //         }),
-    //     ],
-    //         'phone' => 'required',
-    //         'street'=> 'required',
-    //         'suburb'=> 'required',
-    //         'state'=> 'required',
-    //         'pincod'=> 'required',
-
-
-    //     ], [
-    //         'phone.regex' => 'The phone number must be in international format, e.g., +1234567890.',
-    //         // 'email.unique' => 'The email address has already been taken.',
-    //     ]);
-
-    //    // Customer::create($request->only(['name', 'email', 'phone', 'street', 'house_number', 'suburb', 'state', 'pincod']));
-    //     $data = $request->only(['name', 'email', 'phone', 'street', 'house_number', 'suburb', 'state', 'pincod']);
-    //     $data['admin_user_id'] = auth()->user()->id;
-
-    //     Customer::create($data);
-    //     return redirect()->route('customers.index')->with('success', 'Customer created successfully.');
-
-    // }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -135,14 +98,16 @@ class CustomerController extends Controller
                     return $query->where('admin_user_id', auth()->user()->id);
                 }),
             ],
-            'phone' => 'required',
+            'phone' => ['required', 'regex:/^\d+$/'],
             'street' => 'required',
-            'suburb' => 'required',
+            'suburb' => ['required', 'regex:/^[A-Za-z\s]+$/'],
             'state' => 'required',
-            'pincod' => 'required',
+            'pincod' => ['required', 'regex:/^\d+$/'],
         ], [
             'email.unique' => 'This email is already used under your admin account.',
-            'phone.regex' => 'The phone number must be in international format, e.g., +1234567890.',
+            'phone.regex' => 'The phone number may contain digits only.',
+            'suburb.regex' => 'The suburb may contain letters and spaces only.',
+            'pincod.regex' => 'The pincode may contain digits only.',
         ]);
 
         $data = $request->only(['name', 'email', 'phone', 'street', 'house_number', 'suburb', 'state', 'pincod']);
@@ -200,12 +165,14 @@ class CustomerController extends Controller
             ],
             'phone' => 'required',
             'street' => 'required',
-            'suburb' => 'required',
+            'suburb' => ['required', 'regex:/^[A-Za-z\s]+$/'],
             'state' => 'required',
-            'pincod' => 'required',
+            'pincod' => ['required', 'regex:/^\d+$/'],
         ], [
             'phone.regex' => 'The phone number must be in international format, e.g., +1234567890.',
             'email.unique' => 'The email address has already been taken.',
+            'suburb.regex' => 'The suburb may contain letters and spaces only.',
+            'pincod.regex' => 'The pincode may contain digits only.',
         ]);
 
         $customer->update($request->only(['name', 'email', 'phone', 'street', 'house_number', 'suburb', 'state', 'pincod']));
@@ -219,14 +186,22 @@ class CustomerController extends Controller
      */
 
     public function destroy(Customer $customer)
-
     {
         $this->authorizeCustomer($customer);
 
+        try {
+            $customer->delete();
 
-        $customer->delete();
-
-        return redirect()->route('customers.index')->with('success', 'Customer deleted successfully.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer deleted successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while deleting the customer.'
+            ], 500);
+        }
     }
 
     public function updateStatus(Request $request, $id)
@@ -299,3 +274,4 @@ class CustomerController extends Controller
         return response()->json($customers);
     }
 }
+

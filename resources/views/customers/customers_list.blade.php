@@ -17,6 +17,8 @@
                             <span><i class="ti ti-plus me-sm-1"></i> Add Customer</span>
                         </a>
                     </div>
+<div class="container">
+
 
                     <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
 
@@ -26,8 +28,9 @@
                                 <p>{{ $message }}</p>
                             </div>
                         @endif
+                         <div class="alert-placeholder"></div>
 
-                        <div class="card mt-4 p-2 ">
+                        <div class="card p-2 ">
                             <div class="customerscroll">
                                 <table class="datatables-projects table" id="customerlist">
                                     <thead>
@@ -41,6 +44,7 @@
                                     <tbody></tbody>
                                 </table>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -138,15 +142,36 @@
                     });
 
                     // Confirm delete
-                    $('#confirmDeleteBtn').on('click', function() {
+                   $('#confirmDeleteBtn').on('click', function() {
                         var form = $(this).data('form');
+
                         $.ajax({
                             url: form.attr('action'),
                             type: 'POST',
                             data: form.serialize(),
-                            success: function() {
-                                $('#deleteModal').modal('hide');
-                                table.ajax.reload(null, false);
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.success) {
+                                    $('#deleteModal').modal('hide');
+                                    table.ajax.reload(null, false);
+
+                                    // Show success message
+                                    $('.alert-placeholder').html(`
+                                        <div class="alert alert-success">
+                                            <p>${response.message}</p>
+                                        </div>
+                                    `);
+
+                                    // Hide after 3 seconds
+                                    setTimeout(function() {
+                                        $('.alert-placeholder').html('');
+                                    }, 3000);
+                                } else {
+                                    alert(response.message);
+                                }
+                            },
+                            error: function(xhr) {
+                                alert('Error deleting customer.');
                             }
                         });
                     });

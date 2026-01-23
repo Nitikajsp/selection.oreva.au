@@ -58,6 +58,20 @@
                 <div>Products</div>
             </a>
         </li>
+         <!-- POS -->
+        <li class="menu-item {{ request()->routeIs('pos.index') ? 'active' : '' }}">
+            <a href="{{ route('pos.index') }}" class="menu-link">
+                <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M4 7h16v3h-16z" />
+                    <path d="M6 10v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2v-7" />
+                    <path d="M9 14h6" />
+                </svg>
+                <div>POS</div>
+            </a>
+        </li>
 
         <!-- Categories -->
         <li class="menu-item {{ request()->routeIs('showcategory') ? 'active' : '' }}">
@@ -101,13 +115,21 @@
         </form>
     </ul>
 
-    <script>
-        $(document).ready(function() {
-            $('#confirmLogoutBtn').on('click', function() {
-                $('#logout-form').submit();
+    <!--<script>-->
+    <!--    $(document).ready(function() {-->
+    <!--        $('#confirmLogoutBtn').on('click', function() {-->
+    <!--            $('#logout-form').submit();-->
+    <!--        });-->
+    <!--    });-->
+
+    <!--</script>-->
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("confirmLogoutBtn").addEventListener("click", function(e) {
+                e.preventDefault();
+                document.getElementById("logout-form").submit();
             });
         });
-
     </script>
 </aside>
 

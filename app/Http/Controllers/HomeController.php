@@ -8,9 +8,9 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Models\ListModel;
+use Yajra\DataTables\Facades\DataTables;
 
 class HomeController extends Controller
-
 {
     /**
      * Create a new controller instance.
@@ -19,7 +19,6 @@ class HomeController extends Controller
      */     
 
     public function __construct()
-
     {
         $this->middleware('auth');
     }
@@ -31,9 +30,7 @@ class HomeController extends Controller
      */ 
 
     // public function index()
-
     // {
-
     //     $customerCount = Customer::count();
     //     $customers = Customer::with('orders')->get();
     //     $productCount = Product::where('delete_status', '1')->count();
@@ -42,7 +39,6 @@ class HomeController extends Controller
     //     $recentOrders = Order::with('product', 'customer')->latest()->take(4)->get();
     
     //     // Monthly data for chart
-
     //     $monthlyData = Order::selectRaw('MONTH(created_at) as month, COUNT(DISTINCT list_id) as count')
     //     ->groupBy('month')
     //     ->orderBy('month')
@@ -50,22 +46,18 @@ class HomeController extends Controller
     //     ->toArray();
 
     //     // Fill missing months with 0
-
     //     $monthlyData = array_replace(array_fill(1, 12, 0), $monthlyData);
     
     //     // Calculate total orders and determine percentage scale (where 10 orders = 1%)
-
     //     $totalOrders = array_sum($monthlyData);
     //     $percentageScale = 1; // 
     
     //     // Convert monthly data to percentages
-        
     //     $monthlyDataPercentages = array_map(function($count) use ($percentageScale) {
     //         return $count / $percentageScale; // Convert to percentage
     //     }, $monthlyData);
     
     //     return view('home', compact('customerCount', 'productCount', 'listCount', 'recentProduct', 'customers', 'recentOrders', 'monthlyDataPercentages'));
-
     // }
 
 
@@ -150,5 +142,48 @@ class HomeController extends Controller
         ));
     }
 
-    
+    /**
+     * DataTables JSON for customers list on the Home dashboard.
+     */
+    public function customersData(Request $request)
+    {
+        $adminId = auth()->id();
+        $query = Customer::where('admin_user_id', $adminId)
+            ->withCount('orders')
+            ->select(['id', 'name', 'email']);
+
+        return DataTables::of($query)
+            ->addColumn('orders', function ($row) {
+                return $row->orders_count ?? 0;
+            })
+            ->addColumn('action', function ($row) {
+                $editUrl = route('customers.edit', $row->id);
+                $viewUrl = route('customers.show', $row->id);
+                $deleteUrl = route('customers.destroy', $row->id);
+                $csrf = csrf_field();
+                $methodDelete = method_field('DELETE');
+                return '<div class="d-inline-block">'
+                    . '<a href="javascript:;" class="btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow show text-black" data-bs-toggle="dropdown" aria-expanded="false">'
+                    . '<i class="ti ti-dots-vertical ti-md"></i>'
+                    . '</a>'
+                    . '<div class="dropdown-menu dropdown-menu-end m-0">'
+                    . '<a href="' . $editUrl . '" class="dropdown-item">'
+                    . '<i class="ti ti-pencil me-1"></i> Edit'
+                    . '</a>'
+                    . '<a href="' . $viewUrl . '" class="dropdown-item">'
+                    . '<i class="ti ti-eye me-1"></i> View'
+                    . '</a>'
+                    . '<div class="dropdown-divider"></div>'
+                    . '<form action="' . $deleteUrl . '" method="POST" onsubmit="return confirm(\'Are you sure?\')">'
+                    . $csrf . $methodDelete
+                    . '<button type="submit" class="text-danger dropdown-item">'
+                    . '<i class="ti ti-trash me-1"></i> Delete'
+                    . '</button>'
+                    . '</form>'
+                    . '</div>'
+                    . '</div>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
 }

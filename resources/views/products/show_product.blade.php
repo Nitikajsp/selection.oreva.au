@@ -9,7 +9,7 @@
     @include('include.sidebar')
 
     <div class="layout-page">
-        <div class="content-wrapper pl-30">
+        <div class="content-wrapper ">
             <div class="flex-grow-1 container-fluid">
 
                 <!-- Page Header -->
@@ -19,7 +19,7 @@
                     </a>
                 </div>
 
-                <div class="container mt-5">
+            
                     <div class="inner-container">
                         <!-- Title -->
                         <div class="page-wrapper-title">
@@ -27,7 +27,7 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="d-flex justify-content-end gap-2 ms-auto mb-3">
+                            <div class="d-flex justify-content-end gap-2 ms-auto mb-2 mb-md-0">
                             <a href="{{ route('products.edit', $product->id) }}" class="btn btn-icon btn-sm btn-label-primary waves-effect">
                                 <i class="ti ti-pencil"></i>
                             </a>
@@ -46,25 +46,25 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center w-100">
                                 <div class="row mb-2">
-                                    <div class="col-sm-4 fw-bold">Product Name:</div>
-                                    <div class="col-sm-8">{{ $product->product_name }}</div>
+                                    <div class="col-6 col-sm-4 data-text">Product Name:</div>
+                                    <div class="col-6 col-sm-8"> <h6 class="data-value"> {{ $product->product_name }} </h6> </div>
                                 </div>
                                 <div class="row mb-2">
-                                    <div class="col-sm-4 fw-bold">Product Code:</div>
-                                    <div class="col-sm-8">{{ $product->product_code }}</div>
+                                    <div class="col-6 col-sm-4 data-text">Product Code:</div>
+                                    <div class="col-6 col-sm-8"> <h6 class="data-value"> {{ $product->product_code }}</h6> </div>
                                 </div>
                                 <div class="row mb-2">
-                                    <div class="col-sm-4 fw-bold">Product Description:</div>
-                                    <div class="col-sm-8">{{ $product->product_description }}</div>
+                                    <div class="col-6 col-sm-4 data-text">Product Description:</div>
+                                    <div class="col-6 col-sm-8"><h6 class="data-value">  {{ $product->product_description }}</h6> </div>
                                 </div>
                                 <div class="row mb-2">
-                                    <div class="col-sm-4 fw-bold">Product Stock:</div>
-                                    <div class="col-sm-8">{{ $product->product_stock }}</div>
+                                    <div class="col-6 col-sm-4 data-text">Product Stock:</div>
+                                    <div class="col-6 col-sm-8"> <h6 class="data-value"> {{ $product->product_stock }} </h6></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+          
 
             </div> <!-- /.container-fluid -->
         </div> <!-- /.content-wrapper -->

@@ -8,7 +8,7 @@
     <div id="app" class="layout-wrapper">
         @include('include.sidebar')
         <div class="layout-page">
-            <div class="content-wrapper pl-30">
+            <div class="content-wrapper">
                 <div class="flex-grow-1 container-fluid">
 
                     <div class="page-header">
@@ -18,12 +18,12 @@
                         </a>
                     </div>
 
-                    <div class="container">
+                    
                         <div class="inner-container">
 
                             <div class="page-wrapper-title">
-                                <h2>Add Builder</h2>
-                                <h5>Please enter your details</h5>
+                                <h1>Add Builder</h1>
+                                <h6>Please enter your details</h6>
                             </div>
 
                             @if ($errors->any())
@@ -86,7 +86,7 @@
                             </form>
 
                         </div>
-                    </div>
+                   
 
                 </div>
             </div>

@@ -9,28 +9,23 @@
   @include('include.sidebar') 
 
   <div class="layout-page">
-    <div class="content-wrapper pl-30">
+    <div class="content-wrapper">
       <div class="flex-grow-1 container-fluid">
-        <div class="row">
-          <div class="col-md-12 d-flex justify-content-between align-items-center editpadding">
-            <a href="{{ url()->previous() }}" class="float-left d-flex text-black">
+
+          <div class="page-header">
+            <a href="{{ url()->previous() }}" class="back-btn">
               <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black"></i>Back
             </a>
-            <a href="{{ route('user_builders.show', $builders->id) }}" class="btn btn-primary btn-dark float-end rounded">
+            <a href="{{ route('user_builders.show', $builders->id) }}" class="btn btn-primary ">
               View
             </a>
           </div>
-        </div>
-
-        <div class="container">
           <div class="inner-container">
-            <div class="row">
-              <div class="col-lg-12 margin-tb">
-                <div class="pull-left">
-                  <h2>Edit Project</h2>
-                  <h5>Please enter details</h5>
-                </div>
-              </div>
+           
+                <div class="page-wrapper-title">
+                  <h1>Edit Project</h1>
+                  <h6>Please enter details</h6>
+             
             </div>
 
             @if ($errors->any())
@@ -78,7 +73,6 @@
               </div>
             </form>
           </div>
-        </div>
       </div>
     </div>
   </div>

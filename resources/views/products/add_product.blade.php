@@ -8,31 +8,27 @@
         @include('include.sidebar')
 
         <div class="layout-page">
-            <div class="content-wrapper pl-30 ">
+            <div class="content-wrapper ">
 
                 <div class="flex-grow-1  container-fluid">
-                    <div class="row">
-                        <div class="col-md-12 d-flex justify-content-between align-items-center editpadding">
-                            <a href="{{ url()->previous() }}" class="float-left d-flex text-black"><i
-                                    class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black"></i>Back</a>
-                            <a href="{{ route('showproduct') }}" class="btn btn-primary btn-dark float-end rounded">
+              
+                        <div class="page-header">
+                            <a href="{{ url()->previous() }}" class="back-btn">
+                        <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2"></i>Back
+                            <a href="{{ route('showproduct') }}" class="btn btn-primary ">
                                 View
                             </a>
 
                         </div>
-                    </div>
+             
 
-                    <div class="container mt-5">
                         <div class="inner-container">
-                            <div class="row">
-                                <div class="col-lg-12 margin-tb">
-                                    <div class="pull-left">
-                                        <h2>Add Product</h2>
-                                    </div>
-                                    <div class="pull-left">
-                                        <h5>Please enter product detail</h5>
-                                    </div>
-                                </div>
+                            <div class="page-wrapper-title">
+                           
+                                        <h1>Add Product</h1>
+                             
+                                        <h6>Please enter product detail</h6>
+                                 
                             </div>
 
                             @if ($errors->any())
@@ -123,7 +119,7 @@
                             </form>
 
                         </div>
-                    </div>
+                  
                 </div>
             </div>
         @endsection

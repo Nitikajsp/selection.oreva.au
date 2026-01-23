@@ -20,6 +20,8 @@ class Order extends Model
         'customer_id',
         'list_id',
         'project_id',
+        'pos_customer_name',
+        'pos_customer_signature',
     ];
 
     // Define any necessary relationships here

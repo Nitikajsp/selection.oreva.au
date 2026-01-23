@@ -54,16 +54,14 @@
                             </div>
                         @endif
 
-                        <div class="mt-3 card p-2 table_scroll">
+                        <div class=" card p-2 table_scroll">
 
                             <table id="productTable" class="table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Product Image</th>
-                                        <th>Product Category</th>
-                                        <th>Product Name</th>
-                                        <th>Product Code</th>
+                                        <th>Image</th>
+                                        <th>Product Info</th>
                                         <th>Qty</th>
                                         <th>Stock</th>
                                         <th>Action</th>
@@ -110,7 +108,7 @@
                             <h5 class="modal-title fw-semibold text-white" id="importModalLabel">
                                 <i class="ti ti-upload me-2"></i> Import Products
                             </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            <button type="button" class="btn btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
 
@@ -169,16 +167,10 @@
                             searchable: false
                         },
                         {
-                            data: 'product_category',
-                            name: 'product_category'
-                        },
-                        {
-                            data: 'product_name',
-                            name: 'product_name'
-                        },
-                        {
-                            data: 'product_code',
-                            name: 'product_code'
+                            data: 'product_info',
+                            name: 'product_name',
+                            orderable: true,
+                            searchable: true
                         },
                         {
                             data: 'product_stock',

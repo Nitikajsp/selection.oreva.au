@@ -9,7 +9,7 @@
         @include('include.sidebar')
 
         <div class="layout-page">
-            <div class="content-wrapper pl-30 ">
+            <div class="content-wrapper  ">
 
                 <div class="flex-grow-1  container-fluid">
 
@@ -26,12 +26,12 @@
                     </div>
 
 
-                    <div class="container ">
+                 
                         <div class="inner-container ">
                             <div class="page-wrapper-title">
-                                <h2>Edit Customer</h2>
+                                <h1>Edit Customer</h1>
 
-                                <h5>Please update the details below</h5>
+                                <h6>Please update the details below</h6>
                             </div>
 
                             @if ($errors->any())
@@ -161,7 +161,7 @@
                                     <!-- </div> -->
                             </form>
                         </div>
-                    </div>
+                   
                 </div>
             </div>
         </div>
@@ -176,11 +176,25 @@
                     return this.optional(element) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
                 }, "Please enter a valid email address.");
 
-
+                $.validator.addMethod("validSuburb", function(value, element) {
+                    return this.optional(element) || /^[A-Za-z\s]+$/.test(value);
+                }, "Suburb should contain only letters and spaces.");
 
                 $.validator.addMethod("validName", function(value, element) {
                     return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
                 }, "Name should contain only letters and spaces.");
+
+                $('input[name="phone"]').on('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+
+                $('input[name="suburb"]').on('input', function() {
+                    this.value = this.value.replace(/[^A-Za-z\s]/g, '');
+                });
+
+                $('input[name="pincod"]').on('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
 
                 // Initialize form validation
                 $("#editCustomerForm").validate({
@@ -196,20 +210,22 @@
                         },
                         phone: {
                             required: true,
+                            digits: true,
                         },
                         street: {
                             required: true
                         },
 
                         suburb: {
-                            required: true
+                            required: true,
+                            validSuburb: true
                         },
                         state: {
                             required: true
                         },
                         pincod: {
                             required: true,
-
+                            digits: true,
                         }
                     },
                     messages: {
@@ -221,7 +237,8 @@
                             required: "Please enter your email address"
                         },
                         phone: {
-                            required: "Please enter your phone number"
+                            required: "Please enter your phone number",
+                            digits: "Please enter only numbers for the phone number"
                         },
                         street: {
                             required: "Please enter your street address"

@@ -28,9 +28,9 @@
 
 
                             <div class="page-wrapper-title">
-                                <h2>Add Customer</h2>
+                                <h1>Add Customer</h1>
 
-                                <h5>Please enter your details</h5>
+                                <h6>Please enter your details</h6>
                             </div>
 
                             @if ($errors->any())
@@ -151,12 +151,26 @@
                     return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
                 }, "Name should contain only letters.");
 
+                $.validator.addMethod("validSuburb", function(value, element) {
+                    return this.optional(element) || /^[A-Za-z\s]+$/.test(value);
+                }, "Suburb should contain only letters and spaces.");
+
                 $.validator.addMethod("validEmail", function(value, element) {
                     // General regex for email validation
                     return this.optional(element) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
                 }, "Please enter a valid email address.");
 
+                $('#phone').on('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
 
+                $('#suburb').on('input', function() {
+                    this.value = this.value.replace(/[^A-Za-z\s]/g, '');
+                });
+
+                $('#pincod').on('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
 
                 $('#customerForm').validate({
                     rules: {
@@ -191,15 +205,18 @@
 
                         phone: {
                             required: true,
+                            digits: true,
                         },
                         suburb: {
                             required: true,
+                            validSuburb: true,
                         },
                         state: {
                             required: true,
                         },
                         pincod: {
                             required: true,
+                            digits: true,
                         }
                     },
                     messages: {
@@ -216,7 +233,8 @@
                         },
 
                         phone: {
-                            required: "Please enter your phone number"
+                            required: "Please enter your phone number",
+                            digits: "Please enter only numbers for the phone number"
                         },
                         suburb: {
                             required: "Please enter your suburb"
