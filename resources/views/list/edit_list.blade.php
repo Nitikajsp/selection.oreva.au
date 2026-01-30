@@ -17,10 +17,17 @@
             <a href="{{ url()->previous() }}" class="back-btn">
                 <i class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 text-black"></i>Back
             </a>
-                            <a href="{{ route('customers.show', $list->customer_id) }}" 
-                class="btn btn-primary ">
+            <div class="d-flex gap-2">
+            <a href="javascript:;" class="btn btn-primary change-customer-btn"
+                    data-current-customer="{{ $list->customer_id }}">
+                    Change Project Customer
+                </a>
+                <a href="{{ route('customers.show', $list->customer_id) }}" 
+                    class="btn btn-primary">
                     View
                 </a>
+                
+            </div>
         </div>
  
 
@@ -29,7 +36,7 @@
        
             <div class="page-wrapper-title">
                     <h1>Edit Project</h1>
-                    <h6>Please enter details</h5>
+                    <h6>Please enter details</h6>
             </div>
       
 
@@ -46,13 +53,13 @@
         <script>
             $(document).ready(function() {
                 $("#customer_autocomplete").autocomplete({
-                    minLength: 3, // Start filtering after 3 characters
+                    minLength: 3,
                     source: function(request, response) {
                         $.ajax({
                             url: "/get-customers",
                             type: "GET",
                             dataType: "json",
-                            data: { term: request.term }, // Send user input
+                            data: { term: request.term },
                             success: function(data) {
                                 console.log('data', data);
                                 let filteredResults = data.filter(customer => 
@@ -74,9 +81,28 @@
                         $("#customer_autocomplete").val(ui.item.value);
                         $("#builder").val(ui.item.value);
                         $("input[name='contact_email']").val(ui.item.email);
-                        return false; // Prevent default form submission
+                        return false;
                     }
                 });
+
+                $(document).on('click', '.change-customer-btn', function() {
+                    const currentCustomerId = $(this).data('current-customer');
+                    $('#newCustomerSelect').val(currentCustomerId).trigger('change');
+                    $('#changeCustomerModal').modal('show');
+                });
+
+                if ($.fn.select2) {
+                    $('#newCustomerSelect').select2({
+                        dropdownParent: $('#changeCustomerModal'),
+                        width: '100%',
+                        placeholder: 'Select customer'
+                    });
+
+                    $('#newCustomerSelect').on('select2:open', function() {
+                        const $dropdown = $('.select2-container--open .select2-dropdown');
+                        $dropdown.removeClass('select2-dropdown--above').addClass('select2-dropdown--below');
+                    });
+                }
             });
         </script>
 
@@ -184,6 +210,38 @@
     </div>
 </div>
         </div>
+        </div>
+
+        <div class="modal fade" id="changeCustomerModal" tabindex="-1"
+            aria-labelledby="changeCustomerModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changeCustomerModalLabel">Change Project Customer</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="changeCustomerForm" method="POST" action="{{ route('lists.reassignCustomer', $list->id) }}">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="newCustomerSelect" class="form-label">Select Customer</label>
+                                <select class="form-select select2" id="newCustomerSelect" name="new_customer_id" required>
+                                    <option value="">Select customer</option>
+                                    @foreach ($allCustomers as $c)
+                                        <option value="{{ $c->id }}" {{ $c->id == $list->customer_id ? 'selected' : '' }}>
+                                            {{ $c->name }} ({{ $c->email }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Assign</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
 @endsection

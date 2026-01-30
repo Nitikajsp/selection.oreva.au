@@ -313,6 +313,24 @@ table.dataTable>tbody>tr>td {
     border-bottom: 1px solid var(--bs-border-color);
 }
 
+.order-description-col {
+    max-width: 180px;
+    width: 180px;
+}
+
+.order-description-col .description-toggle {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.order-action-col {
+    min-width: 80px;
+    max-width: 90px;
+    width: 80px;
+    text-align: center;
+    white-space: nowrap;
+}
+
 .datatables-projects tr {
     border-bottom: 1px solid #f1f1f1;
 }
@@ -799,8 +817,18 @@ div#app {
     }
 
     .table_scroll {
-        overflow: scroll;
+        overflow: auto;
 
+    }
+
+    .table_scroll table.dataTable {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .table_scroll .order-description-col {
+        max-width: 150px;
+        width: 150px;
     }
 
     .show_custmer {
@@ -1223,6 +1251,7 @@ div#app {
 
 /* POS responsive table behaviour */
 @media (max-width: 767.98px) {
+
     /* Make POS tables display as blocks on small screens */
     .pos-table {
         display: block;
@@ -1306,11 +1335,13 @@ div#app {
 
     .pos-page {
         margin-bottom: 24px;
-        margin-right: 0; /* avoid horizontal scroll on small screens */
+        margin-right: 0;
+        /* avoid horizontal scroll on small screens */
     }
 }
 
 @media (min-width: 992px) {
+
     /* On desktop, extend POS content to the right edge of the padded content-wrapper */
     .pos-page {
         margin-right: -30px;
@@ -1349,4 +1380,28 @@ div#app {
     .pos-actions {
         flex-direction: column;
     }
+}
+
+/* Change Customer modal - Select2 styling (global) */
+#changeCustomerModal .select2-container {
+    width: 100% !important;
+}
+
+#changeCustomerModal .select2-container .select2-selection--single {
+    min-height: 38px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+}
+
+/* Dropdown box design */
+#changeCustomerModal .select2-dropdown {
+    border-radius: 6px;
+    max-height: 50vh !important;
+    overflow-y: auto !important;
+}
+
+/* Limit dropdown height and enable scrolling */
+#changeCustomerModal .select2-results__options {
+    max-height: none;
 }

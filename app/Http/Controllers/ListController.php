@@ -97,7 +97,13 @@ class ListController extends Controller
 
     {
         $list = ListModel::findOrFail($id);
-        return view('list.edit_list', compact('list'));
+
+        $adminId = auth()->id();
+        $allCustomers = Customer::where('admin_user_id', $adminId)
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        return view('list.edit_list', compact('list', 'allCustomers'));
     }
 
 
@@ -129,6 +135,57 @@ class ListController extends Controller
 
         return redirect()->route('customers.show', $list->customer_id)
             ->with('success', 'List updated successfully.');
+    }
+
+
+    public function reassignCustomer(Request $request, $id)
+
+    {
+        $request->validate([
+            'new_customer_id' => 'required|exists:customers,id',
+        ]);
+
+        $adminId = auth()->id();
+
+        $list = ListModel::whereHas('customer', function ($query) use ($adminId) {
+            $query->where('admin_user_id', $adminId);
+        })->findOrFail($id);
+
+        $newCustomer = Customer::where('admin_user_id', $adminId)
+            ->findOrFail($request->input('new_customer_id'));
+        // If the selected customer is the same as current, nothing to move
+        if ($newCustomer->id === $list->customer_id) {
+            return redirect()->route('customers.show', $newCustomer->id)
+                ->with('success', 'Project is already assigned to the selected customer.');
+        }
+
+        // If the selected customer already has a project with the same name, do not move
+        $duplicateProjectExists = ListModel::where('customer_id', $newCustomer->id)
+            ->where('name', $list->name)
+            ->exists();
+
+        if ($duplicateProjectExists) {
+            return redirect()->route('customers.show', $newCustomer->id)
+                ->with('success', 'Project is already assigned to the selected customer.');
+        }
+
+        DB::transaction(function () use ($list, $newCustomer) {
+            $oldCustomerId = $list->customer_id;
+
+            // Move the list to the new customer
+            $list->customer_id = $newCustomer->id;
+            $list->save();
+
+            // Move existing orders from the old customer to the new customer
+            $list->orders()
+                ->where('customer_id', $oldCustomerId)
+                ->update([
+                    'customer_id' => $newCustomer->id,
+                ]);
+        });
+
+        return redirect()->route('customers.show', $newCustomer->id)
+            ->with('success', 'Project moved to selected customer successfully.');
     }
 
 
@@ -955,8 +1012,8 @@ class ListController extends Controller
             return redirect()->back()->with('error', 'List or Customer not found');
         }
 
-        // Orders fetch
-        $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image')
+        // Orders fetch (include product_code so PDF can show it)
+        $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image', 'products.product_code')
             ->join('products', 'orders.product_id', '=', 'products.id')
             ->where('orders.list_id', $list_id)
             ->where('orders.customer_id', $customer_id)

@@ -62,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/lists/{id}', 'show')->name('lists.show');
         Route::get('/lists/{id}/edit', 'edit')->name('lists.edit');
         Route::put('/lists/{id}', 'update')->name('lists.update');
+        Route::post('/lists/{id}/reassign-customer', 'reassignCustomer')->name('lists.reassignCustomer');
         Route::delete('/lists/{id}', 'destroy')->name('lists.destroy');
         Route::get('/lists/{list}/products/{customer}', 'addCartProduct')->name('lists.addcartproduct');
         Route::post('/lists/add-to-cart/{list}/{customer}', 'addToCart')->name('lists.add-to-cart');

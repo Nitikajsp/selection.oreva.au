@@ -20,6 +20,12 @@
                     </div>
                   
                         <div class="inner-container ">
+                            @if ($message = Session::get('success'))
+                                <div class="alert alert-success">
+                                    <p>{{ $message }}</p>
+                                </div>
+                            @endif
+
                             <div class="page-wrapper-title">
                                 <h2>View Customer Detail</h2>
 
@@ -127,7 +133,6 @@
             </div>
         </div>
 
-
         <!-- Delete Confirmation Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -165,6 +170,7 @@
                         formToSubmit.submit();
                     }
                 });
+
             });
         </script>
 
