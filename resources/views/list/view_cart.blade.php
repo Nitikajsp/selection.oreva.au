@@ -228,9 +228,17 @@
 
                 $('#orderForm').on('submit', function(e) {
                     e.preventDefault();
+
+                    // Sync latest quantities into hidden inputs
                     $('.quantity-input').each(function(index) {
                         $('.quantity-hidden').eq(index).val($(this).val());
                     });
+
+                    // Sync latest comments into hidden inputs
+                    $('.comment-input').each(function(index) {
+                        $('.comment-hidden').eq(index).val($(this).val());
+                    });
+
                     this.submit();
                 });
 

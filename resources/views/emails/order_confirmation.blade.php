@@ -149,10 +149,21 @@
                                     No image
                                 @endif
                             </td>
-                            <td style="padding: 12px; text-align: left; border: 1px solid #ddd;">
+                            {{-- <td style="padding: 12px; text-align: left; border: 1px solid #ddd;">
                                 {{ $item['product_name'] }}<br>
                                 <strong class="text-secondary">Comment:</strong> <span
                                     class="text-secondary">{{ $item['comment'] }}</span>
+                            </td> --}}
+                            <td style="padding: 12px; text-align: left; border: 1px solid #ddd;">
+                                {{ is_array($item) ? ($item['product_name'] ?? '') : ($item->product_name ?? '') }}<br>
+                                <strong class="text-secondary">Code:</strong>
+                                <span class="text-secondary">
+                                    {{ is_array($item) ? ($item['product_code'] ?? '') : ($item->product_code ?? '') }}
+                                </span><br>
+                                <strong class="text-secondary">Comment:</strong>
+                                <span class="text-secondary">
+                                    {{ is_array($item) ? ($item['comment'] ?? '') : ($item->comment ?? '') }}
+                                </span>
                             </td>
                             <td style="padding: 12px; text-align: left; border: 1px solid #ddd;">
                                 {{ $item['quantity'] }}</td>
