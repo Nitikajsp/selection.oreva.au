@@ -387,8 +387,8 @@ class PosController extends Controller
 
                 // Your 2 fixed WhatsApp numbers
                 $whatsappNumbers = [
-                    'whatsapp:+919327505310',
-                    // 'whatsapp:+919876543210',
+                   // 'whatsapp:+919999999999',
+                    'whatsapp:+918980886185',
                 ];
 
                 foreach ($whatsappNumbers as $to) {
