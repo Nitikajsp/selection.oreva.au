@@ -13,6 +13,8 @@ use App\Models\ListModel;
 use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class PosController extends Controller
 {
@@ -73,7 +75,7 @@ class PosController extends Controller
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('product_name', 'like', "%{$search}%")
-                  ->orWhere('product_code', 'like', "%{$search}%");
+                    ->orWhere('product_code', 'like', "%{$search}%");
             });
         }
 
@@ -123,8 +125,8 @@ class PosController extends Controller
         if (!empty($term)) {
             $query->where(function ($q) use ($term) {
                 $q->where('name', 'like', "%{$term}%")
-                  ->orWhere('email', 'like', "%{$term}%")
-                  ->orWhere('phone', 'like', "%{$term}%");
+                    ->orWhere('email', 'like', "%{$term}%")
+                    ->orWhere('phone', 'like', "%{$term}%");
             });
         }
 
@@ -151,9 +153,9 @@ class PosController extends Controller
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->whereHas('customer', function ($cq) use ($search) {
-                        $cq->where('name', 'like', "%{$search}%");
-                    })
-                  ->orWhereHas('list', function ($lq) use ($search) {
+                    $cq->where('name', 'like', "%{$search}%");
+                })
+                    ->orWhereHas('list', function ($lq) use ($search) {
                         $lq->where('name', 'like', "%{$search}%");
                     });
             });
@@ -350,6 +352,20 @@ class PosController extends Controller
             if ($actionType === 'save_send') {
                 $pdfContent = Pdf::loadView('emails.order_confirmation', compact('orderData'))->output();
 
+                // 2️⃣ STORE the PDF privately (THIS IS THE MISSING STEP)
+                $fileName = 'invoice_' . $list->id . '_' . time() . '.pdf';
+                $path = "private/invoices/{$fileName}";
+
+                Storage::put($path, $pdfContent); // ✅ PUT IT HERE
+
+                // 3️⃣ Create temporary signed URL for WhatsApp
+                $pdfUrl = URL::temporarySignedRoute(
+                    'secure.pdf',
+                    now()->addMinutes(10),
+                    ['filename' => $fileName]
+                );
+
+
                 // Send to customer
                 if ($customer->email) {
                     Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
@@ -366,6 +382,63 @@ class PosController extends Controller
                     $emails = array_map('trim', explode(',', $adminEmails));
                     foreach ($emails as $adminEmail) {
                         Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
+                    }
+                }
+
+                // 5️⃣ Send WhatsApp using Twilio cURL
+
+                $account_sid  = env('TWILIO_SID');
+                $auth_token   = env('TWILIO_TOKEN');
+                $template_sid = env('TWILIO_WHATSAPP_TEMPLATE_ID');
+                $from         = env('TWILIO_WHATSAPP_FROM');
+
+                // Your 2 fixed WhatsApp numbers
+                $whatsappNumbers = [
+                    'whatsapp:+919327505310',
+                    // 'whatsapp:+919876543210',
+                ];
+
+                foreach ($whatsappNumbers as $to) {
+
+                    $url = "https://api.twilio.com/2010-04-01/Accounts/{$account_sid}/Messages.json";
+
+                    $data = [
+                        'From'       => $from,
+                        'To'         => $to,
+
+                        // WhatsApp template (required for first / 24h-expired message)
+                        'ContentSid' => $template_sid,
+
+                        // Variables must match your approved template
+                        'ContentVariables' => json_encode([
+                            "1" => $customer->name,
+                            "2" => $list->name,
+                        ]),
+
+                        // 🔑 This is the PDF
+                        'MediaUrl' => [$pdfUrl],
+                    ];
+
+                    $ch = curl_init($url);
+                    curl_setopt_array($ch, [
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_POST           => true,
+                        CURLOPT_POSTFIELDS     => http_build_query($data),
+                        CURLOPT_USERPWD        => "{$account_sid}:{$auth_token}",
+                    ]);
+
+                    $response = curl_exec($ch);
+                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    $error    = curl_error($ch);
+                    curl_close($ch);
+
+                    if ($httpCode !== 201) {
+                        \Log::error('WhatsApp send failed', [
+                            'to'       => $to,
+                            'status'   => $httpCode,
+                            'error'    => $error,
+                            'response' => $response,
+                        ]);
                     }
                 }
             }
