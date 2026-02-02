@@ -354,17 +354,10 @@ class PosController extends Controller
 
                 // 2️⃣ STORE the PDF privately (THIS IS THE MISSING STEP)
                 $fileName = 'invoice_' . $list->id . '_' . time() . '.pdf';
-                $path = "private/invoices/{$fileName}";
+                $path = public_path('invoices/' . $fileName);
+                file_put_contents($path, $pdfContent); // store in public
 
-                Storage::put($path, $pdfContent); // ✅ PUT IT HERE
-
-                // 3️⃣ Create temporary signed URL for WhatsApp
-                $pdfUrl = URL::temporarySignedRoute(
-                    'secure.pdf',
-                    now()->addMinutes(10),
-                    ['filename' => $fileName]
-                );
-
+                $pdfUrl = asset('invoices/' . $fileName);
 
                 // Send to customer
                 if ($customer->email) {
@@ -413,10 +406,11 @@ class PosController extends Controller
                         'ContentVariables' => json_encode([
                             "1" => $customer->name,
                             "2" => $list->name,
+                            "3" => $pdfUrl,
                         ]),
 
                         // 🔑 This is the PDF
-                        'MediaUrl' => [$pdfUrl],
+                       // 'MediaUrl' => [$pdfUrl],
                     ];
 
                     $ch = curl_init($url);
