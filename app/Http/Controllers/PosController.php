@@ -352,6 +352,11 @@ class PosController extends Controller
             if ($actionType === 'save_send') {
                 $pdfContent = Pdf::loadView('emails.order_confirmation', compact('orderData'))->output();
 
+                $invoicesPath = public_path('invoices');
+                if (!file_exists($invoicesPath)) {
+                    mkdir($invoicesPath, 0755, true); // create recursively if needed
+                }
+
                 // 2️⃣ STORE the PDF privately (THIS IS THE MISSING STEP)
                 $fileName = 'invoice_' . $list->id . '_' . time() . '.pdf';
                 $path = public_path('invoices/' . $fileName);
@@ -387,7 +392,7 @@ class PosController extends Controller
 
                 // Your 2 fixed WhatsApp numbers
                 $whatsappNumbers = [
-                   // 'whatsapp:+919999999999',
+                    // 'whatsapp:+919999999999',
                     'whatsapp:+918980886185',
                 ];
 
@@ -410,7 +415,7 @@ class PosController extends Controller
                         ]),
 
                         // 🔑 This is the PDF
-                       // 'MediaUrl' => [$pdfUrl],
+                        // 'MediaUrl' => [$pdfUrl],
                     ];
 
                     $ch = curl_init($url);
