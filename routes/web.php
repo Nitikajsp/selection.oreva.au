@@ -16,6 +16,7 @@ use App\Http\Controllers\UserBuilderController;
 use App\Exports\ProductsExport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\InvoiceCleanupController;
 
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -24,6 +25,9 @@ Auth::routes();
 
 // Routes requiring authentication
 Route::middleware(['auth'])->group(function () {
+
+    //Remove pdf manually
+    Route::get('/delete-invoices', [InvoiceCleanupController::class, 'deleteAll']);
 
     // Home Routes
     Route::controller(HomeController::class)->group(function () {
