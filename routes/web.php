@@ -17,7 +17,6 @@ use App\Exports\ProductsExport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\InvoiceCleanupController;
-
 use Maatwebsite\Excel\Facades\Excel;
 
 // Authentication routes
