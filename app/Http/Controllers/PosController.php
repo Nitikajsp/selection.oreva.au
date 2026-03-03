@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\ListModel;
 use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -102,6 +103,10 @@ class PosController extends Controller
             $select[] = 'product_image';
         }
 
+        if (Schema::hasColumn('products', 'specification_product_image')) {
+            $select[] = 'specification_product_image';
+        }
+
         $paginator = $query->paginate($perPage, $select, 'page', $page);
 
         return response()->json([
@@ -151,6 +156,7 @@ class PosController extends Controller
             });
 
         if (!empty($search)) {
+            
             $query->where(function ($q) use ($search) {
                 $q->whereHas('customer', function ($cq) use ($search) {
                     $cq->where('name', 'like', "%{$search}%");
@@ -309,6 +315,7 @@ class PosController extends Controller
                         'quantity' => $existingOrder->quantity,
                         'comment' => $itemComment,
                         'product_image' => $product->product_image ?? null,
+                        'specification_product_image' => $product->specification_product_image ?? null,
                         'order_id' => $existingOrder->id,
                     ];
                 } else {
@@ -328,6 +335,7 @@ class PosController extends Controller
                         'quantity' => $qty,
                         'comment' => $itemComment,
                         'product_image' => $product->product_image ?? null,
+                        'specification_product_image' => $product->specification_product_image ?? null,
                         'order_id' => $order->id,
                     ];
                 }
@@ -349,105 +357,50 @@ class PosController extends Controller
                 'posCustomerSignature' => $posSignature ?: null,
             ];
 
+            DB::commit();
+
             if ($actionType === 'save_send') {
-                $pdfContent = Pdf::loadView('emails.order_confirmation', compact('orderData'))->output();
+                dispatch(function () use ($orderData, $customer, $list) {
+                    try {
+                        $pdfContent = Pdf::loadView('emails.order_confirmation', [
+                            'orderData' => $orderData,
+                            'isPdf' => true,
+                        ])->output();
 
-                $invoicesPath = public_path('invoices');
-                if (!file_exists($invoicesPath)) {
-                    mkdir($invoicesPath, 0755, true); // create recursively if needed
-                }
+                        // Send to customer
+                        if (!empty($customer->email)) {
+                            Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
+                        }
 
-                // 2️⃣ STORE the PDF privately (THIS IS THE MISSING STEP)
-                $fileName = 'invoice_' . $list->id . '_' . time() . '.pdf';
-                $path = public_path('invoices/' . $fileName);
-                file_put_contents($path, $pdfContent); // store in public
+                        // Send to list contact
+                        if (!empty($list->contact_email)) {
+                            Mail::to($list->contact_email)->send(new OrderConfirmation($orderData, $pdfContent));
+                        }
 
-                $pdfUrl = asset('invoices/' . $fileName);
-
-                // Send to customer
-                if ($customer->email) {
-                    Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
-                }
-
-                // Send to list contact
-                if (!empty($list->contact_email)) {
-                    Mail::to($list->contact_email)->send(new OrderConfirmation($orderData, $pdfContent));
-                }
-
-                // Send to admin(s)
-                $adminEmails = get_setting('email');
-                if ($adminEmails) {
-                    $emails = array_map('trim', explode(',', $adminEmails));
-                    foreach ($emails as $adminEmail) {
-                        Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
-                    }
-                }
-
-                // 5️⃣ Send WhatsApp using Twilio cURL
-
-                $account_sid  = env('TWILIO_SID');
-                $auth_token   = env('TWILIO_TOKEN');
-                $template_sid = env('TWILIO_WHATSAPP_TEMPLATE_ID');
-                $from         = env('TWILIO_WHATSAPP_FROM');
-
-                // Your 2 fixed WhatsApp numbers
-                $whatsappNumbers = [
-                    // 'whatsapp:+919999999999',
-                    'whatsapp:+918980886185',
-                ];
-
-                foreach ($whatsappNumbers as $to) {
-
-                    $url = "https://api.twilio.com/2010-04-01/Accounts/{$account_sid}/Messages.json";
-
-                    $data = [
-                        'From'       => $from,
-                        'To'         => $to,
-
-                        // WhatsApp template (required for first / 24h-expired message)
-                        'ContentSid' => $template_sid,
-
-                        // Variables must match your approved template
-                        'ContentVariables' => json_encode([
-                            "1" => $customer->name,
-                            "2" => $list->name,
-                            "3" => $pdfUrl,
-                        ]),
-
-                        // 🔑 This is the PDF
-                        // 'MediaUrl' => [$pdfUrl],
-                    ];
-
-                    $ch = curl_init($url);
-                    curl_setopt_array($ch, [
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_POST           => true,
-                        CURLOPT_POSTFIELDS     => http_build_query($data),
-                        CURLOPT_USERPWD        => "{$account_sid}:{$auth_token}",
-                    ]);
-
-                    $response = curl_exec($ch);
-                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                    $error    = curl_error($ch);
-                    curl_close($ch);
-
-                    if ($httpCode !== 201) {
-                        \Log::error('WhatsApp send failed', [
-                            'to'       => $to,
-                            'status'   => $httpCode,
-                            'error'    => $error,
-                            'response' => $response,
+                        // Send to admin(s)
+                        $adminEmails = get_setting('email');
+                        if ($adminEmails) {
+                            $emails = array_map('trim', explode(',', $adminEmails));
+                            foreach ($emails as $adminEmail) {
+                                if ($adminEmail !== '') {
+                                    Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
+                                }
+                            }
+                        }
+                    } catch (\Throwable $e) {
+                        Log::error('Failed to send POS order emails', [
+                            'customer_id' => $customer->id ?? null,
+                            'list_id' => $list->id ?? null,
+                            'error' => $e->getMessage(),
                         ]);
                     }
-                }
+                })->afterResponse();
             }
-
-            DB::commit();
 
             return response()->json([
                 'status' => true,
                 'message' => $actionType === 'save_send'
-                    ? 'Order saved and email sent successfully.'
+                    ? 'Order saved successfully. Email will be sent shortly.'
                     : 'Order saved successfully.',
                 'project_name' => $list->name,
                 'total_amount' => $totalAmount,

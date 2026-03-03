@@ -54,7 +54,7 @@
                                 <div class=" d-flex flex-column justify-content-center w-100">
                                     <div class="row mb-2">
                                         <div class="col-6 col-sm-4 data-text">Customer Name:</div>
-                                        <div class="col-6 col-sm-8" > <h6 class="data-value"> {{ $customer  ->name }} </h6> </div>
+                                        <div class="col-6 col-sm-8" > <h6 class="data-value"> {{ $customer->name }} </h6> </div>
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col-6 col-sm-4 data-text">Customer ID:</div>

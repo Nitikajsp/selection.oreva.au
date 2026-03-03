@@ -323,8 +323,16 @@
                 }
 
                 items.forEach(item => {
-                    const imageHtml = item.image
-                        ? `<img src="${productImageBaseUrl}${item.image}" alt="${item.name}" class="img-fluid rounded" width="40" height="40">`
+                    const productImage = item.productImage || '';
+                    const specImage = item.specImage || '';
+                    const productImageBase = item.productImageBase || productImageBaseUrl.replace(/\/$/, '');
+                    const specImageBase = item.specImageBase || "{{ asset('images/products/specification') }}";
+
+                    const imageHtml = (productImage || specImage)
+                        ? `<div class="d-flex gap-1">
+                                ${productImage ? `<img src="${productImageBase}/${productImage}" alt="${item.name}" class="img-fluid rounded" width="40" height="40">` : ''}
+                                ${specImage ? `<img src="${specImageBase}/${specImage}" alt="${item.name}" class="img-fluid rounded" width="40" height="40">` : ''}
+                           </div>`
                         : '<span class="text-muted small">No image</span>';
 
                     const row = `<tr class="align-middle" data-product-id="${item.id}">
@@ -369,9 +377,17 @@
                         ? p.category.category_name
                         : (p.product_name || '');
 
-                    const row = `<tr class="align-middle" data-product-id="${p.id}" data-product-name="${p.product_name || ''}" data-product-price="${priceValue}" data-product-image="${p.product_image || ''}">
+                    const productImage = p.product_image || '';
+                    const specImage = p.specification_product_image || '';
+                    const productImageBase = "{{ asset('images/products') }}";
+                    const specImageBase = "{{ asset('images/products/specification') }}";
+
+                    const row = `<tr class="align-middle" data-product-id="${p.id}" data-product-name="${p.product_name || ''}" data-product-price="${priceValue}" data-product-image="${productImage}" data-spec-image="${specImage}" data-product-image-base="${productImageBase}" data-spec-image-base="${specImageBase}">
                             <td class="pos-product-image" data-label="Image">
-                                ${p.product_image ? `<img src="{{ asset('images/products') }}/${p.product_image}" alt="${p.product_name}" class="img-fluid rounded" width="56" height="56">` : '<span class="text-muted small">No image</span>'}
+                                ${(productImage || specImage) ? `<div class="d-flex gap-1">
+                                    ${productImage ? `<img src="${productImageBase}/${productImage}" alt="${p.product_name}" class="img-fluid rounded" width="56" height="56">` : ''}
+                                    ${specImage ? `<img src="${specImageBase}/${specImage}" alt="${p.product_name}" class="img-fluid rounded" width="56" height="56">` : ''}
+                                </div>` : '<span class="text-muted small">No image</span>'}
                             </td>
                             <td class="pos-product-name" data-label="Name">${p.product_name || ''}</td>
                             <td class="pos-product-category" data-label="Category">${categoryName || ''}</td>
@@ -702,15 +718,18 @@
                 const id = $row.data('product-id');
                 const name = $row.data('product-name');
                 const price = parseFloat($row.data('product-price')) || 0;
-                const image = $row.data('product-image') || '';
                 const qty = parseInt($row.find('.product-qty').val()) || 1;
+                const productImage = $row.data('product-image') || '';
+                const specImage = $row.data('spec-image') || '';
+                const productImageBase = $row.data('product-image-base') || "{{ asset('images/products') }}";
+                const specImageBase = $row.data('spec-image-base') || "{{ asset('images/products/specification') }}";
 
                 if (!id || qty <= 0) {
                     return;
                 }
 
                 if (!cart[id]) {
-                    cart[id] = {id, name, price, quantity: qty, image, comment: ''};
+                    cart[id] = {id, name, price, quantity: qty, productImage, specImage, productImageBase, specImageBase, comment: ''};
                 } else {
                     cart[id].quantity += qty;
                 }
@@ -831,9 +850,9 @@
                                 const projectName = response.project_name || '';
                                 const baseMessage = (response.message || 'Order saved successfully.') + (projectName ? ' Project: ' + projectName : '');
 
-                                // For Save & Send, show a specific email message; for Save, show normal success
+                                // For Save & Send, email is triggered after response; for Save, show normal success
                                 if (actionType === 'save_send') {
-                                    showAlert('Email sent, opening selection...', 'success');
+                                    showAlert(response.message || 'Order saved successfully. Email will be sent shortly.', 'success');
                                 } else {
                                     showAlert(baseMessage, 'success');
                                 }

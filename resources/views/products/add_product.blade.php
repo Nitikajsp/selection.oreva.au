@@ -63,9 +63,20 @@
                                             <p class="text-secondary mb-1">Product Image</p>
                                             <input type="file" name="product_image"
                                                 class="form-control border border-white-50" placeholder="Upload Image"
-                                                onchange="previewImage(event)">
+                                                onchange="previewImage(event, 'imagePreview')">
                                             <img id="imagePreview"
-                                                style="display:none; max-width: 100%; height: auto; margin-top: 10px;" />
+                                                style="display:none; max-width: 25%; height: auto; margin-top: 10px;" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+                                        <div class="form-group">
+                                            <p class="text-secondary mb-1">Specification Product Image</p>
+                                            <input type="file" name="specification_product_image"
+                                                class="form-control border border-white-50" placeholder="Upload Image"
+                                                onchange="previewImage(event, 'specificationImagePreview')">
+                                            <img id="specificationImagePreview"
+                                                style="display:none; max-width: 25%; height: auto; margin-top: 10px;" />
                                         </div>
                                     </div>
 
@@ -130,17 +141,30 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
             <script>
-                function previewImage(event) {
+                function previewImage(event, previewElementId) {
+
+                    var file = event.target.files && event.target.files[0];
+                    var output = document.getElementById(previewElementId);
+
+                    if (!file) {
+                        if (output) {
+                            output.style.display = 'none';
+                        }
+                        return;
+                    }
 
                     var reader = new FileReader();
                     reader.onload = function() {
-                        var output = document.getElementById('imagePreview');
+                        if (!output) {
+                            return;
+                        }
+
                         output.src = reader.result;
                         output.style.display = 'block';
 
                     };
 
-                    reader.readAsDataURL(event.target.files[0]);
+                    reader.readAsDataURL(file);
                 }
 
                 $(document).ready(function() {

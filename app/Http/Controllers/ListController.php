@@ -751,22 +751,32 @@ class ListController extends Controller
 
                 // ✅ Email logic
                 if ($actionType === 'save_send') {
-                    $pdfContent = Pdf::loadView('emails.order_confirmation', compact('orderData'))->output();
+                    $pdfContent = Pdf::loadView('emails.order_confirmation', ['orderData' => $orderData, 'isPdf' => true])->output();
 
-                    // Send to customer
-                    Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
+                    $bccEmails = [];
 
-                    // Send to list contact
-                    Mail::to($list->contact_email)->send(new OrderConfirmation($orderData, $pdfContent));
+                    if (!empty($list->contact_email) && $list->contact_email !== $customer->email) {
+                        $bccEmails[] = $list->contact_email;
+                    }
 
-                    // Send to admin(s)
                     $adminEmails = get_setting('email');
                     if ($adminEmails) {
-                        $emails = array_map('trim', explode(',', $adminEmails));
+                        $emails = array_values(array_filter(array_map('trim', explode(',', $adminEmails))));
                         foreach ($emails as $adminEmail) {
-                            Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
+                            if (!empty($adminEmail) && $adminEmail !== $customer->email) {
+                                $bccEmails[] = $adminEmail;
+                            }
                         }
                     }
+
+                    $bccEmails = array_values(array_unique($bccEmails));
+
+                    $mail = Mail::to($customer->email);
+                    if (!empty($bccEmails)) {
+                        $mail->bcc($bccEmails);
+                    }
+
+                    $mail->send(new OrderConfirmation($orderData, $pdfContent));
 
                     return redirect()->route('showlistcustomer', [
                         'listId' => $listId,
@@ -1000,6 +1010,9 @@ class ListController extends Controller
 
     public function sendEmail(Request $request, $list_id, $customer_id)
     {
+        ini_set('max_execution_time', 300);
+        set_time_limit(300);
+
         $request->validate([
             'customer_email' => 'required|email',
         ]);
@@ -1012,8 +1025,8 @@ class ListController extends Controller
             return redirect()->back()->with('error', 'List or Customer not found');
         }
 
-        // Orders fetch (include product_code so PDF can show it)
-        $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image', 'products.product_code')
+        // Orders fetch
+        $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image')
             ->join('products', 'orders.product_id', '=', 'products.id')
             ->where('orders.list_id', $list_id)
             ->where('orders.customer_id', $customer_id)
@@ -1025,39 +1038,61 @@ class ListController extends Controller
             'ordersData' => $ordersData
         ];
 
-        $pdf = Pdf::loadView('emails.order_confirmation', ['orderData' => $orderData]);
+        $pdf = Pdf::loadView('emails.order_confirmation', ['orderData' => $orderData, 'isPdf' => true]);
+        $pdfContent = $pdf->output();
 
         // Subject with customer name
-        $subject = "Product List Received from {$customer->name} - Oreva Selection";
+        $addressParts = [];
+        if (!empty($list->name)) {
+            $addressParts[] = $list->name;
+        }
+        if (!empty($list->suburb)) {
+            $addressParts[] = $list->suburb;
+        }
+        if (!empty($list->state)) {
+            $addressParts[] = $list->state;
+        }
+        if (!empty($list->pincod)) {
+            $addressParts[] = $list->pincod;
+        }
+        $addressString = implode(', ', array_values(array_filter($addressParts, function ($v) {
+            return $v !== null && $v !== '';
+        })));
+
+        $subject = "Product List Received from {$customer->name}";
+        if (!empty($addressString)) {
+            $subject .= " - {$addressString}";
+        }
+        $subject .= " - Oreva Selection";
 
         // ✅ Send to selected email from form
         $selectedEmail = $request->customer_email;
-        Mail::send([], [], function ($message) use ($selectedEmail, $list, $pdf, $subject) {
-            $message->to($selectedEmail)
-                ->subject($subject)
-                ->attachData($pdf->output(), "Selection_Oreva_{$list->id}.pdf");
-        });
-
-        // Send to list contact email
-        if (!empty($list->contact_email)) {
-            Mail::send([], [], function ($message) use ($list, $pdf, $subject) {
-                $message->to($list->contact_email)
-                    ->subject($subject)
-                    ->attachData($pdf->output(), "Selection_Oreva_{$list->id}.pdf");
-            });
+        $bccEmails = [];
+        if (!empty($list->contact_email) && $list->contact_email !== $selectedEmail) {
+            $bccEmails[] = $list->contact_email;
         }
 
-        // Send to admin emails
         $adminEmails = get_setting('email');
         if ($adminEmails) {
-            $emails = array_map('trim', explode(',', $adminEmails));
-            $adminSubject = $subject . " (Admin Copy)";
-            Mail::send([], [], function ($message) use ($emails, $list, $pdf, $adminSubject) {
-                $message->to($emails)
-                    ->subject($adminSubject)
-                    ->attachData($pdf->output(), "Selection_Oreva_{$list->id}_Admin.pdf");
-            });
+            $emails = array_values(array_filter(array_map('trim', explode(',', $adminEmails))));
+            foreach ($emails as $adminEmail) {
+                if (!empty($adminEmail) && $adminEmail !== $selectedEmail) {
+                    $bccEmails[] = $adminEmail;
+                }
+            }
         }
+
+        $bccEmails = array_values(array_unique($bccEmails));
+
+        Mail::send([], [], function ($message) use ($selectedEmail, $bccEmails, $list, $pdfContent, $subject) {
+            $message->to($selectedEmail)
+                ->subject($subject)
+                ->attachData($pdfContent, "Selection_Oreva_{$list->id}.pdf");
+
+            if (!empty($bccEmails)) {
+                $message->bcc($bccEmails);
+            }
+        });
 
         return redirect()->back()->with('success', 'Email sent successfully to ' . $selectedEmail);
     }

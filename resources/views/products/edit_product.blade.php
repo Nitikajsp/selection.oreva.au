@@ -65,10 +65,33 @@
 
                                     <div class="col-sm-12 mb-3">
                                         <div class="form-group">
+                                            <p class="text-secondary mb-1">Existing Specification Product Image</p>
+                                            @if (!empty($product->specification_product_image))
+                                                <img src="{{ asset('images/products/specification/' . $product->specification_product_image) }}"
+                                                    alt="Specification Product Image" class="img-fluid" width="150">
+                                            @else
+                                                <p class="text-muted mb-0">No image uploaded</p>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 mb-3">
+                                        <div class="form-group">
                                             <p class="text-secondary mb-1">New Product Image</p>
                                             <input type="file" name="product_image"
                                                 class="form-control border border-white-50" id="productImageInput">
                                             <img id="imagePreview" src="#" alt="New Product Image"
+                                                class="img-fluid mt-3" style="display: none;" width="150">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 mb-3">
+                                        <div class="form-group">
+                                            <p class="text-secondary mb-1">New Specification Product Image</p>
+                                            <input type="file" name="specification_product_image"
+                                                class="form-control border border-white-50" id="specificationProductImageInput">
+                                            <img id="specificationImagePreview" src="#" alt="New Specification Product Image"
                                                 class="img-fluid mt-3" style="display: none;" width="150">
                                             <div class="invalid-feedback"></div>
                                         </div>
@@ -211,6 +234,15 @@
                     $('#imagePreview').attr('src', URL.createObjectURL(file)).show();
                 } else {
                     $('#imagePreview').hide();
+                }
+            });
+
+            $('#specificationProductImageInput').on('change', function() {
+                const [file] = this.files;
+                if (file) {
+                    $('#specificationImagePreview').attr('src', URL.createObjectURL(file)).show();
+                } else {
+                    $('#specificationImagePreview').hide();
                 }
             });
         });
