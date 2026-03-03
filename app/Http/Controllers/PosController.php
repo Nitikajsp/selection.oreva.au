@@ -14,6 +14,8 @@ use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class PosController extends Controller
 {
@@ -74,7 +76,7 @@ class PosController extends Controller
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('product_name', 'like', "%{$search}%")
-                  ->orWhere('product_code', 'like', "%{$search}%");
+                    ->orWhere('product_code', 'like', "%{$search}%");
             });
         }
 
@@ -128,8 +130,8 @@ class PosController extends Controller
         if (!empty($term)) {
             $query->where(function ($q) use ($term) {
                 $q->where('name', 'like', "%{$term}%")
-                  ->orWhere('email', 'like', "%{$term}%")
-                  ->orWhere('phone', 'like', "%{$term}%");
+                    ->orWhere('email', 'like', "%{$term}%")
+                    ->orWhere('phone', 'like', "%{$term}%");
             });
         }
 
@@ -157,9 +159,9 @@ class PosController extends Controller
             
             $query->where(function ($q) use ($search) {
                 $q->whereHas('customer', function ($cq) use ($search) {
-                        $cq->where('name', 'like', "%{$search}%");
-                    })
-                  ->orWhereHas('list', function ($lq) use ($search) {
+                    $cq->where('name', 'like', "%{$search}%");
+                })
+                    ->orWhereHas('list', function ($lq) use ($search) {
                         $lq->where('name', 'like', "%{$search}%");
                     });
             });
