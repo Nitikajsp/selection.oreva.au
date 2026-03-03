@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\ListModel;
 use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class PosController extends Controller
@@ -100,6 +101,10 @@ class PosController extends Controller
             $select[] = 'product_image';
         }
 
+        if (Schema::hasColumn('products', 'specification_product_image')) {
+            $select[] = 'specification_product_image';
+        }
+
         $paginator = $query->paginate($perPage, $select, 'page', $page);
 
         return response()->json([
@@ -149,6 +154,7 @@ class PosController extends Controller
             });
 
         if (!empty($search)) {
+            
             $query->where(function ($q) use ($search) {
                 $q->whereHas('customer', function ($cq) use ($search) {
                         $cq->where('name', 'like', "%{$search}%");
@@ -307,6 +313,7 @@ class PosController extends Controller
                         'quantity' => $existingOrder->quantity,
                         'comment' => $itemComment,
                         'product_image' => $product->product_image ?? null,
+                        'specification_product_image' => $product->specification_product_image ?? null,
                         'order_id' => $existingOrder->id,
                     ];
                 } else {
@@ -326,6 +333,7 @@ class PosController extends Controller
                         'quantity' => $qty,
                         'comment' => $itemComment,
                         'product_image' => $product->product_image ?? null,
+                        'specification_product_image' => $product->specification_product_image ?? null,
                         'order_id' => $order->id,
                     ];
                 }
@@ -347,35 +355,50 @@ class PosController extends Controller
                 'posCustomerSignature' => $posSignature ?: null,
             ];
 
-            if ($actionType === 'save_send') {
-                $pdfContent = Pdf::loadView('emails.order_confirmation', compact('orderData'))->output();
-
-                // Send to customer
-                if ($customer->email) {
-                    Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
-                }
-
-                // Send to list contact
-                if (!empty($list->contact_email)) {
-                    Mail::to($list->contact_email)->send(new OrderConfirmation($orderData, $pdfContent));
-                }
-
-                // Send to admin(s)
-                $adminEmails = get_setting('email');
-                if ($adminEmails) {
-                    $emails = array_map('trim', explode(',', $adminEmails));
-                    foreach ($emails as $adminEmail) {
-                        Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
-                    }
-                }
-            }
-
             DB::commit();
+
+            if ($actionType === 'save_send') {
+                dispatch(function () use ($orderData, $customer, $list) {
+                    try {
+                        $pdfContent = Pdf::loadView('emails.order_confirmation', [
+                            'orderData' => $orderData,
+                            'isPdf' => true,
+                        ])->output();
+
+                        // Send to customer
+                        if (!empty($customer->email)) {
+                            Mail::to($customer->email)->send(new OrderConfirmation($orderData, $pdfContent));
+                        }
+
+                        // Send to list contact
+                        if (!empty($list->contact_email)) {
+                            Mail::to($list->contact_email)->send(new OrderConfirmation($orderData, $pdfContent));
+                        }
+
+                        // Send to admin(s)
+                        $adminEmails = get_setting('email');
+                        if ($adminEmails) {
+                            $emails = array_map('trim', explode(',', $adminEmails));
+                            foreach ($emails as $adminEmail) {
+                                if ($adminEmail !== '') {
+                                    Mail::to($adminEmail)->send(new OrderConfirmation($orderData, $pdfContent));
+                                }
+                            }
+                        }
+                    } catch (\Throwable $e) {
+                        Log::error('Failed to send POS order emails', [
+                            'customer_id' => $customer->id ?? null,
+                            'list_id' => $list->id ?? null,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                })->afterResponse();
+            }
 
             return response()->json([
                 'status' => true,
                 'message' => $actionType === 'save_send'
-                    ? 'Order saved and email sent successfully.'
+                    ? 'Order saved successfully. Email will be sent shortly.'
                     : 'Order saved successfully.',
                 'project_name' => $list->name,
                 'total_amount' => $totalAmount,

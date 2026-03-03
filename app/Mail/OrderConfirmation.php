@@ -33,31 +33,30 @@ class OrderConfirmation extends Mailable
         $customer = $this->orderData['customer'] ?? null;
         $customerName = $this->orderData['customerName'] ?? ($customer->name ?? 'Customer');
 
+        $list = $this->orderData['list'] ?? null;
         $addressParts = [];
 
-        if ($customer) {
-            if (!empty($customer->street)) {
-                $addressParts[] = $customer->street;
+        if ($list) {
+            if (!empty($list->name)) {
+                $addressParts[] = $list->name;
             }
 
-            if (!empty($customer->house_number)) {
-                $addressParts[] = $customer->house_number;
+            if (!empty($list->suburb)) {
+                $addressParts[] = $list->suburb;
             }
 
-            if (!empty($customer->suburb)) {
-                $addressParts[] = $customer->suburb;
+            if (!empty($list->state)) {
+                $addressParts[] = $list->state;
             }
 
-            if (!empty($customer->state)) {
-                $addressParts[] = $customer->state;
-            }
-
-            if (!empty($customer->pincod)) {
-                $addressParts[] = $customer->pincod;
+            if (!empty($list->pincod)) {
+                $addressParts[] = $list->pincod;
             }
         }
 
-        $addressString = implode(', ', $addressParts);
+        $addressString = implode(', ', array_values(array_filter($addressParts, function ($v) {
+            return $v !== null && $v !== '';
+        })));
 
         $subject = "Product List Received from {$customerName}";
 
@@ -70,6 +69,6 @@ class OrderConfirmation extends Mailable
         return $this->subject($subject)
             ->view('emails.order_confirmation')
             ->with('orderData', $this->orderData)
-            ->attachData($this->pdf, "invoice_{$this->orderData['list']->id}.pdf");
+            ->attachData($this->pdf, "Selection_Oreva_{$this->orderData['list']->id}.pdf");
     }
 }

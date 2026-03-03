@@ -15,6 +15,7 @@ class Product extends Model
         'product_code',
         'product_stock',
         'product_image', // Add this line
+        'specification_product_image',
         'delete_status',
         'admin_user_id',
 

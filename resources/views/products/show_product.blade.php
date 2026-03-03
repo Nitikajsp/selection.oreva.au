@@ -45,9 +45,27 @@
                         <!-- Product Detail Section -->
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center w-100">
+                                
+                                <div class="row mb-2">
+                                    <div class="col-6 col-sm-4 data-text">Product Image:</div>
+                                    <div class="col-6 col-sm-8">
+                                        <div class="d-flex gap-2">
+                                            @if (!empty($product->product_image))
+                                                <img src="{{ asset('images/products/' . $product->product_image) }}" alt="Product Image" class="img-fluid" width="120">
+                                            @endif
+                                            @if (!empty($product->specification_product_image))
+                                                <img src="{{ asset('images/products/specification/' . $product->specification_product_image) }}" alt="Specification Product Image" class="img-fluid" width="120">
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row mb-2">
                                     <div class="col-6 col-sm-4 data-text">Product Name:</div>
                                     <div class="col-6 col-sm-8"> <h6 class="data-value"> {{ $product->product_name }} </h6> </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-6 col-sm-4 data-text">Product Category:</div>
+                                    <div class="col-6 col-sm-8"> <h6 class="data-value"> {{ $categoryList ?? '' }} </h6> </div>
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-6 col-sm-4 data-text">Product Code:</div>

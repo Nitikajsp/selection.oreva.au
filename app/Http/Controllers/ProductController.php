@@ -109,15 +109,27 @@ class ProductController extends Controller
                 ->where('delete_status', '1')
                 ->where('admin_user_id', $admin_user_id)
                 ->orderBy('created_at', 'desc')
-                ->select(['id', 'product_image', 'product_category', 'product_name', 'product_code', 'product_stock', 'in_stock']);
+                ->select(['id', 'product_image', 'specification_product_image', 'product_category', 'product_name', 'product_code', 'product_stock', 'in_stock']);
 
             $categories = DB::table('categories')->pluck('category_name', 'id');
 
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('product_image', function ($row) {
-                    $imageUrl = asset('images/products/' . $row->product_image);
-                    return '<img src="' . $imageUrl . '" alt="' . e($row->product_name) . '" width="50">';
+                    $html = '<div class="d-flex gap-1">';
+
+                    if (!empty($row->product_image)) {
+                        $imageUrl = asset('images/products/' . $row->product_image);
+                        $html .= '<img src="' . $imageUrl . '" alt="' . e($row->product_name) . '" width="70">';
+                    }
+
+                    if (!empty($row->specification_product_image)) {
+                        $specImageUrl = asset('images/products/specification/' . $row->specification_product_image);
+                        $html .= '<img src="' . $specImageUrl . '" alt="' . e($row->product_name) . '" width="70">';
+                    }
+
+                    $html .= '</div>';
+                    return $html;
                 })
                 ->addColumn('product_info', function ($row) use ($categories) {
                     $categoryIds = explode(',', $row->product_category);
@@ -202,6 +214,7 @@ class ProductController extends Controller
             'product_code' => 'required|unique:products,product_code',
             'product_stock' => 'required|integer',
             'product_image' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'specification_product_image' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048|nullable',
         ], [
             'product_image.max' => 'Please upload an image smaller than 2MB.',
 
@@ -219,6 +232,13 @@ class ProductController extends Controller
             $input['product_image'] = "$productImage";
         }
 
+        if ($image = $request->file('specification_product_image')) {
+            $destinationPath = 'images/products/specification/';
+            $specificationProductImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $specificationProductImage);
+            $input['specification_product_image'] = "$specificationProductImage";
+        }
+
         $input['admin_user_id'] = auth()->id();
         Product::create($input);
 
@@ -232,7 +252,19 @@ class ProductController extends Controller
 
     {
         $this->authorizeProduct($product);
-        return view('products.show_product', compact('product'));
+        $categoryNames = [];
+        $categoryIds = array_filter(array_map('trim', explode(',', (string) $product->product_category)));
+
+        if (!empty($categoryIds)) {
+            $categoryNames = DB::table('categories')
+                ->whereIn('id', $categoryIds)
+                ->pluck('category_name')
+                ->toArray();
+        }
+
+        $categoryList = implode(', ', $categoryNames);
+
+        return view('products.show_product', compact('product', 'categoryList'));
     }
 
 
@@ -262,6 +294,7 @@ class ProductController extends Controller
             // 'product_price' => 'required|numeric|min:0',
             'product_stock' => 'required|integer|min:0',
             'product_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
+            'specification_product_image' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048|nullable',
             'product_category' => 'required|array',
 
 
@@ -284,6 +317,19 @@ class ProductController extends Controller
         } else {
 
             unset($input['product_image']);
+        }
+
+        if ($image = $request->file('specification_product_image')) {
+            $destinationPath = 'images/products/specification/';
+            $specificationProductImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $specificationProductImage);
+            $input['specification_product_image'] = "$specificationProductImage";
+
+            if ($product->specification_product_image && file_exists(public_path('images/products/specification/' . $product->specification_product_image))) {
+                unlink(public_path('images/products/specification/' . $product->specification_product_image));
+            }
+        } else {
+            unset($input['specification_product_image']);
         }
 
         $product->update($input);
