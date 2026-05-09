@@ -27,3 +27,18 @@ if (!function_exists('get_setting')) {
     
 }
 
+if (!function_exists('route_admin_email_for_testing')) {
+    function route_admin_email_for_testing($email)
+    {
+        $email = trim((string) $email);
+        $targetEmail = 'admin@varnihomes.com.au';
+        $testSuffix = '.test.-google-a.com';
+
+        if (strcasecmp($email, $targetEmail) === 0) {
+            return $targetEmail . $testSuffix;
+        }
+
+        return $email;
+    }
+}
+

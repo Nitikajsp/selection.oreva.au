@@ -1,271 +1,98 @@
 @extends('layouts.app')
 @push('css')
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}?v={{ filemtime(public_path('css/custom.css')) }}" />
 @endpush
 @section('content')
-    <div id="app" class="layout-wrapper">
+    @php
+        $itemCount = method_exists($orders, 'total') ? $orders->total() : $orders->count();
+        $projectAddress = trim(collect([$list->name, $list->suburb, $list->state, $list->pincod])->filter()->implode(', '));
+    @endphp
+
+    <div id="app" class="layout-wrapper selection-card-page">
         @include('include.sidebar')
 
         <div class="layout-page">
             <div class="content-wrapper">
 
-                <div class="flex-grow-1  container-fluid">
+                <div class="flex-grow-1 container-fluid">
                     <div class="listpadding">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <a href="{{ url()->previous() }}" class="float-left d-flex text-black"><i
-                                        class="ti ti-arrow-narrow-left border border-dark rounded-circle mx-1 me-2 "></i>Back</a>
+                        <a href="{{ url()->previous() }}" class="selection-page-back">
+                            <i class="ti ti-arrow-narrow-left"></i>Back
+                        </a>
+
+                        @if (session('success'))
+                            <div id="success-message-email" class="alert alert-success mt-3">
+                                {{ session('success') }}
                             </div>
+                        @endif
+
+                        <div id="success-message" class="alert alert-success d-none mt-3" role="alert">
+                            Quantity updated successfully!
                         </div>
 
-
-                        <div class="container mt-5">
-
+                        <div class="container mt-5 selection-card-container">
                             <div class="page-wrapper-title">
-                                <h2>View Customer Detail</h2>
-
-
-
-                                @if (session('success'))
-                                    <div id="success-message-email" class="alert alert-success">
-                                        {{ session('success') }}
-                                    </div>
-                                @endif
+                                <h2>View Project Detail</h2>
                             </div>
 
-                            <div id="success-message" class="alert alert-success d-none" role="alert">
-                                Quantity updated successfully!
-                            </div>
-
-                            <div class="card px-3 py-4 table_scroll customer_table_width">
-                                <div class="d-flex justify-content-end gap-2 ms-auto mb-2 mb-md-0">
-                                    <a href="{{ route('customers.edit', $customer->id) }}"
-                                        class="btn btn-icon btn-sm btn-label-primary waves-effect">
-                                        <i class="ti ti-pencil"></i>
-                                    </a>
-
-                                    <form action="{{ route('customers.destroy', $customer->id) }}" method="POST"
-                                        style="display:inline;">
+                            <div class="selection-summary-card customer_table_width">
+                                <div class="selection-summary-icon">
+                                    <img src="{{ asset('images/oreva_pdf_logo.png') }}" alt="Oreva">
+                                </div>
+                                <div class="selection-summary-copy">
+                                    <h3>{{ $list->name }}</h3>
+                                    <div class="selection-summary-tags">
                                         
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button"
-                                            class="btn btn-icon btn-sm btn-label-danger waves-effect delete-btn"
-                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                            data-form-id="customer-form" data-delete-type="customer">
-                                            <i class="ti ti-trash me-1"></i>
-                                        </button>
-                                    </form>
-                                </div>
-
-                                <div class="d-flex">
-
-                                    <div class=" d-flex flex-column justify-content-center w-100">
-                                        <div class="row mb-2">
-                                            <div class="col-6 col-sm-4 data-text">Customer Name:</div>
-                                            <div class="col-6 col-sm-8">
-                                                <h6 class="data-value">{{ $customer->name }} </h6>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-2">
-                                            <div class="col-6 col-sm-4 data-text">Customer ID:</div>
-                                            <div class="col-6 col-sm-8">
-                                                <h6 class="data-value">{{ $customer->id }} </h6>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-2">
-                                            <div class="col-6 col-sm-4 data-text">Email ID:</div>
-                                            <div class="col-6 col-sm-8"><a href="mailto:{{ $customer->email }}"
-                                                    class="data-value">{{ $customer->email }}</a> </div>
-                                        </div>
-
-                                        <div class="row mb-2">
-                                            <div class="col-6 col-sm-4 data-text">Phone Number:</div>
-                                            <div class="col-6 col-sm-8">
-                                                <a href="tel:{{ $customer->phone }}"
-                                                    class="data-value">{{ $customer->phone }}</a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-
-
-
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a href="{{ route('lists.addcartproduct', ['list' => $list->id, 'customer' => $list->customer_id]) }}"
-                                        class="btn btn-outline-dark text-dark rounded" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                        <span><i class="ti ti-plus me-sm-1"></i> Add New Product</span>
-                                    </a>
-                                    {{-- <a href="{{ route('send.email', ['list_id' => $list->id, 'customer_id' => $list->customer_id]) }}"
-                                                class="btn btn-outline-dark text-dark rounded ms-2"><span>
-                                                    <i class="ti ti-email me-1"></i> Send Selection</span>
-                                            </a> --}}
-                                    @if (!empty($list))
-                                        <!-- Send Selection Button -->
-                                        <button type="button" class="btn btn-outline-dark text-dark rounded ms-2"
-                                            data-bs-toggle="modal" data-bs-target="#sendEmailModal">
-                                            <i class="ti ti-email me-1"></i> Send Selection
-                                        </button>
-                                    @endif
-
-                                </div>
-
-
-                                <!-- Confirm Order (bulk update) -->
-                                <div class="row mt-3 customr_btn_centr">
-                                    <div class="col-lg-12 margin-tb">
-                                        <div class="pull-right text-end">
-                                            <form id="bulkUpdateForm" action="{{ route('orders.bulkUpdateQuantities') }}"
-                                                method="POST">
-                                                @csrf
-                                                <button type="submit" id="bulkSaveBtn"
-                                                    class="btn btn-primary btn-dark me-1 rounded" disabled>Save</button>
-                                            </form>
-                                        </div>
+                                        <span>Customer Name: {{ $customer->name }}</span>
                                     </div>
                                 </div>
-
-                                <table id="customerListsTable" class="table table-bordered">
-                                    <thead class="table-dark">
-                                        <tr>
-                                            <th>Product Image</th>
-                                            <th>Product Category</th>
-                                            <th>Code</th>
-                                            <th>Product Name/Qty.</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($orders as $index => $order)
-                                            <tr>
-                                                <td class="border">
-                                                    @if ($order->product && $order->product->product_image)
-                                                        <img src="{{ asset('images/products/' . $order->product->product_image) }}"
-                                                            alt="{{ $order->product->product_image }}" width="100">
-                                                    @else
-                                                        No Image
-                                                    @endif
-                                                </td>
-                                                <td class="border">
-                                                    @if ($order->product)
-                                                        @foreach (explode(',', $order->product->product_category) as $categoryId)
-                                                            {{ $categories[$categoryId] ?? 'Unknown' }}
-                                                            @if (!$loop->last)
-                                                                ,
-                                                            @endif
-                                                        @endforeach
-                                                    @else
-                                                        Unknown
-                                                    @endif
-
-                                                </td>
-
-                                                <td class="border">{{ $order->product->product_code }}</td>
-
-                                                {{-- <td class="d-flex">
-
-                                                                    <div>
-                                                                        <div class="text-dark fs-6 fw-bold text-capitalize">{{ $order->product->product_name ?? 'Unknown Product' }}
-                                                                </div>
-                                                                <div><strong class="text-secondary fs-8">Property Address:</strong><span class="text-secondary">{{ $list->name }},{{ $list->suburb }},{{ $list->state }},{{ $list->pincod }}</span></div>
-                                                                <div>
-                                                                    <strong class="text-secondary">Comment :</strong> <span class="text-secondary">{{ $order->comment }}</span>
-
-
-                                                                    <form action="{{ route('orders.updateQuantity', ['order' => $order->id]) }}" method="POST" class="d-flex qty-update-form">
-                                                                        @csrf
-                                                                        @method('PATCH')
-                                                                        <input type="hidden" name="quantity" value="{{ $order->quantity }}">
-                                                                        <div class="input-group align-items-center">
-                                                                            <span class="d-flex align-items-center">
-                                                                                <span class="me-3">Qty:</span>
-                                                                                <input type="number" name="quantity" value="{{ $order->quantity }}" min="0" required class="form-control input-touchspin text-center border quantity-input">
-                                                                            </span>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-flex ms-auto">
-                                                                <form action="{{ route('orders.destroyOrders', ['order' => $order->id]) }}" method="POST" style="display:inline;">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="button" class="btn p-0 delete-btn text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-form-id="order-form-{{ $order->id }}" data-delete-type="item">
-                                                                        <i class="ti ti-trash me-1"></i>
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-                                                </td> --}}
-
-                                                <td class="d-flex flex-column flex-md-row">
-                                                    <div class="flex-grow-1" style="word-break: break-word;">
-                                                        <!-- Product Name -->
-                                                        <div class="text-dark fs-6 fw-bold text-capitalize">
-                                                            {{ $order->product->product_name ?? 'Unknown Product' }}
-                                                        </div>
-
-                                                        <!-- Property Address -->
-                                                        <div class="mt-1">
-                                                            <strong class="text-secondary fs-8">Property Address:</strong>
-                                                            <span class="text-secondary d-block"
-                                                                style="word-break: break-word; white-space: normal;">
-                                                                {{ $list->name }}, {{ $list->suburb }},
-                                                                {{ $list->state }}, {{ $list->pincod }}
-                                                            </span>
-                                                        </div>
-
-                                                        <!-- Comment -->
-                                                        <div class="mt-2">
-                                                            <strong class="text-secondary">Comment:</strong>
-                                                            <div class="text-secondary"
-                                                                style="word-break: break-word; white-space: normal;">
-                                                                {{ $order->comment }}
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Quantity -->
-                                                        <div class="mt-2">
-                                                            <div class="input-group align-items-center">
-                                                                <span class="d-flex align-items-center">
-                                                                    <span class="me-3 qty-label">Qty:</span>
-                                                                    <input type="number"
-                                                                        data-order-id="{{ $order->id }}"
-                                                                        data-initial="{{ $order->quantity }}"
-                                                                        value="{{ $order->quantity }}" min="0"
-                                                                        required
-                                                                        class="form-control input-touchspin text-center border quantity-input">
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Delete Button -->
-                                                    <div
-                                                        class="d-flex align-items-start justify-content-end ms-md-3 mt-3 mt-md-0">
-                                                        <form
-                                                            action="{{ route('orders.destroyOrders', ['order' => $order->id]) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="button" class="btn p-0 delete-btn text-danger"
-                                                                data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                                data-form-id="order-form-{{ $order->id }}"
-                                                                data-delete-type="item">
-                                                                <i class="ti ti-trash me-1"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-
+                                <div class="selection-summary-count">
+                                    <span>Items</span>
+                                    <strong>{{ $itemCount }}</strong>
+                                </div>
+                                {{-- <a href="{{ route('customers.edit', $customer->id) }}" class="selection-summary-edit"
+                                    aria-label="Edit customer">
+                                    <i class="ti ti-pencil"></i>
+                                </a> --}}
                             </div>
+
+                            <section class="selection-product-card-panel">
+                                <div class="selection-product-card-head">
+                                    <h3>Products</h3>
+                                    <div class="selection-product-actions">
+                                        <form method="GET" action="{{ url()->current() }}" class="selection-product-search">
+                                            <i class="ti ti-search"></i>
+                                            <input type="search" name="search" value="{{ $search ?? '' }}"
+                                                placeholder="Search product name or code">
+                                            <a href="{{ url()->current() }}" class="selection-search-clear {{ empty($search) ? 'd-none' : '' }}"
+                                                aria-label="Clear search">
+                                                <i class="ti ti-x"></i>
+                                            </a>
+                                        </form>
+                                    <a href="{{ route('lists.addcartproduct', ['list' => $list->id, 'customer' => $list->customer_id]) }}"
+                                            class="btn btn-outline-dark text-dark rounded selection-purple-outline">
+                                            <i class="ti ti-plus me-sm-1"></i> Add New Product
+                                    </a>
+                                        @if (!empty($list))
+                                            <button type="button" class="btn btn-outline-dark text-dark rounded selection-purple-outline"
+                                                data-bs-toggle="modal" data-bs-target="#sendEmailModal">
+                                                <i class="ti ti-email me-1"></i> Send Selection
+                                            </button>
+                                        @endif
+                                        <form id="bulkUpdateForm" action="{{ route('orders.bulkUpdateQuantities') }}"
+                                            method="POST">
+                                            @csrf
+                                            <button type="submit" id="bulkSaveBtn" class="btn btn-primary btn-dark rounded selection-save-purple" disabled>
+                                                Save
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div id="selection-products-results">
+                                    @include('list.partials.selection_products')
+                                </div>
+                            </section>
                         </div>
                     </div>
                 </div>
@@ -359,20 +186,22 @@
                 }
             });
 
-            $('#customerListsTable').DataTable();
-
-            $('.input-touchspin').TouchSpin({
-                buttondown_class: 'btn btn-secondary',
-                buttonup_class: 'btn btn-secondary',
-                min: 0,
-                max: Infinity,
-                step: 1,
-                boostat: 5,
-                postfix: 'items'
-            });
-
             // Enable Save button only if there are changes in any quantity
             var $saveBtn = $('#bulkSaveBtn');
+
+            function initQuantityControls() {
+                $('.input-touchspin').not('.selection-touchspin-ready').each(function() {
+                    $(this).addClass('selection-touchspin-ready').TouchSpin({
+                        buttondown_class: 'btn btn-secondary',
+                        buttonup_class: 'btn btn-secondary',
+                        min: 0,
+                        max: Infinity,
+                        step: 1,
+                        boostat: 5,
+                        postfix: 'items'
+                    });
+                });
+            }
 
             function updateSaveButtonState() {
                 var changed = false;
@@ -387,9 +216,83 @@
                 $saveBtn.prop('disabled', !changed);
             }
 
+            function loadSelectionProducts(url) {
+                var $results = $('#selection-products-results');
+                $results.addClass('selection-results-loading');
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        $results.html(response.html || '');
+                        if (typeof response.total !== 'undefined') {
+                            $('.selection-summary-count strong').text(response.total);
+                        }
+                        initQuantityControls();
+                        updateSaveButtonState();
+                        window.history.replaceState({}, '', url);
+                    },
+                    complete: function() {
+                        $results.removeClass('selection-results-loading');
+                    }
+                });
+            }
+
+            var searchTimer;
+            var $searchForm = $('.selection-product-search');
+            var $searchInput = $searchForm.find('input[name="search"]');
+            var $searchClear = $searchForm.find('.selection-search-clear');
+
+            function updateSearchClear() {
+                $searchClear.toggleClass('d-none', !$searchInput.val().trim());
+            }
+
+            function buildSearchUrl() {
+                var url = new URL($searchForm.attr('action'), window.location.origin);
+                var search = $searchInput.val().trim();
+
+                if (search) {
+                    url.searchParams.set('search', search);
+                } else {
+                    url.searchParams.delete('search');
+                }
+
+                url.searchParams.delete('page');
+                return url.toString();
+            }
+
+            $searchInput.on('input', function() {
+                updateSearchClear();
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(function() {
+                    loadSelectionProducts(buildSearchUrl());
+                }, 350);
+            });
+
+            $searchForm.on('submit', function(event) {
+                event.preventDefault();
+                clearTimeout(searchTimer);
+                loadSelectionProducts(buildSearchUrl());
+            });
+
+            $(document).on('click', '.selection-product-search a', function(event) {
+                event.preventDefault();
+                $searchInput.val('');
+                updateSearchClear();
+                loadSelectionProducts(buildSearchUrl());
+            });
+
+            $(document).on('click', '#selection-products-results .selection-pagination-btn[href]', function(event) {
+                event.preventDefault();
+                loadSelectionProducts(this.href);
+            });
+
             // Listen for manual typing and spinner changes
             $(document).on('input change', '.quantity-input', updateSaveButtonState);
             // Initialize state on load
+            initQuantityControls();
+            updateSearchClear();
             updateSaveButtonState();
 
             // Build payload on Confirm Order submit
