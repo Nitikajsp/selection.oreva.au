@@ -194,13 +194,23 @@ class ListController extends Controller
     public function destroy($id)
 
     {
-        $list = ListModel::findOrFail($id);
+        $adminId = auth()->id();
 
-        $customer_id = $list->customer_id;
+        $list = ListModel::whereHas('customer', function ($query) use ($adminId) {
+            $query->where('admin_user_id', $adminId);
+        })->findOrFail($id);
 
-        $list->delete();
+        $list->update(['delete_status' => 1]);
 
-        return redirect()->route('showorder')->with('success', 'List deleted successfully.');
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Project delete successfully.'
+            ]);
+        }
+
+        return redirect()->route('customers.show', $list->customer_id)
+            ->with('success', 'Project delete successfully.');
     }
 
     // add cart product controller start  //
@@ -218,7 +228,8 @@ class ListController extends Controller
             ->where('delete_status', '1')
             ->where('admin_user_id', $adminId)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(12)
+            ->withQueryString();
 
         // Fetch all categories
         $categories = DB::table('categories')
@@ -226,12 +237,13 @@ class ListController extends Controller
             ->pluck('category_name', 'id');
 
         // Add category names to products
-        foreach ($products as $product) {
+        $products->getCollection()->transform(function ($product) use ($categories) {
             $categoryIds = explode(',', $product->product_category);
             $product->category_names = array_map(function ($id) use ($categories) {
                 return $categories[$id] ?? 'Unknown';
             }, $categoryIds);
-        }
+            return $product;
+        });
 
         return view('list.add_cart_product', compact('list', 'products',));
     }
@@ -760,6 +772,7 @@ class ListController extends Controller
                     }
 
                     $adminEmails = get_setting('email');
+
                     if ($adminEmails) {
                         $emails = array_values(array_filter(array_map('trim', explode(',', $adminEmails))));
                         foreach ($emails as $adminEmail) {
@@ -825,6 +838,7 @@ class ListController extends Controller
 
     {
         $adminId = auth()->id();
+        $search = trim((string) request('search', ''));
         $list = ListModel::where('id', $listId)
             ->where('customer_id', $customerId)
             ->whereHas('customer', function ($query) use ($adminId) {
@@ -836,13 +850,20 @@ class ListController extends Controller
 
         $orders = Order::where('list_id', $listId)
             ->where('customer_id', $customerId)
+            ->when($search !== '', function ($query) use ($search) {
+                $query->whereHas('product', function ($query) use ($search) {
+                    $query->where('product_name', 'like', "%{$search}%")
+                        ->orWhere('product_code', 'like', "%{$search}%");
+                });
+            })
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
-        $products = Product::whereIn('id', $orders->pluck('product_id')->unique())->get()->keyBy('id');
+        $products = Product::whereIn('id', $orders->getCollection()->pluck('product_id')->unique())->get()->keyBy('id');
         $categories = DB::table('categories')->pluck('category_name', 'id')->toArray();
 
-        foreach ($orders as $order) {
+        $orders->getCollection()->transform(function ($order) use ($products, $categories) {
             $product = $products->get($order->product_id);
             if ($product) {
                 $categoryIds = explode(',', $product->product_category);
@@ -851,9 +872,19 @@ class ListController extends Controller
                 }, $categoryIds);
             }
             $order->product = $product;
+            return $order;
+        });
+
+        $projectAddress = trim(collect([$list->name, $list->suburb, $list->state, $list->pincod])->filter()->implode(', '));
+
+        if (request()->ajax()) {
+            return response()->json([
+                'html' => view('list.partials.selection_products', compact('orders', 'categories', 'search', 'projectAddress'))->render(),
+                'total' => $orders->total(),
+            ]);
         }
 
-        return view('list.show_list', compact('list', 'customer', 'orders', 'categories'));
+        return view('list.show_list', compact('list', 'customer', 'orders', 'categories', 'search'));
     }
 
     //  show list order update qty //
@@ -891,7 +922,7 @@ class ListController extends Controller
         foreach ($ordersPayload as $orderId => $data) {
             $quantity = isset($data['quantity']) ? (int) $data['quantity'] : null;
             if ($quantity === null) {
-                continue;   
+                continue;
             }
 
             $order = Order::find($orderId);
@@ -1072,7 +1103,9 @@ class ListController extends Controller
             $bccEmails[] = $list->contact_email;
         }
 
+        // $adminEmails = 'admin@varnihomes.com.au';
         $adminEmails = get_setting('email');
+
         if ($adminEmails) {
             $emails = array_values(array_filter(array_map('trim', explode(',', $adminEmails))));
             foreach ($emails as $adminEmail) {
@@ -1084,9 +1117,14 @@ class ListController extends Controller
 
         $bccEmails = array_values(array_unique($bccEmails));
 
-        Mail::send([], [], function ($message) use ($selectedEmail, $bccEmails, $list, $pdfContent, $subject) {
+        $bodyHtml = '<p>Hi, please find attached the selected product list for your project.</p>'
+            . '<p>Kindly review and let us know if you would like to make any changes or proceed further</p>'
+            . '<p>Thanks</p>';
+
+        Mail::send([], [], function ($message) use ($selectedEmail, $bccEmails, $list, $pdfContent, $subject, $bodyHtml) {
             $message->to($selectedEmail)
                 ->subject($subject)
+                ->html($bodyHtml)
                 ->attachData($pdfContent, "Selection_Oreva_{$list->id}.pdf");
 
             if (!empty($bccEmails)) {

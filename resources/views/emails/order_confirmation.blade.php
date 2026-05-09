@@ -321,7 +321,7 @@
                         <td class="invoice-header-left">
                             <strong style="font-size: 1.5rem;">Oreva</strong><br>
                             <p style="margin: 0;">{{ get_setting('address') }}</p>
-                            <p style="margin: 4px 0 0 0;">{{ get_setting('phone_number') }}</p>
+                            <p style="margin: 4px 0 0 0;">{{ ('phone_number') }}</p>
                         </td>
                         <td class="invoice-header-right">
                             <strong style="font-size: 1.125rem;">Project id

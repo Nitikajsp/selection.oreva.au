@@ -23,6 +23,7 @@ class ListModel extends Model
         'status',
         'product_name',
         'customer_id',
+        'delete_status',
         
     ];
 

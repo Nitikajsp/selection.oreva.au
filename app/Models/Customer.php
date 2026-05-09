@@ -17,7 +17,7 @@ class Customer extends Model
     public function lists()
     
     {
-        return $this->hasMany(ListModel::class);
+        return $this->hasMany(ListModel::class)->where('delete_status', 0);
     }
     public function orders()
     {

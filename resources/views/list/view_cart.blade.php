@@ -5,7 +5,7 @@
 @endpush
 
 @section('content')
-    <div id="app" class="layout-wrapper">
+    <div id="app" class="layout-wrapper cart-card-page">
         @include('include.sidebar')
 
         <div class="layout-page">
@@ -20,7 +20,7 @@
                         </a>
                     </div>
 
-                    <div class="container">
+                    <div class="container cart-card-container">
                         @if (session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
@@ -31,84 +31,74 @@
                         <div id="alert-container"></div>
 
                         @if (count($cartItems) > 0)
+                            <div class="cart-card-header">
+                                <div>
+                                    <span>Selected Products</span>
+                                    <h1>Review Cart</h1>
+                                    <p>{{ count($cartItems) }} items ready for selection</p>
+                                </div>
+                                <a href="{{ route('lists.addcartproduct', ['list' => $list->id, 'customer' => $list->customer_id]) }}"
+                                    class="cart-add-more-btn">
+                                    <i class="ti ti-plus"></i>Add More
+                                </a>
+                            </div>
+
                             <div class="row g-4">
                                 <div class="col-lg-8">
-                                    <div class="card p-2">
-                                        <div class="customerscroll">
-                                            <table id="cartTable" class="table ">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Product</th>
-                                                        <th>Code</th>
-                                                        <th>Product Name / Qty.</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($cartItems as $index => $item)
-                                                        <tr>
-                                                            <td>
-                                                                @if ($item['product']->product_image)
-                                                                    <img src="{{ asset('images/products/' . $item['product']->product_image) }}"
-                                                                        alt="{{ $item['product']->product_name }}" width="100">
-                                                                @else
-                                                                    No Image
-                                                                @endif
-                                                            </td>
+                                    <div class="cart-items-panel">
+                                        @foreach ($cartItems as $index => $item)
+                                            <article class="cart-item-card">
+                                                <div class="cart-item-image">
+                                                    @if ($item['product']->product_image)
+                                                        <img src="{{ asset('images/products/' . $item['product']->product_image) }}"
+                                                            alt="{{ $item['product']->product_name }}">
+                                                    @else
+                                                        <span>No Image</span>
+                                                    @endif
+                                                    <small>{{ $item['product']->product_code }}</small>
+                                                </div>
 
-                                                            <td class=" sorting_1">{{ $item['product']->product_code }}</td>
+                                                <div class="cart-item-body">
+                                                    <h3>{{ $item['product']->product_name }}</h3>
+                                                    <form
+                                                        action="{{ route('cart.updateqty', ['list' => $list->id, 'productId' => $item['product']->id, 'customerId' => $list->customer_id]) }}"
+                                                        method="POST" class="cart-item-update-form qty-update-form">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <input type="hidden" name="quantity" value="{{ $item['quantity'] }}">
 
-                                                            <td class=" d-flex">
-                                                                <div>
-                                                                    <div class="text-dark fs-5 fw-bold text-capitalize">
-                                                                        {{ $item['product']->product_name }}</div>
-                                                                    <form
-                                                                        action="{{ route('cart.updateqty', ['list' => $list->id, 'productId' => $item['product']->id, 'customerId' => $list->customer_id]) }}"
-                                                                        method="POST" class="d-flex flex-column qty-update-form">
-                                                                        @csrf
-                                                                        @method('PATCH')
-                                                                        <input type="hidden" name="quantity"
-                                                                            value="{{ $item['quantity'] }}">
+                                                        <div class="cart-item-qty">
+                                                            <span>Qty:</span>
+                                                            <input type="number" name="quantity"
+                                                                value="{{ $item['quantity'] }}" min="0" required
+                                                                class="form-control input-touchspin text-center border quantity-input">
+                                                        </div>
 
-                                                                        <div class="input-group align-items-center">
-                                                                            <span class="d-flex align-items-center">
-                                                                                <span class="me-3">Qty:</span>
-                                                                                <input type="number" name="quantity"
-                                                                                    value="{{ $item['quantity'] }}" min="0"
-                                                                                    required
-                                                                                    class="form-control input-touchspin text-center border quantity-input">
-                                                                            </span>
-                                                                        </div>
+                                                        <div class="cart-item-comment">
+                                                            <label for="comment_{{ $item['product']->id }}">Comment</label>
+                                                            <textarea id="comment_{{ $item['product']->id }}" name="comment"
+                                                                class="form-control border comment-input" rows="2">{{ old('comment', $item['comment'] ?? '') }}</textarea>
+                                                        </div>
 
-                                                                        <div class="mt-2">
-                                                                            <label
-                                                                                for="comment_{{ $item['product']->id }}">Comment:</label>
-                                                                            <textarea name="comment" class="form-control border comment-input" rows="2">{{ old('comment', $item['comment'] ?? '') }}</textarea>
-                                                                            <button type="button"
-                                                                                class="btn btn-primary btn-sm mt-2 rounded update-btn">Update</button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
+                                                        <button type="button" class="btn btn-primary rounded update-btn">
+                                                            Update
+                                                        </button>
+                                                    </form>
+                                                </div>
 
-                                                                <div class="d-flex ms-auto">
-                                                                    <form class="delete-form"
-                                                                        action="{{ route('cart.remove', ['list' => $list->id, 'productId' => $item['product']->id, 'customerId' => $list->customer_id]) }}"
-                                                                        method="POST">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <button type="button" class="btn p-0 delete-btn text-danger"
-                                                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                                            data-form-action="{{ route('cart.remove', ['list' => $list->id, 'productId' => $item['product']->id, 'customerId' => $list->customer_id]) }}">
-                                                                            <i class="ti ti-trash me-1"></i>
-                                                                        </button>
-                                                                    </form>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-
-                                            </table>
-                                        </div>
+                                                <form class="delete-form cart-item-delete-form"
+                                                    action="{{ route('cart.remove', ['list' => $list->id, 'productId' => $item['product']->id, 'customerId' => $list->customer_id]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="cart-item-delete-btn delete-btn"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                        data-form-action="{{ route('cart.remove', ['list' => $list->id, 'productId' => $item['product']->id, 'customerId' => $list->customer_id]) }}">
+                                                        <i class="ti ti-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </article>
+                                        @endforeach
                                     </div>
                                 </div>
 
@@ -139,9 +129,9 @@
 
                                         <input type="hidden" id="actionType" name="action_type" value="save">
 
-                                        <div class="card">
+                                        <div class="card cart-order-card">
                                             <div class="card-body">
-                                                {{-- <h5 class="mb-3">Order details</h5> --}}
+                                                <h5 class="cart-order-title">Order Details</h5>
 
                                                 <div class="mb-3">
                                                     <label for="order-customer-name" class="form-label">Customer name
@@ -157,17 +147,17 @@
                                                         <button type="button" class="btn btn-sm btn-link p-0"
                                                             id="clear-signature">Clear</button>
                                                     </div>
-                                                    <div class="border rounded-3 bg-white" style="padding: 6px;">
+                                                    <div class="cart-signature-box">
                                                         <canvas id="signature-pad" height="140"
                                                             style="width: 100%; touch-action: none; cursor: crosshair; display: block;"></canvas>
                                                     </div>
                                                     <input type="hidden" id="signature-data" name="signature">
                                                 </div>
 
-                                                <div class="pull-right mt-4">
-                                                    <button type="submit" class="btn btn-primary btn-dark me-1 rounded"
+                                                <div class="cart-order-actions">
+                                                    <button type="submit" class="btn btn-primary btn-dark rounded"
                                                         onclick="setActionType('save')">Save</button>
-                                                    <button type="submit" class="btn btn-primary btn-dark me-1 rounded"
+                                                    <button type="submit" class="btn btn-primary btn-dark rounded"
                                                         onclick="setActionType('save_send')">Save & Send</button>
                                                 </div>
                                             </div>
@@ -176,7 +166,13 @@
                                 </div>
                             </div>
                         @else
-                            <p>Your cart is empty.</p>
+                            <div class="cart-empty-state">
+                                <h2>Your cart is empty.</h2>
+                                <a href="{{ route('lists.addcartproduct', ['list' => $list->id, 'customer' => $list->customer_id]) }}"
+                                    class="cart-add-more-btn">
+                                    <i class="ti ti-plus"></i>Add Products
+                                </a>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -212,8 +208,6 @@
                     maxboostedstep: 10,
                     postfix: ' items'
                 });
-
-                let table = new DataTable('#cartTable');
 
                 function displayAlert(message, type) {
                     var alertHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
