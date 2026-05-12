@@ -33,7 +33,7 @@
                         <div>
                             {{-- <span>Product Selection</span> --}}
                             <h1>Product Selection</h1>
-                            <p>{{ method_exists($products, 'total') ? $products->total() : $products->count() }} available products</p>
+                            <p><span id="available-products-count">{{ method_exists($products, 'total') ? $products->total() : $products->count() }}</span> available products</p>
                         </div>
                         <form action="{{ route('lists.view-cart', ['list' => $list->id, 'customer_id' => $list->customer_id]) }}"
                             method="post">
@@ -56,102 +56,20 @@
                     <section class="add-product-panel">
                         <div class="add-product-panel-head">
                             <h2><span></span>Products</h2>
-                            <div class="add-product-search">
+                            <form method="GET" action="{{ url()->current() }}" class="add-product-search" id="product-card-search-form">
                                 <i class="ti ti-search"></i>
-                                <input type="search" id="product-card-search" placeholder="Search product name or code">
-                            </div>
+                                <input type="search" id="product-card-search" name="search"
+                                    value="{{ $search ?? '' }}" placeholder="Search product name or code">
+                                <a href="{{ url()->current() }}" class="{{ empty($search) ? 'd-none' : '' }}"
+                                    id="product-card-search-clear" aria-label="Clear search">
+                                    <i class="ti ti-x"></i>
+                                </a>
+                            </form>
                         </div>
 
-                        <div class="add-product-card-grid" id="product-card-grid">
-                            @foreach ($products as $product)
-                                <article class="add-product-card"
-                                    data-search="{{ strtolower($product->product_name . ' ' . $product->product_code) }}">
-                                    <div class="add-product-image">
-                                        @if ($product->product_image)
-                                            <img src="{{ asset('images/products/' . $product->product_image) }}"
-                                                alt="{{ $product->product_name }}">
-                                        @else
-                                            <span>No Image</span>
-                                        @endif
-                                        <small>{{ $product->product_code }}</small>
-                                    </div>
-
-                                    <div class="add-product-info">
-                                        <div class="add-product-category">
-                                            @if (isset($product->category_names))
-                                                {{ implode(', ', $product->category_names) }}
-                                            @else
-                                                Product
-                                            @endif
-                                        </div>
-                                        <h3>{{ $product->product_name }}</h3>
-
-                                        <div class="add-product-controls">
-                                            <div class="add-product-qty">
-                                                <span>Qty:</span>
-                                                <input type="number" name="quantity" value="1" min="0" required
-                                                    class="form-control input-touchspin text-center"
-                                                    data-product-id="{{ $product->id }}">
-                                            </div>
-                                            <textarea name="comment" class="form-control" rows="2" data-product-id="{{ $product->id }}"
-                                                placeholder="Enter a comment..."></textarea>
-                                            <button type="button" class="btn btn-primary add-to-cart rounded"
-                                                data-product-id="{{ $product->id }}">
-                                                <i class="ti ti-shopping-cart-plus me-1"></i>Add to Cart
-                                            </button>
-                                        </div>
-                                    </div>
-                                </article>
-                            @endforeach
+                        <div id="product-card-results">
+                            @include('list.partials.add_cart_products')
                         </div>
-
-                        <div class="add-product-empty d-none" id="product-card-empty">No products found.</div>
-
-                        @if (method_exists($products, 'links') && $products->hasPages())
-                            <div class="add-product-pagination">
-                                <div class="add-product-pagination-summary">
-                                    Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of {{ $products->total() }} products
-                                </div>
-                                <nav class="add-product-pagination-nav" aria-label="Product pagination">
-                                    @if ($products->onFirstPage())
-                                        <span class="add-product-pagination-btn disabled">Previous</span>
-                                    @else
-                                        <a class="add-product-pagination-btn" href="{{ $products->previousPageUrl() }}">Previous</a>
-                                    @endif
-
-                                    @php
-                                        $currentPage = $products->currentPage();
-                                        $lastPage = $products->lastPage();
-                                        $pages = collect([1, 2, $currentPage - 1, $currentPage, $currentPage + 1, $lastPage - 1, $lastPage])
-                                            ->filter(fn ($page) => $page >= 1 && $page <= $lastPage)
-                                            ->unique()
-                                            ->sort()
-                                            ->values();
-                                        $previousPage = 0;
-                                    @endphp
-
-                                    @foreach ($pages as $page)
-                                        @if ($previousPage && $page > $previousPage + 1)
-                                            <span class="add-product-pagination-ellipsis">...</span>
-                                        @endif
-
-                                        @if ($page === $currentPage)
-                                            <span class="add-product-pagination-btn active">{{ $page }}</span>
-                                        @else
-                                            <a class="add-product-pagination-btn" href="{{ $products->url($page) }}">{{ $page }}</a>
-                                        @endif
-
-                                        @php $previousPage = $page; @endphp
-                                    @endforeach
-
-                                    @if ($products->hasMorePages())
-                                        <a class="add-product-pagination-btn" href="{{ $products->nextPageUrl() }}">Next</a>
-                                    @else
-                                        <span class="add-product-pagination-btn disabled">Next</span>
-                                    @endif
-                                </nav>
-                            </div>
-                        @endif
                     </section>
                 </div>
             </div>
@@ -162,15 +80,23 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            $('.input-touchspin').TouchSpin({
-                min: 0,
-                max: Infinity,
-                step: 1,
-                boostat: 5,
-                postfix: 'items'
-            });
+            function initTouchSpin() {
+                $('.input-touchspin').each(function() {
+                    if (!$(this).parent().hasClass('bootstrap-touchspin')) {
+                        $(this).TouchSpin({
+                            min: 0,
+                            max: Infinity,
+                            step: 1,
+                            boostat: 5,
+                            postfix: 'items'
+                        });
+                    }
+                });
+            }
 
-            $('.add-to-cart').click(function() {
+            initTouchSpin();
+
+            $(document).on('click', '.add-to-cart', function() {
                 var button = $(this);
                 var productId = button.data('product-id');
                 var inputField = $('input[data-product-id="' + productId + '"]');
@@ -203,19 +129,117 @@
                 });
             });
 
-            $('#product-card-search').on('input', function() {
-                var search = $(this).val().trim().toLowerCase();
-                var visibleCount = 0;
+            var searchTimer;
+            var $searchForm = $('#product-card-search-form');
+            var $searchInput = $('#product-card-search');
+            var $searchClear = $('#product-card-search-clear');
+            var pendingRequest = null;
+            var activeRequestId = 0;
 
-                $('.add-product-card').each(function() {
-                    var matched = $(this).data('search').indexOf(search) !== -1;
-                    $(this).toggle(matched);
-                    if (matched) {
-                        visibleCount++;
+            function loadProducts(url, pushState) {
+                var requestUrl = url || new URL($searchForm.attr('action'), window.location.origin).toString();
+                var requestId = ++activeRequestId;
+
+                if (pendingRequest) {
+                    pendingRequest.abort();
+                }
+
+                $('#product-card-results').addClass('is-loading');
+
+                pendingRequest = $.ajax({
+                    url: requestUrl,
+                    type: 'GET',
+                    dataType: 'json',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(response) {
+                        if (requestId !== activeRequestId) {
+                            return;
+                        }
+
+                        $('#product-card-results').html(response.html);
+                        $('#available-products-count').text(response.total || 0);
+                        initTouchSpin();
+
+                        if (pushState) {
+                            window.history.pushState({}, '', requestUrl);
+                        }
+                    },
+                    error: function(xhr) {
+                        if (requestId !== activeRequestId) {
+                            return;
+                        }
+
+                        if (xhr.statusText !== 'abort') {
+                            showAlert('Failed to load products.', 'danger');
+                        }
+                    },
+                    complete: function() {
+                        if (requestId !== activeRequestId) {
+                            return;
+                        }
+
+                        $('#product-card-results').removeClass('is-loading');
+                        pendingRequest = null;
                     }
                 });
+            }
 
-                $('#product-card-empty').toggleClass('d-none', visibleCount !== 0);
+            function submitProductSearch() {
+                var search = $searchInput.val().trim();
+                var url = new URL($searchForm.attr('action'), window.location.origin);
+
+                if (search) {
+                    url.searchParams.set('search', search);
+                } else {
+                    url.searchParams.delete('search');
+                }
+
+                url.searchParams.delete('page');
+                loadProducts(url.toString(), true);
+            }
+
+            $searchInput.on('input', function() {
+                $searchClear.toggleClass('d-none', !$searchInput.val().trim());
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(submitProductSearch, 450);
+            });
+
+            $searchForm.on('submit', function(event) {
+                event.preventDefault();
+                clearTimeout(searchTimer);
+                submitProductSearch();
+            });
+
+            $(document).on('click', '#product-card-results .add-product-pagination-btn[href]', function(event) {
+                event.preventDefault();
+                clearTimeout(searchTimer);
+
+                var url = new URL(this.href);
+                var search = $searchInput.val().trim();
+
+                if (search) {
+                    url.searchParams.set('search', search);
+                } else {
+                    url.searchParams.delete('search');
+                }
+
+                loadProducts(url.toString(), true);
+            });
+
+            $searchClear.on('click', function(event) {
+                event.preventDefault();
+                $searchInput.val('');
+                $searchClear.addClass('d-none');
+                submitProductSearch();
+            });
+
+            window.addEventListener('popstate', function() {
+                var url = new URL(window.location.href);
+                $searchInput.val(url.searchParams.get('search') || '');
+                $searchClear.toggleClass('d-none', !$searchInput.val().trim());
+                loadProducts(url.toString(), false);
             });
 
             function showAlert(message, type) {

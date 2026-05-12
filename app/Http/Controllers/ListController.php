@@ -215,9 +215,11 @@ class ListController extends Controller
 
     // add cart product controller start  //
 
-    public function addcartproduct(ListModel $list, $customerId)
+    public function addcartproduct(Request $request, ListModel $list, $customerId)
     {
         $adminId = auth()->id();
+        $search = trim((string) $request->query('search', ''));
+
         $lists = ListModel::where('customer_id', $customerId)
             ->whereHas('customer', function ($query) use ($adminId) {
                 $query->where('admin_user_id', $adminId);
@@ -227,9 +229,15 @@ class ListController extends Controller
         $products = Product::where('in_stock', 1)
             ->where('delete_status', '1')
             ->where('admin_user_id', $adminId)
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('product_name', 'like', "%{$search}%")
+                        ->orWhere('product_code', 'like', "%{$search}%");
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(12)
-            ->withQueryString();
+            ->appends($request->only('search'));
 
         // Fetch all categories
         $categories = DB::table('categories')
@@ -245,7 +253,14 @@ class ListController extends Controller
             return $product;
         });
 
-        return view('list.add_cart_product', compact('list', 'products',));
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('list.partials.add_cart_products', compact('products', 'search'))->render(),
+                'total' => $products->total(),
+            ]);
+        }
+
+        return view('list.add_cart_product', compact('list', 'products', 'search'));
     }
 
 
