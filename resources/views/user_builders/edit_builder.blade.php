@@ -53,7 +53,9 @@
 
               <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                 <div class="form-group">
-                  <p class="text-secondary mb-1">Builder Email</p>
+                 <label for="contact_email" class="text-secondary mb-1">
+                    Builder Email <span class="text-danger">*</span>
+                </label>
                   <input type="email" name="contact_email" value="{{ $builders->contact_email }}" class="form-control border border-white-50">
                   <div class="invalid-feedback"></div>
                 </div>
@@ -61,7 +63,9 @@
 
               <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                 <div class="form-group">
-                  <label for="builder" class="text-secondary mb-1">Builder Name</label>
+                  <label for="builder" class="text-secondary mb-1">
+                    Builder Name <span class="text-danger">*</span> 
+                  </label>
                   <input type="text" id="builder" name="builder_name" value="{{ $builders->builder_name }}" class="form-control border border-white-50">
                   <span class="text-danger error-text builder-error"></span>
                 </div>

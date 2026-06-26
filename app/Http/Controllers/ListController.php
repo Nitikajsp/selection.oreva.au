@@ -1072,11 +1072,22 @@ class ListController extends Controller
         }
 
         // Orders fetch
-        $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image')
-            ->join('products', 'orders.product_id', '=', 'products.id')
-            ->where('orders.list_id', $list_id)
-            ->where('orders.customer_id', $customer_id)
-            ->get();
+        // $ordersData = Order::select('orders.*', 'products.product_name', 'products.product_image')
+        //     ->join('products', 'orders.product_id', '=', 'products.id')
+        //     ->where('orders.list_id', $list_id)
+        //     ->where('orders.customer_id', $customer_id)
+        //     ->get();
+
+        $ordersData = Order::select(
+            'orders.*',
+            'products.product_name',
+            'products.product_image',
+            'products.specification_product_image'
+        )
+        ->join('products', 'orders.product_id', '=', 'products.id')
+        ->where('orders.list_id', $list_id)
+        ->where('orders.customer_id', $customer_id)
+        ->get();
 
         $orderData = [
             'list' => $list,
