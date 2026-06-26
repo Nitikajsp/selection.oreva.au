@@ -50,7 +50,7 @@
                                     <!-- Product Name -->
                                     <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Name</p>
+                                            <p class="text-secondary mb-1">Product Name <span class="text-danger">*</span></p>
                                             <input type="text" name="product_name"
                                                 class="form-control border border-white-50" placeholder="Name"
                                                 value="{{ old('product_name') }}">
@@ -60,7 +60,7 @@
                                     <!-- Product Image (cannot preserve value) -->
                                     <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Image</p>
+                                            <p class="text-secondary mb-1">Product Image <span class="text-danger">*</span></p>
                                             <input type="file" name="product_image"
                                                 class="form-control border border-white-50" placeholder="Upload Image"
                                                 onchange="previewImage(event, 'imagePreview')">
@@ -83,7 +83,7 @@
                                     <!-- Product Category (checkboxes will be filled via JS below) -->
                                     <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Category</p>
+                                            <p class="text-secondary mb-1">Product Category <span class="text-danger">*</span></p>
                                             <div id="category-container"></div>
                                         </div>
                                     </div>
@@ -91,7 +91,7 @@
                                     <!-- Product Code -->
                                     <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Code:</p>
+                                            <p class="text-secondary mb-1">Product Code: <span class="text-danger">*</span></p>
                                             <input type="text" name="product_code"
                                                 class="form-control border border-white-50" placeholder="Product Code"
                                                 value="{{ old('product_code') }}">
@@ -101,7 +101,7 @@
                                     <!-- Product Stock -->
                                     <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Stock:</p>
+                                            <p class="text-secondary mb-1">Product Stock: <span class="text-danger">*</span></p>
                                             <input type="text" name="product_stock"
                                                 class="form-control border border-white-50" placeholder="Stock"
                                                 value="{{ old('product_stock') }}">
@@ -111,7 +111,7 @@
                                     <!-- Product Description -->
                                     <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Description:</p>
+                                            <p class="text-secondary mb-1">Product Description: <span class="text-danger">*</span></p>
                                             <textarea class="form-control border border-white-50" style="height:150px !important;" name="product_description"
                                                 placeholder="Description">{{ old('product_description') }}</textarea>
                                         </div>

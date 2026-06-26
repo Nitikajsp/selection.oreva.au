@@ -50,7 +50,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <label for="name" class="text-secondary mb-1">Name</label>
+                                            <label for="name" class="text-secondary mb-1">Name <span class="text-danger">*</span></label>
                                             <input type="text" id="name" name="name"
                                                 class="form-control border border-white-50">
                                             <span class="text-danger error-text name-error"></span>
@@ -58,7 +58,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <label for="phone" class="text-secondary mb-1">Phone</label>
+                                            <label for="phone" class="text-secondary mb-1">Phone <span class="text-danger">*</span></label>
                                             <input type="text" id="phone" name="phone"
                                                 class="form-control border border-white-50">
                                             <span class="text-danger error-text phone-error"></span>
@@ -66,7 +66,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <label for="email" class="text-secondary mb-1">E-mail Address</label>
+                                            <label for="email" class="text-secondary mb-1">E-mail Address <span class="text-danger">*</span></label>
                                             <input type="email" id="email" name="email"
                                                 class="form-control border border-white-50">
                                             <span class="text-danger error-text email-error"></span>
@@ -82,7 +82,7 @@
                                     </div> -->
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <label for="suburb" class="text-secondary mb-1">Suburb</label>
+                                            <label for="suburb" class="text-secondary mb-1">Suburb <span class="text-danger">*</span></label>
                                             <input type="text" id="suburb" name="suburb"
                                                 class="form-control border border-white-50">
                                             <span class="text-danger error-text suburb-error"></span>
@@ -90,7 +90,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 mb-3">
                                         <div class="form-group">
-                                            <label for="street" class="text-secondary mb-1">Property Address</label>
+                                            <label for="street" class="text-secondary mb-1">Property Address <span class="text-danger">*</span></label>
                                             <input type="text" id="street" name="street"
                                                 class="form-control border border-white-50">
                                             <span class="text-danger error-text street-error"></span>
@@ -98,7 +98,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <label for="State" class="text-secondary mb-1">State</label>
+                                            <label for="State" class="text-secondary mb-1">State <span class="text-danger">*</span></label>
                                             <select name="state" class="form-control border border-white-50">
                                                 <option value="" disabled selected>Select State</option>
                                                 <option value="New South Wales (NSW)">New South Wales (NSW)</option>
@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <label for="pincod" class="text-secondary mb-1">Pincode</label>
+                                            <label for="pincod" class="text-secondary mb-1">Pincode <span class="text-danger">*</span></label>
                                             <input type="text" id="pincod" name="pincod"
                                                 class="form-control border border-white-50">
                                             <span class="text-danger error-text pincod-error"></span>

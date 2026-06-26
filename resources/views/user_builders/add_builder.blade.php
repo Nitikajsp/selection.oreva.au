@@ -18,75 +18,77 @@
                         </a>
                     </div>
 
-                    
-                        <div class="inner-container">
 
-                            <div class="page-wrapper-title">
-                                <h1>Add Builder</h1>
-                                <h6>Please enter your details</h6>
+                    <div class="inner-container">
+
+                        <div class="page-wrapper-title">
+                            <h1>Add Builder</h1>
+                            <h6>Please enter your details</h6>
+                        </div>
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
                             </div>
-
-                            @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
+                        @endif
 
 
 
-                            <form id="builderForm" action="{{ route('user_builders.store') }}" method="POST">
-                                @csrf
+                        <form id="builderForm" action="{{ route('user_builders.store') }}" method="POST">
+                            @csrf
 
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 mb-3">
-                                        <div class="form-group">
-                                            <label for="customer_autocomplete" class="text-secondary mb-1">Select
-                                                Customer</label>
-                                            {{-- <input type="text" id="customer_autocomplete"
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 mb-3">
+                                    <div class="form-group">
+                                        <label for="customer_autocomplete" class="text-secondary mb-1">Select
+                                            Customer</label>
+                                        {{-- <input type="text" id="customer_autocomplete"
                                                 class="form-control border border-white-50"
                                                 placeholder="Type customer name"> --}}
 
-                                            <input type="text" id="customer_autocomplete"
-                                                class="form-control border border-white-50"
-                                                placeholder="Type customer name">
-                                            <input type="hidden" name="customer_id" id="customer_id">
+                                        <input type="text" id="customer_autocomplete"
+                                            class="form-control border border-white-50" placeholder="Type customer name">
+                                        <input type="hidden" name="customer_id" id="customer_id">
 
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 mb-3">
-                                        <div class="form-group">
-                                            <p class="text-secondary mb-1">Builder Email</p>
-                                            <input type="email" name="contact_email"
-                                                class="form-control border border-white-50">
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 mb-3">
-                                        <div class="form-group">
-                                            <label for="builder" class="text-secondary mb-1">Builder Name</label>
-                                            <input type="text" id="builder" name="builder_name"
-                                                class="form-control border border-white-50">
-                                            <span class="text-danger error-text builder-error"></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-center gap-2 mt-2">
-                                        <button type="submit" class="btn btn-primary rounded">Save</button>
-                                        <a href="{{ url()->previous() }}"
-                                            class="btn btn-outline-dark waves-effect rounded">Cancel</a>
                                     </div>
                                 </div>
-                            </form>
 
-                        </div>
-                   
+                                <div class="col-xs-12 col-sm-12 mb-3">
+                                    <div class="form-group">
+                                        <p class="text-secondary mb-1">
+                                            Builder Email <span class="text-danger">*</span>
+                                        </p> <input type="email" name="contact_email"
+                                            class="form-control border border-white-50">
+                                        <div class="invalid-feedback"></div>
+                                        <span class="text-danger error-text"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-12 col-sm-12 mb-3">
+                                    <div class="form-group">
+                                        <label for="builder" class="text-secondary mb-1">
+                                            Builder Name <span class="text-danger">*</span>
+                                        </label> <input type="text" id="builder" name="builder_name"
+                                            class="form-control border border-white-50">
+                                        <span class="text-danger error-text builder-error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-center gap-2 mt-2">
+                                    <button type="submit" class="btn btn-primary rounded">Save</button>
+                                    <a href="{{ url()->previous() }}"
+                                        class="btn btn-outline-dark waves-effect rounded">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+
 
                 </div>
             </div>
@@ -173,7 +175,7 @@
                         required: "Please enter builder name"
                     },
                     contact_email: {
-                        required: "Please enter email",
+                        required: "Please enter builder email",
                         remote: "The email address has already been taken"
                     }
                 },

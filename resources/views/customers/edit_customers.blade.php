@@ -59,7 +59,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Name</p>
+                                            <p class="text-secondary mb-1">Name <span class="text-danger">*</span></p>
                                             <input type="text" name="name" value="{{ old('name', $customer->name) }}"
                                                 class="form-control border border-white-50" placeholder="Name">
                                             <div class="invalid-feedback"></div>
@@ -67,7 +67,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Phone</p>
+                                            <p class="text-secondary mb-1">Phone <span class="text-danger">*</span></p>
                                             <input type="text" name="phone"
                                                 value="{{ old('phone', $customer->phone) }}"
                                                 class="form-control border border-white-50" placeholder="Phone">
@@ -76,7 +76,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">E-mail Address</p>
+                                            <p class="text-secondary mb-1">E-mail Address <span class="text-danger">*</span></p>
                                             <input type="email" name="email"
                                                 value="{{ old('email', $customer->email) }}"
                                                 class="form-control border border-white-50" placeholder="Email">
@@ -93,7 +93,7 @@
                             </div> -->
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Suburb</p>
+                                            <p class="text-secondary mb-1">Suburb <span class="text-danger">*</span></p>
                                             <input type="text" name="suburb"
                                                 value="{{ old('suburb', $customer->suburb) }}"
                                                 class="form-control border border-white-50" placeholder="Suburb">
@@ -102,7 +102,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Property Address</p>
+                                            <p class="text-secondary mb-1">Property Address <span class="text-danger">*</span></p>
                                             <input type="text" name="street"
                                                 value="{{ old('street', $customer->street) }}"
                                                 class="form-control border border-white-50" placeholder="Street">
@@ -113,7 +113,7 @@
 
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">State</p>
+                                            <p class="text-secondary mb-1">State <span class="text-danger">*</span></p>
                                             <select name="state" class="form-select">
                                                 <option value="New South Wales (NSW)"
                                                     {{ old('state', $customer->state) == 'New South Wales (NSW)' ? 'selected' : '' }}>
@@ -145,7 +145,7 @@
 
                                     <div class="col-xs-12 col-sm-6 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Pincode</p>
+                                            <p class="text-secondary mb-1">Pincode <span class="text-danger">*</span></p>
                                             <input type="text" name="pincod"
                                                 value="{{ old('pincod', $customer->pincod) }}"
                                                 class="form-control border border-white-50" placeholder="Pincode">

@@ -48,7 +48,7 @@
                                 <div class="row">
                                     <div class="col-sm-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Name</p>
+                                            <p class="text-secondary mb-1">Product Name <span class="text-danger">*</span></p>
                                             <input type="text" name="product_name" value="{{ $product->product_name }}"
                                                 class="form-control border border-white-50" placeholder="Name">
                                             <div class="invalid-feedback"></div>
@@ -98,7 +98,7 @@
                                     </div>
 
                                     <div class="col-sm-12 mb-3">
-                                        <p class="text-secondary mb-1">Product Categories</p>
+                                        <p class="text-secondary mb-1">Product Categories <span class="text-danger">*</span></p>
                                         @foreach ($categories as $category)
                                             <div class="form-check">
                                                 <input type="checkbox" name="product_category[]" value="{{ $category->id }}"
@@ -113,7 +113,7 @@
 
                                     <div class="col-sm-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Code</p>
+                                            <p class="text-secondary mb-1">Product Code <span class="text-danger">*</span></p>
                                             <input type="text" name="product_code" value="{{ $product->product_code }}"
                                                 class="form-control border border-white-50" placeholder="Code">
                                             <div class="invalid-feedback"></div>
@@ -122,7 +122,7 @@
 
                                     <div class="col-sm-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Stock</p>
+                                            <p class="text-secondary mb-1">Product Stock <span class="text-danger">*</span></p>
                                             <input type="text" name="product_stock"
                                                 value="{{ $product->product_stock }}"
                                                 class="form-control border border-white-50" placeholder="Stock">
@@ -132,7 +132,7 @@
 
                                     <div class="col-sm-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Product Description</p>
+                                            <p class="text-secondary mb-1">Product Description <span class="text-danger">*</span></p>
                                             <textarea class="form-control border border-white-50" name="product_description" style="height: 150px;"
                                                 placeholder="Description">{{ $product->product_description }}</textarea>
                                             <div class="invalid-feedback"></div>

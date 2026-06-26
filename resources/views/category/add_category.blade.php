@@ -50,7 +50,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                                         <div class="form-group">
-                                            <p class="text-secondary mb-1">Category Name</p>
+                                            <p class="text-secondary mb-1">Category Name <span class="text-danger">*</span></p>
                                             <input type="text" name="category_name"
                                                 class="form-control border border-white-50" placeholder="Name">
                                         </div>

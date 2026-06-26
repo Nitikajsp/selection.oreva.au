@@ -113,7 +113,7 @@
             <div class="row mt-3">
                 <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
                     <div class="form-group">
-                        <p class="text-secondary mb-1">Property Address</p>
+                        <p class="text-secondary mb-1">Property Address <span class="text-danger">*</span></p>
                         <input type="text" name="name" value="{{ $list->name }}" class="form-control border border-white-50" placeholder="Property Address">
                     </div>
                 </div>
@@ -283,11 +283,9 @@
                 //     required: true,
                 // },
                 contact_number: {
-                    required: true,
                     digits: true,
                 },
                 contact_email: {
-                    required: true,
                     email: true,
                     validEmail: true
                 },
@@ -319,11 +317,9 @@
                 //     required: "Please enter the description",
                 // },
                 contact_number: {
-                    required: "Please enter the contact number",
                     digits: "Please enter only numbers for the contact number"
                 },
                 contact_email: {
-                    required: "Please enter the contact email",
                     email: "Please enter a valid email address",
                     validEmail: "Please enter a valid email address ending with '.com'"
                 },
