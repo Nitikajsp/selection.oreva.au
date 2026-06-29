@@ -59,6 +59,7 @@
                                 $(document).ready(function() {
                                     $("#customer_autocomplete").autocomplete({
                                         minLength: 2, // Start filtering after 3 characters
+                                        max: 10, // 👈 Yeh 10 items show karega aur baaki scroll ke liye
                                         source: function(request, response) {
                                             $.ajax({
                                                 url: "/get-customers",
