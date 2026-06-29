@@ -221,7 +221,7 @@
         </div>
     @endsection
 
-    @push('scripts')
+    {{-- @push('scripts')
         <script>
             $(document).ready(function() {
                 $.validator.addMethod("validEmail", function(value, element) {
@@ -321,4 +321,65 @@
                 });
             });
         </script>
-    @endpush
+    @endpush --}}
+
+    @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $.validator.addMethod("validEmail", function(value, element) {
+                // General regex for email validation
+                return this.optional(element) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            }, "Please enter a valid email address.");
+            
+            $('input[name="contact_number"]').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+            $("#createBranchForm").validate({
+                rules: {
+                    list_name: {
+                        required: true,
+                    },
+                    contact_number: {
+                        digits: true,
+                    },
+                    contact_email: {
+                        email: true,
+                        validEmail: true
+                    },
+                },
+                messages: {
+                    list_name: {
+                        required: "Please enter the street name",
+                    },
+                    contact_number: {
+                        digits: "Please enter only numbers for the contact number"
+                    },
+                    contact_email: {
+                        email: "Please enter a valid email address",
+                        validEmail: "Please enter a valid email address ending with '.com'"
+                    },
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    error.insertAfter(element);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid').removeClass('is-valid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid is-valid');
+                }
+            });
+
+            $('#createBranchForm input, #createBranchForm textarea, #createBranchForm select').on('blur', function() {
+                $(this).valid();
+            });
+            
+            $('#createBranchForm input, #createBranchForm textarea, #createBranchForm select').on('focus', function() {
+                // Do nothing on focus
+            });
+        });
+    </script>
+@endpush
