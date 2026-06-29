@@ -3192,6 +3192,30 @@ div#app {
     opacity: 0.4;
 }
 
+/* custom.css me add karein */
+.ui-autocomplete {
+    max-height: 200px; /* 10 items ke liye approximately */
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+}
+
+/* Scrollbar styling (optional) */
+.ui-autocomplete::-webkit-scrollbar {
+    width: 6px;
+}
+.ui-autocomplete::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+.ui-autocomplete::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+.ui-autocomplete::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 /* POS responsive table behaviour */
 @media (max-width: 767.98px) {
 
