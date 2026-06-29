@@ -255,13 +255,13 @@
                         errorElement: 'div',
                         errorPlacement: function(error, element) {
                             error.addClass('invalid-feedback');
-                            error.insertBefore(element); // Places the error message above the input field
+                            error.insertAfter(element); // Places the error message above the input field
                         },
                         highlight: function(element, errorClass, validClass) {
                             $(element).addClass('is-invalid').removeClass('is-valid');
                         },
                         unhighlight: function(element, errorClass, validClass) {
-                            $(element).addClass('is-valid').removeClass('is-invalid');
+                            $(element).removeClass('is-invalid is-valid');
                         },
                         submitHandler: function(form) {
                             $('button[type="submit"]').prop('disabled', true).text('Saving...');
@@ -271,7 +271,7 @@
                     });
 
                     // Trigger validation when an input field gains focus
-                    $('#addProductForm input, #addProductForm textarea').on('focus', function() {
+                    $('#addProductForm input, #addProductForm textarea').on('blur', function() {
                         $(this).valid();
                     });
                 });
