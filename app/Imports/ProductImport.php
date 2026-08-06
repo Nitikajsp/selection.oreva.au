@@ -106,6 +106,7 @@ class ProductImport implements ToModel
     public function model(array $row)
     {
         $productName = isset($row[0]) ? trim((string)$row[0]) : '';
+        
 
         // Skip header row or empty product name rows
         $cleanHeaderCheck = str_replace([' ', '_'], '', strtolower($productName));
