@@ -105,14 +105,18 @@ class ProductImport implements ToModel
 
     public function model(array $row)
     {
-        if (strtolower($row[0]) == 'product_name') {
+        $productName = isset($row[0]) ? trim((string)$row[0]) : '';
+
+        // Skip header row or empty product name rows
+        $cleanHeaderCheck = str_replace([' ', '_'], '', strtolower($productName));
+        if ($productName === '' || $cleanHeaderCheck === 'productname') {
             return null;
         }
 
         $adminId = Auth::id();
 
         // 🔁 Product code logic
-        $inputCode = trim($row[3]);
+        $inputCode = isset($row[3]) ? trim((string)$row[3]) : '';
         $productCode = null;
 
         if (!empty($inputCode)) {
@@ -132,20 +136,21 @@ class ProductImport implements ToModel
             $productCode = 'oreva_' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
         }
 
-        //  Check for duplicates
+        // Check for duplicates
         if (Product::where('product_code', $productCode)->exists()) {
             Log::info("Skipped duplicate product_code: " . $productCode);
             return null;
         }
 
-        //  Category creation
+        // Category creation
+        $categoryName = isset($row[1]) && trim((string)$row[1]) !== '' ? trim((string)$row[1]) : 'Uncategorized';
         $category = Category::firstOrCreate(
-            ['category_name' => trim($row[1])],
+            ['category_name' => $categoryName],
             ['admin_user_id' => $adminId]
         );
 
         // Image logic
-        $imageUrl = trim($row[6]);
+        $imageUrl = isset($row[6]) ? trim((string)$row[6]) : '';
         $finalImageName = 'placeholder.jpg'; // default placeholder
 
         if (!empty($imageUrl)) {
@@ -183,11 +188,11 @@ class ProductImport implements ToModel
         // 🔹 Final product return
         return new Product([
             'admin_user_id'       => $adminId,
-            'product_name'        => $row[0],
+            'product_name'        => $productName,
             'product_category'    => $category->id,
-            'product_description' => $row[2],
+            'product_description' => isset($row[2]) ? trim((string)$row[2]) : null,
             'product_code'        => $productCode,
-            'product_stock'       => $row[4],
+            'product_stock'       => isset($row[4]) && $row[4] !== '' ? $row[4] : 0,
             'in_stock'            => $row[5] ?? 1,
             'product_image'       => $finalImageName,
             'delete_status'       => '1',
