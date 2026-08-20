@@ -165,28 +165,57 @@ class ListController extends Controller
 
     // list update controller strat //
 
-    public function update(Request $request, $id)
+    // public function update(Request $request, $id)
 
+    // {
+    //     $request->validate([
+
+    //         'name' => 'required|max:255',
+    //         //'suburb' => 'required|max:255',
+    //         //'state' => 'required|max:255',
+    //         //'pincod' => 'required|max:255',
+    //         //'description' => 'required',
+    //         'contact_number' => ['nullable', 'max:20', 'regex:/^\d+$/'],
+    //         'contact_email' => 'required|email|max:255',
+    //         //'builder_name' => 'required|max:255',
+    //         //'status' => 'required|max:255',
+
+    //     ], [
+    //         'contact_number.regex' => 'The contact number may contain digits only.',
+    //     ]);
+
+    //     $list = ListModel::findOrFail($id);
+
+    //     $list->update($request->all());
+
+    //     return redirect()->route('customers.show', $list->customer_id)
+    //         ->with('success', 'List updated successfully.');
+    // }
+
+    public function update(Request $request, $id)
     {
         $request->validate([
-
             'name' => 'required|max:255',
-            //'suburb' => 'required|max:255',
-            //'state' => 'required|max:255',
-            //'pincod' => 'required|max:255',
-            //'description' => 'required',
             'contact_number' => ['nullable', 'max:20', 'regex:/^\d+$/'],
             'contact_email' => 'required|email|max:255',
-            //'builder_name' => 'required|max:255',
-            //'status' => 'required|max:255',
-
         ], [
             'contact_number.regex' => 'The contact number may contain digits only.',
         ]);
 
         $list = ListModel::findOrFail($id);
 
-        $list->update($request->all());
+        // 🔥 FIXED: Explicitly set all fields with fallback values
+        $list->update([
+            'name' => $request->input('name'),
+            'suburb' => $request->input('suburb') ?? '',
+            'state' => $request->input('state') ?? '',
+            'pincod' => $request->input('pincod') ?? '',
+            'description' => $request->input('description') ?? '',
+            'contact_number' => $request->input('contact_number') ?? '',  // 🔥 IMPORTANT: Empty string instead of null
+            'contact_email' => $request->input('contact_email'),
+            'builder_name' => $request->input('builder_name') ?? '',
+            'status' => $request->input('status') ?? '',
+        ]);
 
         return redirect()->route('customers.show', $list->customer_id)
             ->with('success', 'List updated successfully.');
