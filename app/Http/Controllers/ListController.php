@@ -31,44 +31,72 @@ class ListController extends Controller
 
     // insert new list controller start //
 
+    // public function store(Request $request)
+
+
+    // {
+
+    //     $request->validate([
+
+    //         'list_name' => 'required|max:255',
+    //         // 'suburb' => 'required|max:255',
+    //         // 'state' => 'required|max:255',
+    //         // 'pincod' => 'required|max:255',
+    //         //'list_description' => 'required',
+    //         'contact_number' => ['nullable', 'max:20', 'regex:/^\d+$/'],
+    //         'contact_email' => 'required|email|max:255',
+    //         //'builder_name' => 'required|max:255',
+    //         //'status' => 'required|max:255',
+    //         'customer_id' => 'required|exists:customers,id',
+
+    //     ], [
+    //         'contact_number.regex' => 'The contact number may contain digits only.',
+    //     ]);
+
+
+    //     ListModel::create([
+
+    //         'name' => $request->input('list_name'),
+    //         'suburb' => $request->input('suburb'),
+    //         'state' => $request->input('state'),
+    //         'pincod' => $request->input('pincod'),
+    //         'description' => $request->input('list_description'),
+    //         'contact_number' => $request->input('contact_number'),
+    //         'contact_email' => $request->input('contact_email'),
+    //         'builder_name' => $request->input('builder_name'),
+    //         'status' => $request->input('status'),
+    //         'customer_id' => $request->input('customer_id'),
+
+    //     ]);
+
+
+    //     return redirect()->route('customers.show', $request->input('customer_id'))
+    //         ->with('success', 'List created successfully.');
+    // }
+
     public function store(Request $request)
-
-
     {
-
         $request->validate([
-
             'list_name' => 'required|max:255',
-            // 'suburb' => 'required|max:255',
-            // 'state' => 'required|max:255',
-            // 'pincod' => 'required|max:255',
-            //'list_description' => 'required',
             'contact_number' => ['nullable', 'max:20', 'regex:/^\d+$/'],
             'contact_email' => 'required|email|max:255',
-            //'builder_name' => 'required|max:255',
-            //'status' => 'required|max:255',
             'customer_id' => 'required|exists:customers,id',
-
         ], [
             'contact_number.regex' => 'The contact number may contain digits only.',
         ]);
 
-
         ListModel::create([
-
             'name' => $request->input('list_name'),
-            'suburb' => $request->input('suburb'),
-            'state' => $request->input('state'),
-            'pincod' => $request->input('pincod'),
-            'description' => $request->input('list_description'),
-            'contact_number' => $request->input('contact_number'),
+            'suburb' => $request->input('suburb') ?? '',
+            'state' => $request->input('state') ?? '',
+            'pincod' => $request->input('pincod') ?? '',
+            'description' => $request->input('list_description') ?? '',
+            'contact_number' => $request->input('contact_number') ?? '', // This is the key fix
             'contact_email' => $request->input('contact_email'),
-            'builder_name' => $request->input('builder_name'),
-            'status' => $request->input('status'),
+            'builder_name' => $request->input('builder_name') ?? '',
+            'status' => $request->input('status') ?? '',
             'customer_id' => $request->input('customer_id'),
-
         ]);
-
 
         return redirect()->route('customers.show', $request->input('customer_id'))
             ->with('success', 'List created successfully.');
