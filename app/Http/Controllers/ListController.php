@@ -74,12 +74,39 @@ class ListController extends Controller
     //         ->with('success', 'List created successfully.');
     // }
 
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'list_name' => 'required|max:255',
+    //         'contact_number' => ['nullable', 'max:20', 'regex:/^\d+$/'],
+    //         'contact_email' => 'required|email|max:255',
+    //         'customer_id' => 'required|exists:customers,id',
+    //     ], [
+    //         'contact_number.regex' => 'The contact number may contain digits only.',
+    //     ]);
+
+    //     ListModel::create([
+    //         'name' => $request->input('list_name'),
+    //         'suburb' => $request->input('suburb') ?? '',
+    //         'state' => $request->input('state') ?? '',
+    //         'pincod' => $request->input('pincod') ?? '',
+    //         'description' => $request->input('list_description') ?? '',
+    //         'contact_number' => $request->input('contact_number') ?? '', // This is the key fix
+    //         'contact_email' => $request->input('contact_email'),
+    //         'builder_name' => $request->input('builder_name') ?? '',
+    //         'status' => $request->input('status') ?? '',
+    //         'customer_id' => $request->input('customer_id'),
+    //     ]);
+
+    //     return redirect()->route('customers.show', $request->input('customer_id'))
+    //         ->with('success', 'List created successfully.');
+    // }
+
     public function store(Request $request)
     {
         $request->validate([
             'list_name' => 'required|max:255',
             'contact_number' => ['nullable', 'max:20', 'regex:/^\d+$/'],
-            'contact_email' => 'required|email|max:255',
             'customer_id' => 'required|exists:customers,id',
         ], [
             'contact_number.regex' => 'The contact number may contain digits only.',
@@ -91,8 +118,8 @@ class ListController extends Controller
             'state' => $request->input('state') ?? '',
             'pincod' => $request->input('pincod') ?? '',
             'description' => $request->input('list_description') ?? '',
-            'contact_number' => $request->input('contact_number') ?? '', // This is the key fix
-            'contact_email' => $request->input('contact_email'),
+            'contact_number' => $request->input('contact_number') ?? '',
+            'contact_email' => $request->input('contact_email') ?? '',  // ✅ Now optional
             'builder_name' => $request->input('builder_name') ?? '',
             'status' => $request->input('status') ?? '',
             'customer_id' => $request->input('customer_id'),
