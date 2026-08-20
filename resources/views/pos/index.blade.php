@@ -14,7 +14,6 @@
 
                     <div class="page-header d-flex justify-content-between align-items-center">
                         <h1 class="mb-0">Point of Sale</h1>
-                        {{-- <a href="{{ route('pos.orders.index') }}" class="btn btn-primary">All Orders</a> --}}
                     </div>
 
                     <div class="container-fluid addcustomer_pad pos-page">
@@ -44,13 +43,20 @@
                                                 </div>
                                                 <input type="hidden" id="selected-customer-id">
 
+                                                {{-- 🔥 UPDATED: Project Section --}}
                                                 <div class="mt-3">
-                                                    <label for="project-select" class="form-label pos-label">Project</label>
-                                                    <select id="project-select" class="form-select pos-input" disabled>
-                                                        <option value="">Select customer first</option>
-                                                    </select>
-                                                    <div class="mt-2 d-flex justify-content-between">
-                                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="reload-projects" disabled>Reload projects</button>
+                                                    <div class="mb-1">
+                                                        <label for="project-select" class="form-label pos-label mb-0">Project</label>
+                                                    </div>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <select id="project-select" class="form-select pos-input" disabled style="flex: 1;">
+                                                            <option value="">Select customer first</option>
+                                                        </select>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="reload-projects" disabled title="Reload projects" style="flex-shrink: 0; padding: 6px 10px;">
+                                                            <i class="ti ti-refresh"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="d-flex justify-content-end mt-2">
                                                         <a href="#" target="_blank" class="btn btn-sm btn-outline-primary" id="create-project-link">Create project</a>
                                                     </div>
                                                     <input type="hidden" id="selected-project-id">
@@ -264,6 +270,52 @@
                 });
             }
 
+            // 🔥 NEW: Refresh projects with spinning animation
+            function refreshProjects() {
+                const customerId = $('#selected-customer-id').val();
+                if (!customerId) {
+                    showAlert('Please select a customer first.', 'warning');
+                    return;
+                }
+
+                const $btn = $('#reload-projects');
+                const $icon = $btn.find('i');
+
+                // Add spinning animation
+                $icon.addClass('ti-spin');
+                $btn.prop('disabled', true);
+
+                const $select = $('#project-select');
+                $select.prop('disabled', true).html('<option value="">Refreshing projects...</option>');
+
+                $.ajax({
+                    url: '{{ route('get-lists') }}',
+                    type: 'GET',
+                    data: { customer_id: customerId },
+                    success: function (lists) {
+                        $select.empty();
+                        if (!lists.length) {
+                            $select.append('<option value="">No projects found</option>');
+                        } else {
+                            $select.append('<option value="">Select project</option>');
+                            lists.forEach(function (list) {
+                                $select.append('<option value="' + list.id + '">' + list.name + '</option>');
+                            });
+                        }
+                        $select.prop('disabled', false);
+                        $btn.prop('disabled', false);
+                        $icon.removeClass('ti-spin');
+                        showAlert('Projects refreshed successfully!', 'success');
+                    },
+                    error: function () {
+                        $select.prop('disabled', true).html('<option value="">Failed to refresh projects</option>');
+                        $btn.prop('disabled', false);
+                        $icon.removeClass('ti-spin');
+                        showAlert('Failed to refresh projects.', 'danger');
+                    }
+                });
+            }
+
             function refreshSummary() {
                 let totalItems = 0;
                 let totalAmount = 0;
@@ -429,13 +481,11 @@
                 const pages = [];
 
                 if (lastPage <= 7) {
-                    // Few pages: show all
                     for (let page = 1; page <= lastPage; page++) {
                         pages.push(page);
                     }
                 } else {
                     if (current <= 4) {
-                        // Beginning of range: 1..current+1, ..., last
                             for (let page = 1; page <= current + 1 && page <= lastPage; page++) {
                                 pages.push(page);
                             }
@@ -446,7 +496,6 @@
                             pages.push(lastPage);
                         }
                     } else if (current >= lastPage - 3) {
-                        // End of range: 1, ..., last-4..last
                         pages.push(1);
                         if (lastPage - 4 > 2) {
                             pages.push('ellipsis');
@@ -456,7 +505,6 @@
                             pages.push(page);
                         }
                     } else {
-                        // Middle range: 1, ..., current-1,current,current+1, ..., last
                         pages.push(1);
                         if (current - 2 > 2) {
                             pages.push('ellipsis');
@@ -598,7 +646,6 @@
                         }
                     },
                     error: function () {
-                        // fallback to normal loader if it fails
                         loadProjects(initialCustomer.id);
                     }
                 });
@@ -657,12 +704,9 @@
                 toggleCustomerSaveButton();
             });
 
-            // Reload projects for selected customer
+            // 🔥 UPDATED: Reload projects click handler
             $('#reload-projects').on('click', function () {
-                const customerId = $('#selected-customer-id').val();
-                if (customerId) {
-                    loadProjects(customerId);
-                }
+                refreshProjects();
             });
 
             $('#customer-project-save').on('click', function () {
